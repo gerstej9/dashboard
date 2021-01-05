@@ -41,6 +41,7 @@
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
+const fetch = require('node-fetch');
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
@@ -62,5 +63,21 @@ app.use('/graphql', graphqlHTTP({
   rootValue: root,
   graphiql: true,
 }));
+
+function retrieveObject(){
+  fetch('http://localhost:4000/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({query: "{ hello }"})
+  })
+    .then(r => r.json())
+    .then(data => console.log('data returned:', data));
+}
+
+retrieveObject();
+
 app.listen(4000);
 console.log('Running a GraphQL API server at http://localhost:4000/graphql');
