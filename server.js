@@ -11,31 +11,42 @@ app.set('view engine', 'ejs');
 
 app.get('/', getHomepage);
 
-function getHomepage(req,res){
-  const roundCloseDate =  retrieveObject(roundResolve(200));
-  console.log(roundCloseDate);
-  res.render('index.ejs', {roundCloseDate: roundCloseDate});
+const roundResolve = round => `{rounds(number: ${round}) { resolveTime }}`;
+const latestNmrPrice = () => '{latestNmrPrice {lastUpdated PriceUSD}}';
+
+
+async function getHomepage(req,res){
+  const [roundClose, nmrPrice] = await Promise.all([
+    retrieveObject(roundResolve(190)), 
+    retrieveObject(latestNmrPrice())
+  ]);
+  const roundCloseDate = roundClose.rounds[0].resolveTime;
+  res.render('index.ejs', {roundCloseDate: roundCloseDate, nmrPrice: nmrPrice.latestNmrPrice.PriceUSD});
 }
 
-function roundResolve(round){
-  return `{rounds(number: ${round}) { resolveTime }}`;
-}
 
-function retrieveObject(Numquery){
-  const returnedInfo =  fetch('https://api-tournament.numer.ai/', {
+
+async function retrieveObject(numquery){
+  const returnedInfo =  await fetch('https://api-tournament.numer.ai/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
     body: JSON.stringify({
-      query: Numquery})
+      query: numquery})
   })
     .then(r => r.json())
-    .then(data => {console.log('data returned:', data.data);
-    });
+    .then(data => data.data)
+    .catch(error => console.error(error));
+  // console.log(returnedInfo);
   return returnedInfo;
 }
+
+
+
+// retrieveObject(latestNmrPrice())
+//   .then(result => console.log(result));
 
 
 app.use('*', (req, res) => res.status(404).send('Route you are looking for is not available'));
