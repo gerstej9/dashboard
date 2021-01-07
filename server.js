@@ -84,6 +84,11 @@ const userProfile = username => `{v2UserProfile(username: "${username}") {
   username
 }}`;
 
+const v2Leaderboard = () => `{v2Leaderboard{
+  username
+}
+}`;
+
 const v2RoundDetails = roundNumber => `{
   v2RoundDetails(roundNumber:${roundNumber}) {
     roundNumber
@@ -104,6 +109,8 @@ const sortUsers = (leftModel, rightModel) =>{
     return 0;
   }
 };
+
+
 
 function p90(arr){
   const ninety = percentile(arr, 90);
@@ -174,10 +181,19 @@ async function getPercentile(roundNumber, modelArr){
   console.log(gBoyNinety.length);
 }
 
-getPercentile(238, gBoys);
-getPercentile(239, gBoys);
-getPercentile(240, gBoys);
-getPercentile(241, gBoys);
+async function getUsers(){
+  const leaderboard = await retrieveObject(v2Leaderboard());
+  const leaderboardUsers = leaderboard.v2Leaderboard;
+  let users = leaderboardUsers.map(user => user.username);
+  return users;
+}
+
+
+// getUsers();
+// getPercentile(238, gBoys);
+// getPercentile(239, gBoys);
+// getPercentile(240, gBoys);
+// getPercentile(241, gBoys);
 // horse_race("gerstej9");
 // retrieveObject(latestNmrPrice())
 //   .then(result => console.log(result));
