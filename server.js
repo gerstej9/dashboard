@@ -11,7 +11,7 @@ app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
 
 
-
+//Global Constant
 const gBoys = [
   'rgb_arp',
   'rgb_moog',
@@ -55,11 +55,8 @@ const gBoys = [
   'three_kingdoms'
 ];
 
-app.get('/', getHomepage);
-app.get('/percent', getPercentile);
-// app.get('/horserace', getHorsePage(gBoys));
 
-
+//Query Constants
 
 // const roundResolve = round => `{rounds(number: ${round}) { resolveTime }}`;
 const latestNmrPrice = () => '{latestNmrPrice {lastUpdated PriceUSD}}';
@@ -105,6 +102,25 @@ const v2RoundDetails = roundNumber => `{
   }
 }`;
 
+
+// Route Paths
+app.get('/', getHomepage);
+app.get('/percent', getPercentile);
+// app.get('/horserace', getHorsePage(gBoys));
+
+//Constructor Function for User Detail
+function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange, gBoyArr){
+  this.mmcCurrent = mmcCurrent;
+  this.mmcPrevRank = mmcPrevRank;
+  this.corrCurrent = corrCurrent;
+  this.corrPrev = corrPrev;
+  this.activeRounds = activeRounds;
+  this.totalStake = totalStake;
+  this.modelName = modelName;
+  this.dailyChange = dailyChange;
+}
+
+//Helper Functions
 const sortUsers = (leftModel, rightModel) =>{
   if(leftModel.correlation < rightModel.correlation){
     return -1;
@@ -115,25 +131,13 @@ const sortUsers = (leftModel, rightModel) =>{
   }
 };
 
-
+//90th percentile function
 function p90(arr){
   const ninety = percentile(arr, 90);
   return ninety;
 }
 
-async function getHomepage(req,res){
-  const [currentNmr, userData] = await Promise.all([
-    // retrieveObject(roundResolve(190)),
-    retrieveObject(latestNmrPrice()),
-    horse_race('gerstej9')
-  ]);
-  // const roundCloseDate = roundClose.rounds[0].resolveTime;
-  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  // console.log(userData);
-  res.render('index.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userData, latestRounds: userData[4]});
-}
-
-
+//Base api graphql call
 async function retrieveObject(numquery){
   const returnedInfo =  await fetch('https://api-tournament.numer.ai/', {
     method: 'POST',
@@ -151,17 +155,23 @@ async function retrieveObject(numquery){
   return returnedInfo;
 }
 
-function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange, gBoyArr){
-  this.mmcCurrent = mmcCurrent;
-  this.mmcPrevRank = mmcPrevRank;
-  this.corrCurrent = corrCurrent;
-  this.corrPrev = corrPrev;
-  this.activeRounds = activeRounds;
-  this.totalStake = totalStake;
-  this.modelName = modelName;
-  this.dailyChange = dailyChange;
+//Function for retrieving a percentile number and comparing models to establish > than percentile models
+async function getPercentile(roundNumber, modelArr){
+  const roundBoard = await retrieveObject(v2RoundDetails(roundNumber));
+  const userPerformanceArr = roundBoard.v2RoundDetails.userPerformances;
+  const endDate = userPerformanceArr[0].date;
+  const filteredArr = userPerformanceArr.filter(user => user.date === endDate);
+  const corrArr = filteredArr.map(user => user.correlation);
+  const ninentyPercentile = p90(corrArr);
+  const gboyModelArr = filteredArr.filter(user => modelArr.includes(user.username));
+  console.log(roundNumber);
+  const gBoyNinety = gboyModelArr.filter(user => user.correlation > ninentyPercentile);
+  gBoyNinety.sort(sortUsers);
+  gBoyNinety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
+  console.log(gBoyNinety.length);
 }
 
+//Individual user profile information retrieval
 async function horse_race(username){
   const user = await retrieveObject(userProfile(username));
   const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
@@ -180,6 +190,22 @@ async function horse_race(username){
   return[userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange];
 }
 
+
+//Homepage Route Function
+async function getHomepage(req,res){
+  const [currentNmr, userData] = await Promise.all([
+    // retrieveObject(roundResolve(190)),
+    retrieveObject(latestNmrPrice()),
+    horse_race('gerstej9')
+  ]);
+  // const roundCloseDate = roundClose.rounds[0].resolveTime;
+  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
+  // console.log(userData);
+  res.render('index.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userData, latestRounds: userData[4]});
+}
+
+
+//Horse Race Page function
 async function getHorsePage(gBoy,res){
   let gBoyModelArr = [];
   for(let i = 0; i < gBoy.length; i++){
@@ -208,22 +234,8 @@ async function getHorsePage(gBoy,res){
   // res.render('horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: gBoyModelArr[0], latestRounds: latestRounds});
 }
 
-async function getPercentile(roundNumber, modelArr){
-  const roundBoard = await retrieveObject(v2RoundDetails(roundNumber));
-  const userPerformanceArr = roundBoard.v2RoundDetails.userPerformances;
-  // console.log(userPerformanceArr[1]);
-  const endDate = userPerformanceArr[0].date;
-  const filteredArr = userPerformanceArr.filter(user => user.date === endDate);
-  const corrArr = filteredArr.map(user => user.correlation);
-  const ninentyPercentile = p90(corrArr);
-  const gboyModelArr = filteredArr.filter(user => modelArr.includes(user.username));
-  console.log(roundNumber);
-  const gBoyNinety = gboyModelArr.filter(user => user.correlation > ninentyPercentile);
-  gBoyNinety.sort(sortUsers);
-  gBoyNinety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
-  console.log(gBoyNinety.length);
-}
 
+// Function to retrieve list of all users from leaderboard
 async function getUsers(){
   const leaderboard = await retrieveObject(v2Leaderboard());
   const leaderboardUsers = leaderboard.v2Leaderboard;
@@ -231,12 +243,13 @@ async function getUsers(){
   return users;
 }
 
-getHorsePage(gBoys);
+//Function for retrieving mmc of a user
 // async function userProfileMmc(username){
 //   const userProfile = await retrieveObject(userProfile(username));
 //   return userProfile.v2UserProfile.latestRoundPerformances.mmc;
 // }
 
+//Function for calculating mmc total per round for percentile gathering
 // async function calculateRoundInfo(round){
 //   const users = await getUsers();
 //   const usermmc = userProfileMmc(users[0]);
@@ -246,6 +259,9 @@ getHorsePage(gBoys);
 //   console.log(mmcArr[0]);
 // }
 
+
+//Executable functions
+// getHorsePage(gBoys);
 // calculateRoundInfo(240);
 // getUsers();
 // getPercentile(238, gBoys);
