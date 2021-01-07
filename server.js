@@ -10,8 +10,7 @@ app.use(express.static('./public'));
 app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
 
-app.get('/', getHomepage);
-app.get('/percent', getPercentile);
+
 
 const gBoys = [
   'rgb_arp',
@@ -55,6 +54,12 @@ const gBoys = [
   'equinox',
   'three_kingdoms'
 ];
+
+app.get('/', getHomepage);
+app.get('/percent', getPercentile);
+// app.get('/horserace', getHorsePage(gBoys));
+
+
 
 // const roundResolve = round => `{rounds(number: ${round}) { resolveTime }}`;
 const latestNmrPrice = () => '{latestNmrPrice {lastUpdated PriceUSD}}';
@@ -146,6 +151,17 @@ async function retrieveObject(numquery){
   return returnedInfo;
 }
 
+function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange, gBoyArr){
+  this.mmcCurrent = mmcCurrent;
+  this.mmcPrevRank = mmcPrevRank;
+  this.corrCurrent = corrCurrent;
+  this.corrPrev = corrPrev;
+  this.activeRounds = activeRounds;
+  this.totalStake = totalStake;
+  this.modelName = modelName;
+  this.dailyChange = dailyChange;
+}
+
 async function horse_race(username){
   const user = await retrieveObject(userProfile(username));
   const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
@@ -162,6 +178,34 @@ async function horse_race(username){
   // console.log(user.v2UserProfile.dailyUserPerformances[0]);
   // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
   return[userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange];
+}
+
+async function getHorsePage(gBoy,res){
+  let gBoyModelArr = [];
+  for(let i = 0; i < gBoy.length; i++){
+    const user = await retrieveObject(userProfile(gBoy[i]));
+    const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
+    [
+      user.v2UserProfile.latestRanks.mmcRank,
+      user.v2UserProfile.latestRanks.prevMmcRank,
+      user.v2UserProfile.latestRanks.rank,
+      user.v2UserProfile.latestRanks.prevRank,
+      user.v2UserProfile.latestRoundPerformances.slice(-4),
+      Number(user.v2UserProfile.totalStake).toFixed(2),
+      user.v2UserProfile.username,
+      Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
+    ];
+    // console.log(user.v2UserProfile.dailyUserPerformances[0]);
+    // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
+    gBoyModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+  }
+  const currentNmr = await retrieveObject(latestNmrPrice());
+  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
+  const latestRounds = gBoyModelArr[0].activeRounds;
+  console.log(gBoyModelArr);
+  console.log(currentNmr);
+  console.log(latestRounds);
+  // res.render('horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: gBoyModelArr[0], latestRounds: latestRounds});
 }
 
 async function getPercentile(roundNumber, modelArr){
@@ -187,6 +231,7 @@ async function getUsers(){
   return users;
 }
 
+getHorsePage(gBoys);
 // async function userProfileMmc(username){
 //   const userProfile = await retrieveObject(userProfile(username));
 //   return userProfile.v2UserProfile.latestRoundPerformances.mmc;
