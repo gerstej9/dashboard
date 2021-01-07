@@ -95,6 +95,16 @@ const v2RoundDetails = roundNumber => `{
   }
 }`;
 
+const sortUsers = (leftModel, rightModel) =>{
+  if(leftModel.correlation < rightModel.correlation){
+    return -1;
+  }else if(leftModel.correlation > rightModel.correlation){
+    return 1;
+  }else{
+    return 0;
+  }
+};
+
 function p90(arr){
   const ninety = percentile(arr, 90);
   return ninety;
@@ -149,19 +159,25 @@ async function horse_race(username){
 }
 
 async function getPercentile(roundNumber, modelArr){
-  console.log(roundNumber);
   const roundBoard = await retrieveObject(v2RoundDetails(roundNumber));
   const userPerformanceArr = roundBoard.v2RoundDetails.userPerformances;
   // console.log(userPerformanceArr[1]);
   const endDate = userPerformanceArr[0].date;
   const filteredArr = userPerformanceArr.filter(user => user.date === endDate);
   const corrArr = filteredArr.map(user => user.correlation);
-  ninentyPercentile = p90(corrArr);
-  
-  
+  const ninentyPercentile = p90(corrArr);
+  const ***REMOVED***ModelArr = filteredArr.filter(user => modelArr.includes(user.username));
+  console.log(roundNumber);
+  const ***REMOVED***Ninety = ***REMOVED***ModelArr.filter(user => user.correlation > ninentyPercentile);
+  ***REMOVED***Ninety.sort(sortUsers);
+  ***REMOVED***Ninety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
+  console.log(***REMOVED***Ninety.length);
 }
 
-getPercentile(240, "***REMOVED***");
+getPercentile(238, ***REMOVED***);
+getPercentile(239, ***REMOVED***);
+getPercentile(240, ***REMOVED***);
+getPercentile(241, ***REMOVED***);
 // horse_race("***REMOVED***");
 // retrieveObject(latestNmrPrice())
 //   .then(result => console.log(result));
