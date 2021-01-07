@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const fetch = require('node-fetch');
 const PORT = process.env.PORT || 9999;
+const percentile = require('stats-percentile');
 
 const app = express();
 
@@ -10,10 +11,54 @@ app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
 
 app.get('/', getHomepage);
+app.get('/percent', getPercentile);
+
+const gBoys = [
+  'rgb_arp',
+  'rgb_moog',
+  'burning_flash',
+  'onesimplenight',
+  'dg',
+  'era__mix__2000',
+  'era__mix__2001',
+  'rgb_alpha',
+  'bookofillusions',
+  'thread__of__change',
+  'as_i_was',
+  'all_were_connected',
+  'by_this_illusive',
+  'all_that_eye',
+  '____cycles____',
+  'robot_sam',
+  'mistborn',
+  'jules_verne',
+  'dies',
+  'sauce_files',
+  'pizzadragon',
+  'parfection',
+  'mediocrity',
+  'cash_me_outside',
+  'cat_and_dog',
+  'gerstej9',
+  'lottery_of_babylon',
+  'vincent_moon',
+  'kafka_murakami',
+  'fuka_eri',
+  'miss_may',
+  'bamboo_cat',
+  'baby_dragon',
+  'kira_bella',
+  'wallingford_nut',
+  'kokedama',
+  'cyanesce',
+  'wild_sheep',
+  'equinox',
+  'three_kingdoms'
+];
 
 // const roundResolve = round => `{rounds(number: ${round}) { resolveTime }}`;
 const latestNmrPrice = () => '{latestNmrPrice {lastUpdated PriceUSD}}';
-const userProfile = (username) => `{v2UserProfile(username: "${username}") {
+const userProfile = username => `{v2UserProfile(username: "${username}") {
   latestRanks {
     mmcRank
     prevMmcRank
@@ -39,6 +84,21 @@ const userProfile = (username) => `{v2UserProfile(username: "${username}") {
   username
 }}`;
 
+const v2RoundDetails = roundNumber => `{
+  v2RoundDetails(roundNumber:${roundNumber}) {
+    roundNumber
+    userPerformances {
+      correlation
+      date
+      username
+    }
+  }
+}`;
+
+function p90(arr){
+  const ninety = percentile(arr, 90);
+  return ninety;
+}
 
 async function getHomepage(req,res){
   const [currentNmr, userData] = await Promise.all([
@@ -51,7 +111,6 @@ async function getHomepage(req,res){
   // console.log(userData);
   res.render('index.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userData, latestRounds: userData[4]});
 }
-
 
 
 async function retrieveObject(numquery){
@@ -89,7 +148,21 @@ async function horse_race(username){
   return[userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange];
 }
 
-horse_race("gerstej9");
+async function getPercentile(roundNumber, modelArr){
+  console.log(roundNumber);
+  const roundBoard = await retrieveObject(v2RoundDetails(roundNumber));
+  const userPerformanceArr = roundBoard.v2RoundDetails.userPerformances;
+  // console.log(userPerformanceArr[1]);
+  const endDate = userPerformanceArr[0].date;
+  const filteredArr = userPerformanceArr.filter(user => user.date === endDate);
+  const corrArr = filteredArr.map(user => user.correlation);
+  ninentyPercentile = p90(corrArr);
+  
+  
+}
+
+getPercentile(240, "gerstej9");
+// horse_race("gerstej9");
 // retrieveObject(latestNmrPrice())
 //   .then(result => console.log(result));
 
