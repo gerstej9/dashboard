@@ -111,7 +111,6 @@ const sortUsers = (leftModel, rightModel) =>{
 };
 
 
-
 function p90(arr){
   const ninety = percentile(arr, 90);
   return ninety;
@@ -188,7 +187,21 @@ async function getUsers(){
   return users;
 }
 
+// async function userProfileMmc(username){
+//   const userProfile = await retrieveObject(userProfile(username));
+//   return userProfile.v2UserProfile.latestRoundPerformances.mmc;
+// }
 
+// async function calculateRoundInfo(round){
+//   const users = await getUsers();
+//   const usermmc = userProfileMmc(users[0]);
+//   // let corrArr = [];
+//   let mmcArr = [];
+//   mmcArr.push(usermmc);
+//   console.log(mmcArr[0]);
+// }
+
+// calculateRoundInfo(240);
 // getUsers();
 // getPercentile(238, ***REMOVED***);
 // getPercentile(239, ***REMOVED***);
