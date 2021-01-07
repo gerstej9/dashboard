@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const fetch = require('node-fetch');
 const PORT = process.env.PORT || 9999;
+const percentile = require('stats-percentile');
 
 const app = express();
 
@@ -10,10 +11,54 @@ app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
 
 app.get('/', getHomepage);
+app.get('/percent', getPercentile);
+
+const ***REMOVED*** = [
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  'onesimplenight',
+  'dg',
+  'era__mix__2000',
+  'era__mix__2001',
+  'rgb_alpha',
+  'bookofillusions',
+  'thread__of__change',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***ot_sam',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***',
+  '***REMOVED***'
+];
 
 // const roundResolve = round => `{rounds(number: ${round}) { resolveTime }}`;
 const latestNmrPrice = () => '{latestNmrPrice {lastUpdated PriceUSD}}';
-const userProfile = (username) => `{v2UserProfile(username: "${username}") {
+const userProfile = username => `{v2UserProfile(username: "${username}") {
   latestRanks {
     mmcRank
     prevMmcRank
@@ -39,6 +84,37 @@ const userProfile = (username) => `{v2UserProfile(username: "${username}") {
   username
 }}`;
 
+const v2Leaderboard = () => `{v2Leaderboard{
+  username
+}
+}`;
+
+const v2RoundDetails = roundNumber => `{
+  v2RoundDetails(roundNumber:${roundNumber}) {
+    roundNumber
+    userPerformances {
+      correlation
+      date
+      username
+    }
+  }
+}`;
+
+const sortUsers = (leftModel, rightModel) =>{
+  if(leftModel.correlation < rightModel.correlation){
+    return -1;
+  }else if(leftModel.correlation > rightModel.correlation){
+    return 1;
+  }else{
+    return 0;
+  }
+};
+
+
+function p90(arr){
+  const ninety = percentile(arr, 90);
+  return ninety;
+}
 
 async function getHomepage(req,res){
   const [currentNmr, userData] = await Promise.all([
@@ -51,7 +127,6 @@ async function getHomepage(req,res){
   // console.log(userData);
   res.render('index.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userData, latestRounds: userData[4]});
 }
-
 
 
 async function retrieveObject(numquery){
@@ -89,7 +164,50 @@ async function horse_race(username){
   return[userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange];
 }
 
-horse_race("***REMOVED***");
+async function getPercentile(roundNumber, modelArr){
+  const roundBoard = await retrieveObject(v2RoundDetails(roundNumber));
+  const userPerformanceArr = roundBoard.v2RoundDetails.userPerformances;
+  // console.log(userPerformanceArr[1]);
+  const endDate = userPerformanceArr[0].date;
+  const filteredArr = userPerformanceArr.filter(user => user.date === endDate);
+  const corrArr = filteredArr.map(user => user.correlation);
+  const ninentyPercentile = p90(corrArr);
+  const ***REMOVED***ModelArr = filteredArr.filter(user => modelArr.includes(user.username));
+  console.log(roundNumber);
+  const ***REMOVED***Ninety = ***REMOVED***ModelArr.filter(user => user.correlation > ninentyPercentile);
+  ***REMOVED***Ninety.sort(sortUsers);
+  ***REMOVED***Ninety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
+  console.log(***REMOVED***Ninety.length);
+}
+
+async function getUsers(){
+  const leaderboard = await retrieveObject(v2Leaderboard());
+  const leaderboardUsers = leaderboard.v2Leaderboard;
+  let users = leaderboardUsers.map(user => user.username);
+  return users;
+}
+
+// async function userProfileMmc(username){
+//   const userProfile = await retrieveObject(userProfile(username));
+//   return userProfile.v2UserProfile.latestRoundPerformances.mmc;
+// }
+
+// async function calculateRoundInfo(round){
+//   const users = await getUsers();
+//   const usermmc = userProfileMmc(users[0]);
+//   // let corrArr = [];
+//   let mmcArr = [];
+//   mmcArr.push(usermmc);
+//   console.log(mmcArr[0]);
+// }
+
+// calculateRoundInfo(240);
+// getUsers();
+// getPercentile(238, ***REMOVED***);
+// getPercentile(239, ***REMOVED***);
+// getPercentile(240, ***REMOVED***);
+// getPercentile(241, ***REMOVED***);
+// horse_race("***REMOVED***");
 // retrieveObject(latestNmrPrice())
 //   .then(result => console.log(result));
 
