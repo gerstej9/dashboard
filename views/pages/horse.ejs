@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Numerai Dashboard</title>
+    <link href= "../style/reset.css" rel= "stylesheet">
+    <link href= "../style/base.css" rel= "stylesheet">
+    <link href= "../style/layout.css" rel= "stylesheet">
+    <link href= "../style/modules.css" rel= "stylesheet">
+  </head>
+  <body>
+    <header>
+      <h1>Daily Horse Race</h1>
+      <h2>Date: <%=date%></h2>
+      <h2>Live Rounds: <%=userData[0].activeRounds[0].roundNumber%> to <%=userData[0].activeRounds[3].roundNumber%></h2>
+    </header>
+    <main>
+      <div>
+      </div>
+      <h2>User: David</h2>
+      <div>
+        <h2>Staked</h2>
+        <h2>Payout</h2>
+        <h2>Daily Change</h2>
+        <h2>Corr-Rep</h2>
+        <h2>Prev Corr Rank</h2>
+        <h2>Rank</h2>
+        <h2>MMC Rank</h2>
+      </div>
+      <%for(let i = 0; i< userData.length; i++){%>
+      <div>
+        <p><%=userData[i].modelName%></p>
+        <p><%=userData[i].totalStake%> NMR</p>
+        <% let activeTotal = 0%>
+        <%for(let j =0; j< userData[i].activeRounds.length; j++){activeTotal+= Number(userData[i].activeRounds[j].payoutPending)}%>
+        <p><%=activeTotal.toFixed(2)%> NMR </p>
+        <p><%=userData[i].corrCurrent%></p>
+        <p><%=userData[i].corrPrev%></p>
+        <p><%=userData[i].corrCurrent%></p>
+        <p><%=userData[i].mmcCurrent%></p>
+      </div>
+      <%}%>
+      <div>
+        <h2>Total NMR Staked: NMR</h2>
+        <h2>Total USD Staked: Money</h2>
+        <h2>Total Pending Payout NMR: NMR </h2>
+        <h2>Total Pending USD: Money</h2>
+        <h2>Grand Total NMR: NMR</h2>
+        <h2>Total USD:</h2>
+      </div>
+
+    </main>
+    <footer>
+
+    </footer>
+    <script src= '/app.js'></script>
+  </body>
+</html>
