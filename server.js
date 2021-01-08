@@ -217,8 +217,8 @@ async function getHomepage(req,res){
 
 
 //Horse Race Page function
-async function getHorsePage(***REMOVED***,res){
-  let ***REMOVED*** = [];
+// async function getHorsePage(***REMOVED***,res){
+//   let ***REMOVED*** = [];
 //   for(let i = 0; i < ***REMOVED***.length; i++){
 //     const user = await retrieveObject(userProfile(***REMOVED***[i]));
 //     const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
@@ -272,7 +272,7 @@ async function calculateRoundInfo(round, modelArr){
   console.log(users.length);
   let mmcArr = [];
   let modelMmcArr = [];
-  for(let i = 0; i < 2400; i++){
+  for(let i = 0; i < 2500; i++){
     const userMmc = await userProfileMmc(users[i], round);
     mmcArr.push(userMmc.mmc);
     if(modelArr.includes(userMmc.username)){
@@ -294,7 +294,7 @@ async function calculateRoundInfo(round, modelArr){
 //Executable functions
 // userProfileMmc('***REMOVED***', 239);
 // getHorsePage(***REMOVED***);
-// calculateRoundInfo(240, ***REMOVED***);
+calculateRoundInfo(238, ***REMOVED***);
 // getUsers();
 // getPercentile(238, ***REMOVED***);
 // getPercentile(239, ***REMOVED***);
