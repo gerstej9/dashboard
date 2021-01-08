@@ -12,6 +12,7 @@ app.set('view engine', 'ejs');
 
 
 //Global Constant
+const latestRoundsPosition = 4;
 const ***REMOVED*** = [
   '***REMOVED***',
   '***REMOVED***',
@@ -108,8 +109,8 @@ app.get('/', getHomepage);
 app.get('/percent', getPercentile);
 // app.get('/horserace', getHorsePage(***REMOVED***));
 
-//Constructor Function for User Detail
-function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange, ***REMOVED***Arr){
+//Object constructor Function for User Detail
+function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
   this.mmcCurrent = mmcCurrent;
   this.mmcPrevRank = mmcPrevRank;
   this.corrCurrent = corrCurrent;
@@ -201,38 +202,38 @@ async function getHomepage(req,res){
   // const roundCloseDate = roundClose.rounds[0].resolveTime;
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   // console.log(userData);
-  res.render('index.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userData, latestRounds: userData[4]});
+  res.render('index.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userData, latestRounds: userData[latestRoundsPosition]});
 }
 
 
 //Horse Race Page function
-async function getHorsePage(***REMOVED***,res){
-  let ***REMOVED*** = [];
-  for(let i = 0; i < ***REMOVED***.length; i++){
-    const user = await retrieveObject(userProfile(***REMOVED***[i]));
-    const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
-    [
-      user.v2UserProfile.latestRanks.mmcRank,
-      user.v2UserProfile.latestRanks.prevMmcRank,
-      user.v2UserProfile.latestRanks.rank,
-      user.v2UserProfile.latestRanks.prevRank,
-      user.v2UserProfile.latestRoundPerformances.slice(-4),
-      Number(user.v2UserProfile.totalStake).toFixed(2),
-      user.v2UserProfile.username,
-      Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
-    ];
-    // console.log(user.v2UserProfile.dailyUserPerformances[0]);
-    // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
-    ***REMOVED***.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
-  }
-  const currentNmr = await retrieveObject(latestNmrPrice());
-  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  const latestRounds = ***REMOVED***[0].activeRounds;
-  console.log(***REMOVED***);
-  console.log(currentNmr);
-  console.log(latestRounds);
-  // res.render('horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***[0], latestRounds: latestRounds});
-}
+// async function getHorsePage(***REMOVED***,res){
+//   let ***REMOVED*** = [];
+//   for(let i = 0; i < ***REMOVED***.length; i++){
+//     const user = await retrieveObject(userProfile(***REMOVED***[i]));
+//     const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
+//     [
+//       user.v2UserProfile.latestRanks.mmcRank,
+//       user.v2UserProfile.latestRanks.prevMmcRank,
+//       user.v2UserProfile.latestRanks.rank,
+//       user.v2UserProfile.latestRanks.prevRank,
+//       user.v2UserProfile.latestRoundPerformances.slice(-4),
+//       Number(user.v2UserProfile.totalStake).toFixed(2),
+//       user.v2UserProfile.username,
+//       Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
+//     ];
+//     // console.log(user.v2UserProfile.dailyUserPerformances[0]);
+//     // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
+//     ***REMOVED***.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+//   }
+//   const currentNmr = await retrieveObject(latestNmrPrice());
+//   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
+//   const latestRounds = ***REMOVED***[0].activeRounds;
+//   console.log(***REMOVED***);
+//   console.log(currentNmr);
+//   console.log(latestRounds);
+//   // res.render('horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***[0], latestRounds: latestRounds});
+// }
 
 
 // Function to retrieve list of all users from leaderboard
@@ -240,29 +241,43 @@ async function getUsers(){
   const leaderboard = await retrieveObject(v2Leaderboard());
   const leaderboardUsers = leaderboard.v2Leaderboard;
   let users = leaderboardUsers.map(user => user.username);
+  // console.log(users);
   return users;
 }
 
-//Function for retrieving mmc of a user
-// async function userProfileMmc(username){
-//   const userProfile = await retrieveObject(userProfile(username));
-//   return userProfile.v2UserProfile.latestRoundPerformances.mmc;
-// }
+// Function for retrieving mmc of a user
+async function userProfileMmc(username, round){
+  const user = await retrieveObject(userProfile(username));
+  // console.log(user);
+  const userRounds = user.v2UserProfile.latestRoundPerformances;
+  const mmcRound = userRounds.filter(userRound => userRound.roundNumber === round);
+  const targetMmc = mmcRound[0].mmc;
+  return targetMmc;
+}
+
 
 //Function for calculating mmc total per round for percentile gathering
-// async function calculateRoundInfo(round){
-//   const users = await getUsers();
-//   const usermmc = userProfileMmc(users[0]);
-//   // let corrArr = [];
-//   let mmcArr = [];
-//   mmcArr.push(usermmc);
-//   console.log(mmcArr[0]);
-// }
+async function calculateRoundInfo(round){
+  const users = await getUsers();
+  console.log(users.length);
+  let mmcArr = [];
+  for(let i = 0; i < 2400; i++){
+    const userMmc = await userProfileMmc(users[i], round);
+    mmcArr.push(userMmc);
+  }
+  console.log(mmcArr);
+  console.log('hello');
+
+  // // let corrArr = [];
+  // mmcArr.push(usermmc);
+  // console.log(mmcArr[0]);
+}
 
 
 //Executable functions
+// userProfileMmc('***REMOVED***', 239);
 // getHorsePage(***REMOVED***);
-// calculateRoundInfo(240);
+calculateRoundInfo(240);
 // getUsers();
 // getPercentile(238, ***REMOVED***);
 // getPercentile(239, ***REMOVED***);
