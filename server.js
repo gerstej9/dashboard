@@ -242,10 +242,10 @@ async function getHorsePage(req,res){
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = ***REMOVED***[0].activeRounds[3].date.substring(0,10);
-  console.log(***REMOVED***[0].activeRounds.length);
-  // console.log(***REMOVED***[0]);
-  // console.log(***REMOVED***.splice(15,24));
-  // console.log(***REMOVED***.splice(25,39));
+  // console.log(***REMOVED***[0].activeRounds.length);
+  console.log(***REMOVED***.slice(0,15));
+  console.log(***REMOVED***.slice(15,25));
+  console.log(***REMOVED***.slice(25,40));
   // console.log(***REMOVED***);
   // console.log(currentNmr);
   // console.log(latestRounds);
