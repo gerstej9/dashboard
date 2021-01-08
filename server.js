@@ -122,10 +122,20 @@ function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds
 }
 
 //Helper Functions
-const sortUsers = (leftModel, rightModel) =>{
+const sortUsersCorr = (leftModel, rightModel) =>{
   if(leftModel.correlation < rightModel.correlation){
     return -1;
   }else if(leftModel.correlation > rightModel.correlation){
+    return 1;
+  }else{
+    return 0;
+  }
+};
+
+const sortUsersMmc = (leftModel, rightModel) =>{
+  if(leftModel.mmc < rightModel.mmc){
+    return -1;
+  }else if(leftModel.mmc > rightModel.mmc){
     return 1;
   }else{
     return 0;
@@ -167,7 +177,7 @@ async function getPercentile(roundNumber, modelArr){
   const ***REMOVED***ModelArr = filteredArr.filter(user => modelArr.includes(user.username));
   console.log(roundNumber);
   const ***REMOVED***Ninety = ***REMOVED***ModelArr.filter(user => user.correlation > ninentyPercentile);
-  ***REMOVED***Ninety.sort(sortUsers);
+  ***REMOVED***Ninety.sort(sortUsersCorr);
   ***REMOVED***Ninety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
   console.log(***REMOVED***Ninety.length);
 }
@@ -207,8 +217,8 @@ async function getHomepage(req,res){
 
 
 //Horse Race Page function
-// async function getHorsePage(***REMOVED***,res){
-//   let ***REMOVED*** = [];
+async function getHorsePage(***REMOVED***,res){
+  let ***REMOVED*** = [];
 //   for(let i = 0; i < ***REMOVED***.length; i++){
 //     const user = await retrieveObject(userProfile(***REMOVED***[i]));
 //     const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
@@ -252,32 +262,39 @@ async function userProfileMmc(username, round){
   const userRounds = user.v2UserProfile.latestRoundPerformances;
   const mmcRound = userRounds.filter(userRound => userRound.roundNumber === round);
   const targetMmc = mmcRound[0].mmc;
-  return targetMmc;
+  return {username: username, mmc: targetMmc};
 }
 
 
 //Function for calculating mmc total per round for percentile gathering
-async function calculateRoundInfo(round){
+async function calculateRoundInfo(round, modelArr){
   const users = await getUsers();
   console.log(users.length);
   let mmcArr = [];
+  let modelMmcArr = [];
   for(let i = 0; i < 2400; i++){
     const userMmc = await userProfileMmc(users[i], round);
-    mmcArr.push(userMmc);
+    mmcArr.push(userMmc.mmc);
+    if(modelArr.includes(userMmc.username)){
+      modelMmcArr.push(userMmc);
+    }
   }
-  console.log(mmcArr);
-  console.log('hello');
-
-  // // let corrArr = [];
-  // mmcArr.push(usermmc);
-  // console.log(mmcArr[0]);
+  const filteredMmcArr = mmcArr.filter(m => m !== null);
+  // console.log(filteredMmcArr);
+  console.log(modelMmcArr);
+  const ninentyPercentile = p90(filteredMmcArr);
+  console.log(round);
+  const ***REMOVED***Ninety = modelMmcArr.filter(user => user.mmc > ninentyPercentile);
+  ***REMOVED***Ninety.sort(sortUsersMmc);
+  ***REMOVED***Ninety.forEach(user => console.log(`${user.username}: ${user.mmc.toFixed(3)}`));
+  console.log(***REMOVED***Ninety.length);
 }
 
 
 //Executable functions
 // userProfileMmc('***REMOVED***', 239);
 // getHorsePage(***REMOVED***);
-calculateRoundInfo(240);
+// calculateRoundInfo(240, ***REMOVED***);
 // getUsers();
 // getPercentile(238, ***REMOVED***);
 // getPercentile(239, ***REMOVED***);
