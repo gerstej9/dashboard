@@ -9,6 +9,31 @@
   </head>
   <body>
     <header>
+      <h1>Daily Horse Race</h1>
+      <h2>Date</h2>
+      <h2>Round to Round</h2>
+    </header>
+    <main>
+      <div>
+      </div>
+      <h2>User</h2>
+      <div>
+        <h2>Staked</h2>
+        <h2>Payout</h2>
+        <h2>Daily Change</h2>
+        <h2>Corr-Rep</h2>
+        <h2>Prev</h2>
+        <h2>Rank</h2>
+      </div>
+      <div>
+        <h2>Rob Total NMR Staked: NMR</h2>
+        <h2>Total USD Staked: Money</h2>
+        <h2>Total Pending Payout NMR: NMR </h2>
+        <h2>Total Pending USD: Money</h2>
+        <h2>Grand Total NMR: NMR</h2>
+        <h2>Total USD:</h2>
+      </div>
+
       <h2>Latest NMR Price: $<%=nmrPrice%></h2><br>
       <p>Model: <%=userData[6]%></p><br>
       <p>Current Corr Rank: <%=userData[2]%></p>
@@ -40,8 +65,6 @@
       <p>Live Total: <%=liveTotal.toFixed(2)%> NMR </p>
       <% let liveTotalUsd = (liveTotal*nmrPrice).toFixed(2)%>
       <p>Live Total USD: $<%=liveTotalUsd%></p>
-    </header>
-    <main>
     </main>
     <footer>
 
