@@ -1,0 +1,61 @@
+header{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin:2% 2% 5% 2%;
+}
+
+h1{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 5vw;
+  font-weight: bold;
+  margin: 2%;
+}
+
+header h2{
+  margin:1%;
+  font-size:3vw;
+  display:flex;
+  justify-content: center;
+  width:100%;
+}
+
+
+.user{
+  font-weight: bold;
+  margin:2% 0% 1% 2%;
+  font-size:1.2vw;
+}
+
+.titleRow, .modelRow {
+  display: grid;
+  margin-left: 2%;
+  margin-right: 2%;
+  grid-template-columns: 2fr 1.3fr 1.2fr 1.2fr 1fr 1fr 1fr;
+  grid-column-gap: 1%;
+  font-size: 1vw;
+}
+
+
+.titleRow p, .modelRow p{
+  margin:2%;
+}
+
+section{
+  display: grid;
+}
+
+.totalRow {
+  font-size: 1vw;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 2%;
+}
+
+.totalRow p{
+  margin:1%;
+}

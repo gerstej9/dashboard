@@ -107,7 +107,7 @@ const v2RoundDetails = roundNumber => `{
 // Route Paths
 app.get('/', getHomepage);
 app.get('/percent', getPercentile);
-app.get('/horserace', getHorsePage);
+app.get('/horseracemobile', getHorsePage);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -243,9 +243,10 @@ async function getHorsePage(req,res){
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = ***REMOVED***[0].activeRounds[3].date.substring(0,10);
   // console.log(***REMOVED***[0].activeRounds.length);
-  console.log(***REMOVED***.slice(0,15));
-  console.log(***REMOVED***.slice(15,25));
-  console.log(***REMOVED***.slice(25,40));
+  // console.log(***REMOVED***[5]);
+  // console.log(***REMOVED***.slice(0,15));
+  // console.log(***REMOVED***.slice(15,25));
+  // console.log(***REMOVED***.slice(25,40));
   // console.log(***REMOVED***);
   // console.log(currentNmr);
   // console.log(latestRounds);
