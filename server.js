@@ -107,7 +107,7 @@ const v2RoundDetails = roundNumber => `{
 // Route Paths
 app.get('/', getHomepage);
 app.get('/percent', getPercentile);
-// app.get('/horserace', getHorsePage(gBoys));
+app.get('/horserace', getHorsePage);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -215,35 +215,42 @@ async function getHomepage(req,res){
   res.render('index.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userData, latestRounds: userData[latestRoundsPosition]});
 }
 
-
+async function multiHorse(){
+  let gBoyModelArr = [];
+  for(let i = 0; i < gBoys.length; i++){
+    const user = await retrieveObject(userProfile(gBoys[i]));
+    const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
+    [
+      user.v2UserProfile.latestRanks.mmcRank,
+      user.v2UserProfile.latestRanks.prevMmcRank,
+      user.v2UserProfile.latestRanks.rank,
+      user.v2UserProfile.latestRanks.prevRank,
+      user.v2UserProfile.latestRoundPerformances.slice(-4),
+      Number(user.v2UserProfile.totalStake).toFixed(2),
+      user.v2UserProfile.username,
+      Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
+    ];
+    // console.log(user.v2UserProfile.dailyUserPerformances[0]);
+    // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
+    gBoyModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+  }
+  return gBoyModelArr;
+}
 //Horse Race Page function
-// async function getHorsePage(gBoy,res){
-//   let gBoyModelArr = [];
-//   for(let i = 0; i < gBoy.length; i++){
-//     const user = await retrieveObject(userProfile(gBoy[i]));
-//     const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
-//     [
-//       user.v2UserProfile.latestRanks.mmcRank,
-//       user.v2UserProfile.latestRanks.prevMmcRank,
-//       user.v2UserProfile.latestRanks.rank,
-//       user.v2UserProfile.latestRanks.prevRank,
-//       user.v2UserProfile.latestRoundPerformances.slice(-4),
-//       Number(user.v2UserProfile.totalStake).toFixed(2),
-//       user.v2UserProfile.username,
-//       Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
-//     ];
-//     // console.log(user.v2UserProfile.dailyUserPerformances[0]);
-//     // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
-//     gBoyModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
-//   }
-//   const currentNmr = await retrieveObject(latestNmrPrice());
-//   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-//   const latestRounds = gBoyModelArr[0].activeRounds;
-//   console.log(gBoyModelArr);
-//   console.log(currentNmr);
-//   console.log(latestRounds);
-//   // res.render('horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: gBoyModelArr[0], latestRounds: latestRounds});
-// }
+async function getHorsePage(req,res){
+  const gBoyModelArr = await multiHorse();
+  const currentNmr = await retrieveObject(latestNmrPrice());
+  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
+  const date = gBoyModelArr[0].activeRounds[3].date.substring(0,10);
+  console.log(gBoyModelArr[0].activeRounds.length);
+  // console.log(gBoyModelArr[0]);
+  // console.log(gBoyModelArr.splice(15,24));
+  // console.log(gBoyModelArr.splice(25,39));
+  // console.log(gBoyModelArr);
+  // console.log(currentNmr);
+  // console.log(latestRounds);
+  res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: gBoyModelArr, date: date});
+}
 
 
 // Function to retrieve list of all users from leaderboard
@@ -272,7 +279,7 @@ async function calculateRoundInfo(round, modelArr){
   console.log(users.length);
   let mmcArr = [];
   let modelMmcArr = [];
-  for(let i = 0; i < 2500; i++){
+  for(let i = 0; i < 600; i++){
     const userMmc = await userProfileMmc(users[i], round);
     mmcArr.push(userMmc.mmc);
     if(modelArr.includes(userMmc.username)){
@@ -281,7 +288,7 @@ async function calculateRoundInfo(round, modelArr){
   }
   const filteredMmcArr = mmcArr.filter(m => m !== null);
   // console.log(filteredMmcArr);
-  console.log(modelMmcArr);
+  // console.log(modelMmcArr);
   const ninentyPercentile = p90(filteredMmcArr);
   console.log(round);
   const gBoyNinety = modelMmcArr.filter(user => user.mmc > ninentyPercentile);
@@ -294,7 +301,10 @@ async function calculateRoundInfo(round, modelArr){
 //Executable functions
 // userProfileMmc('gerstej9', 239);
 // getHorsePage(gBoys);
-calculateRoundInfo(238, gBoys);
+// calculateRoundInfo(238, gBoys);
+// calculateRoundInfo(239, gBoys);
+// calculateRoundInfo(240, gBoys);
+// calculateRoundInfo(241, gBoys);
 // getUsers();
 // getPercentile(238, gBoys);
 // getPercentile(239, gBoys);

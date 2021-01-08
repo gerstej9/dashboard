@@ -10,23 +10,37 @@
   <body>
     <header>
       <h1>Daily Horse Race</h1>
-      <h2>Date</h2>
-      <h2>Round to Round</h2>
+      <h2>Date: <%=date%></h2>
+      <h2>Live Rounds: <%=userData[0].activeRounds[0].roundNumber%> to <%=userData[0].activeRounds[3].roundNumber%></h2>
     </header>
     <main>
       <div>
       </div>
-      <h2>User</h2>
+      <h2>User: David</h2>
       <div>
         <h2>Staked</h2>
         <h2>Payout</h2>
         <h2>Daily Change</h2>
         <h2>Corr-Rep</h2>
-        <h2>Prev</h2>
+        <h2>Prev Corr Rank</h2>
         <h2>Rank</h2>
+        <h2>MMC Rank</h2>
       </div>
+      <%for(let i = 0; i< userData.length; i++){%>
       <div>
-        <h2>Rob Total NMR Staked: NMR</h2>
+        <p><%=userData[i].modelName%></p>
+        <p><%=userData[i].totalStake%> NMR</p>
+        <% let activeTotal = 0%>
+        <%for(let j =0; j< userData[i].activeRounds.length; j++){activeTotal+= Number(userData[i].activeRounds[j].payoutPending)}%>
+        <p><%=activeTotal.toFixed(2)%> NMR </p>
+        <p><%=userData[i].corrCurrent%></p>
+        <p><%=userData[i].corrPrev%></p>
+        <p><%=userData[i].corrCurrent%></p>
+        <p><%=userData[i].mmcCurrent%></p>
+      </div>
+      <%}%>
+      <div>
+        <h2>Total NMR Staked: NMR</h2>
         <h2>Total USD Staked: Money</h2>
         <h2>Total Pending Payout NMR: NMR </h2>
         <h2>Total Pending USD: Money</h2>
@@ -34,37 +48,6 @@
         <h2>Total USD:</h2>
       </div>
 
-      <h2>Latest NMR Price: $<%=nmrPrice%></h2><br>
-      <p>Model: <%=userData[6]%></p><br>
-      <p>Current Corr Rank: <%=userData[2]%></p>
-      <p>Prvious Corr Rank: <%=userData[3]%></p>
-      <p>Current MMC Rank: <%=userData[0]%></p>
-      <p>Previous MMC Rank: <%=userData[1]%></p><br>
-      <p>Total Staked <%=userData[5]%> NMR</p>
-      <% let totalUsd = Number(userData[5] * nmrPrice)%>
-      <p>Total USD: $<%=totalUsd%> </p>
-      <% let activeTotal = 0%>
-      <%for(let i =0; i< latestRounds.length; i++){%><br>
-        <h2>Round <%=latestRounds[i].roundNumber%></h2>
-        <ul>
-          <li>Correlation: <%=Number(latestRounds[i].correlation).toFixed(4)%></li>
-          <li>MMC: <%=Number(latestRounds[i].mmc).toFixed(4)%></li>
-          <li>Staked: <%=Number(latestRounds[i].selectedStakeValue).toFixed(2)%> NMR</li>
-          <li>Payout Selection: <%=latestRounds[i].weekPayoutSelection%></li>
-          <li>Payout Pending: <%=Number(latestRounds[i].payoutPending).toFixed(2)%></li>
-        </ul>
-        <%activeTotal+= Number(latestRounds[i].payoutPending)}%>
-      <br>
-      <p>Daily Change: <%=userData[7]%> NMR</p>
-      <% let dailyChangeUsd = (userData[7]*nmrPrice).toFixed(2)%>
-      <p>Daily Change USD: $<%=dailyChangeUsd%></p><br>
-      <p>Current Payout Pending Across all Live Rounds: <%=activeTotal.toFixed(2)%> NMR </p>
-      <%let currPayoutUsd = (activeTotal*nmrPrice).toFixed(2)%>
-      <p>Current Payout Pending USD: $<%=currPayoutUsd%></p><br>
-      <% let liveTotal = activeTotal + Number(userData[5]) %>
-      <p>Live Total: <%=liveTotal.toFixed(2)%> NMR </p>
-      <% let liveTotalUsd = (liveTotal*nmrPrice).toFixed(2)%>
-      <p>Live Total USD: $<%=liveTotalUsd%></p>
     </main>
     <footer>
 
