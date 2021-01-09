@@ -60,6 +60,13 @@
         <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
         <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
       </div>
+      <div>
+        <form action ="/<%=username%>/addmodel?_method=PUT" method = "POST">
+          <label>Add Model</label>
+          <input class ="model-input" type="text" name ="model"></input>
+          <input type = "submit"></input>
+        </form>
+      </div>
     </main>
     <footer>
 

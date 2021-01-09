@@ -85,6 +85,10 @@ background-color: #926AA6
   background-color:#A0DAA9
 }
 
+.username-input, .model-input{
+  font-family: Helvetica, sans-serif;
+}
+
 
 @media(min-width: 760px){
   body{
