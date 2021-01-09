@@ -6,6 +6,9 @@ const percentile = require('stats-percentile');
 
 const app = express();
 
+const client = new pageXOffset.Client(process.env.DATABASE_URL);
+client.on('error', error => console.error(error));
+
 app.use(express.static('./public'));
 app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
@@ -99,6 +102,8 @@ const v2RoundDetails = roundNumber => `{
 
 // Route Paths
 app.get('/', getHomepage);
+app.post('/detail', getModelName);
+app.get('/detail/:model', getModelDetails);
 app.get('/percent', getPercentile);
 app.get('/horseracemobile', getHorsePage);
 
@@ -196,11 +201,22 @@ async function horse_race(username){
 
 
 //Homepage Route Function
-async function getHomepage(req,res){
+function getHomepage(req, res){
+  res.render('pages/home.ejs');
+}
+
+function getModelName(req, res){
+  // console.log(req.body.model);
+  res.redirect(`/detail/${req.body.model}`);
+}
+
+//Model Detail Page
+async function getModelDetails(req,res){
+  console.log(req.params);
   const [currentNmr, userData] = await Promise.all([
     // retrieveObject(roundResolve(190)),
     retrieveObject(latestNmrPrice()),
-    horse_race('gerstej9')
+    horse_race(`${req.params.model}`)
   ]);
   // const roundCloseDate = roundClose.rounds[0].resolveTime;
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
@@ -311,4 +327,6 @@ async function calculateRoundInfo(round, modelArr){
 
 app.use('*', (req, res) => res.status(404).send('Route you are looking for is not available'));
 
-app.listen(PORT,() => console.log(`Listening on: ${PORT}`));
+client.connect().then(() => {
+  app.listen(PORT,() => console.log(`Listening on: ${PORT}`));
+});
