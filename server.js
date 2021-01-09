@@ -4,12 +4,14 @@ const fetch = require('node-fetch');
 const PORT = process.env.PORT || 9999;
 const percentile = require('stats-percentile');
 const pg = require('pg');
+const methodOverride = require('method-override');
 
 const app = express();
 
 const client = new pg.Client(process.env.DATABASE_URL);
 client.on('error', error => console.error(error));
 
+app.use(methodOverride('_method'));
 app.use(express.static('./public'));
 app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
@@ -107,6 +109,7 @@ app.post('/detail', getUserName);
 app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
 app.get('/horseracemobile', getHorsePage);
+app.put('/:username/addmodel', userAddModel);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -216,7 +219,7 @@ async function retrieveUserModels(user){
   await client.query(`SELECT * FROM userProfile WHERE username = '${user}' `)
     .then(result => {
       modelArr = result.rows[0].models;
-      console.log(modelArr);
+      // console.log(modelArr);
       return modelArr;
     });
   return modelArr;
@@ -225,7 +228,7 @@ async function retrieveUserModels(user){
 async function getModelDetails(req,res){
   const username = req.params.user;
   const modelArr = await retrieveUserModels(username);
-  console.log(modelArr);
+  // console.log(modelArr);
   const ***REMOVED*** = await multiHorse(modelArr);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
@@ -270,6 +273,17 @@ async function getHorsePage(req,res){
   // console.log(currentNmr);
   // console.log(latestRounds);
   res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date});
+}
+
+async function userAddModel(req, res){
+  // const username = req.params.username;
+  // const newModel = req.body.model;
+  client.query(`UPDATE userProfile SET models = models || '{${newModel}}' WHERE username = '${username}'`)
+    .then(()=>{
+      console.log(newModel);
+      console.log(username);
+      res.redirect(`/detail/${username}`);
+    });
 }
 
 
