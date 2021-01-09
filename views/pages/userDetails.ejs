@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Numerai Dashboard</title>
+    <link href= "../style/reset.css" rel= "stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href= "../style/base.css" rel= "stylesheet">
+    <link href= "../style/layout.css" rel= "stylesheet">
+    <link href= "../style/modules.css" rel= "stylesheet">
+  </head>
+  <body>
+    <header>
+      <h1>NMRai Dashboard</h1>
+      <h2>Daily Performance</h2>
+      <h2>Date: <%=date%></h2>
+      <h2>Live Rounds: <%=userData[0].activeRounds[0].roundNumber%> to <%=userData[0].activeRounds[3].roundNumber%></h2>
+    </header>
+    <main>
+      <h2 class ="user">User: <%=username%></h2>
+      <div class = "titleRow ***REMOVED***">
+        <p>Model</p>
+        <p>Staked</p>
+        <p>Payout</p>
+        <p>Daily Change</p>
+        <p>Prev Corr Rank</p>
+        <p>Rank</p>
+        <p>MMC Rank</p>
+      </div>
+      <% let userTotalStake = 0%>
+      <%let activeTotalAllModels = 0%>
+      <%let dailyChangeAllModels = 0%>
+      <%for(let i = 0; i< userData.length; i++){%>
+      <div class = "modelRow ***REMOVED***">
+        <p><%=userData[i].modelName%></p>
+        <p><%=userData[i].totalStake%> NMR</p>
+        <% userTotalStake+=Number(userData[i].totalStake)%>
+        <% let activeTotal = 0%>
+        <%for(let j =0; j< userData[i].activeRounds.length; j++){activeTotal+= Number(userData[i].activeRounds[j].payoutPending)}%>
+        <p><%=activeTotal.toFixed(2)%> NMR </p>
+        <p><%=userData[i].dailyChange%> NMR </p>
+        <%dailyChangeAllModels += Number(userData[i].dailyChange)%>
+        <p><%=userData[i].corrPrev%></p>
+        <p><%=userData[i].corrCurrent%></p>
+        <p><%=userData[i].mmcCurrent%></p>
+      </div>
+      <%activeTotalAllModels+= Number(activeTotal)}%>
+      <div class = "totalRow ***REMOVED***">
+        <p>Daily Change NMR: <%=dailyChangeAllModels.toFixed(2)%> NMR</p>
+        <% let dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
+        <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
+        <p>Total Pending Payout: <%=activeTotalAllModels.toFixed(2)%> NMR </p>
+        <%let currPayoutUsd = (activeTotalAllModels*nmrPrice).toFixed(2)%>
+        <p>Total Pending USD: $<%=currPayoutUsd%></p>
+        <p>Total NMR Staked: <%= userTotalStake.toFixed(2)%> NMR</p>
+        <%let stakedPayoutUsd = (userTotalStake*nmrPrice).toFixed(2)%>
+        <p>Total USD Staked: $<%=stakedPayoutUsd%></p>
+        <% let userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2)%>
+        <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
+        <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
+        <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
+      </div>
+    </main>
+    <footer>
+
+    </footer>
+    <script src= '/app.js'></script>
+  </body>
+</html>
