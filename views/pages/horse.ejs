@@ -3,6 +3,8 @@
   <head>
     <title>Numerai Dashboard</title>
     <link href= "../style/reset.css" rel= "stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href= "../style/base.css" rel= "stylesheet">
     <link href= "../style/layout.css" rel= "stylesheet">
     <link href= "../style/modules.css" rel= "stylesheet">
@@ -15,12 +17,11 @@
     </header>
     <main>
       <h2 class ="user">User: David</h2>
-      <div class = "titleRow">
+      <div class = "titleRow david">
         <p>Model</p>
         <p>Staked</p>
         <p>Payout</p>
         <p>Daily Change</p>
-        <p>Corr-Rep</p>
         <p>Prev Corr Rank</p>
         <p>Rank</p>
         <p>MMC Rank</p>
@@ -28,8 +29,8 @@
       <% let userTotalStake = 0%>
       <%let activeTotalAllModels = 0%>
       <%let dailyChangeAllModels = 0%>
-      <%for(let i = 0; i< 15; i++){%>
-      <div class = "modelRow">
+      <%for(let i = 0; i< 8; i++){%>
+      <div class = "modelRow david">
         <p><%=userData[i].modelName%></p>
         <p><%=userData[i].totalStake%> NMR</p>
         <% userTotalStake+=Number(userData[i].totalStake)%>
@@ -43,7 +44,7 @@
         <p><%=userData[i].mmcCurrent%></p>
       </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
-      <div class = "totalRow">
+      <div class = "totalRow david">
         <p>Daily Change NMR: <%=dailyChangeAllModels.toFixed(2)%> NMR</p>
         <% let dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
         <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
@@ -56,15 +57,15 @@
         <% let userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2)%>
         <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
         <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
-        <p> Live Total USD: $<%=userLiveTotalUsd%></p>
+        <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
       </div>
 
       <h2 class ="user">User: Rob</h2>
-      <div class = "titleRow">
+      <div class = "titleRow rob">
+        <p>Model</p>
         <p>Staked</p>
         <p>Payout</p>
         <p>Daily Change</p>
-        <p>Corr-Rep</p>
         <p>Prev Corr Rank</p>
         <p>Rank</p>
         <p>MMC Rank</p>
@@ -72,8 +73,8 @@
       <%dailyChangeAllModels = 0%>
       <% userTotalStake = 0%>
       <%activeTotalAllModels = 0%>
-      <%for(let i = 15; i< 25; i++){%>
-      <div class = "modelRow">
+      <%for(let i = 8; i< 18; i++){%>
+      <div class = "modelRow rob">
         <p><%=userData[i].modelName%></p>
         <p><%=userData[i].totalStake%> NMR</p>
         <% userTotalStake+=Number(userData[i].totalStake)%>
@@ -87,7 +88,7 @@
         <p><%=userData[i].mmcCurrent%></p>
       </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
-      <div class = "totalRow">
+      <div class = "totalRow rob">
         <p>Daily Change NMR: <%= dailyChangeAllModels.toFixed(2)%> NMR</p>
         <% dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
         <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
@@ -100,16 +101,15 @@
         <% userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2)%>
         <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
         <% userLiveTotalUsd = (userLiveTotal*nmrPrice)%>
-        <p> Live Total USD: $<%=userLiveTotalUsd%></p>
+        <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
       </div>
 
       <h2 class ="user">User: James</h2>
-      <section>
-        <div class = "titleRow">
+        <div class = "titleRow james">
+          <p>Model</p>
           <p>Staked</p>
           <p>Payout</p>
           <p>Daily Change</p>
-          <p>Corr-Rep</p>
           <p>Prev Corr Rank</p>
           <p>Rank</p>
           <p>MMC Rank</p>
@@ -117,8 +117,8 @@
         <%dailyChangeAllModels = 0%>
         <% userTotalStake = 0%>
         <%activeTotalAllModels = 0%>
-        <%for(let i = 25; i< 40; i++){%>
-        <div class = "modelRow">
+        <%for(let i = 18; i< 33; i++){%>
+        <div class = "modelRow james">
           <p><%=userData[i].modelName%></p>
           <p><%=userData[i].totalStake%> NMR</p>
           <% userTotalStake+=Number(userData[i].totalStake)%>
@@ -132,7 +132,7 @@
           <p><%=userData[i].mmcCurrent%></p>
         </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
-      <div class = "totalRow">
+      <div class = "totalRow james">
         <p>Daily Change NMR: <%= dailyChangeAllModels.toFixed(2)%> NMR</p>
         <% dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
         <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
@@ -145,7 +145,7 @@
         <% userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2)%>
         <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
         <% userLiveTotalUsd = (userLiveTotal*nmrPrice)%>
-        <p> Live Total USD: $<%=userLiveTotalUsd%></p>
+        <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
       </div>
 
     </main>
