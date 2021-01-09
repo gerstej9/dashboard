@@ -3,9 +3,3 @@
   font-family: 'Bebas Neue';
 }
 
-@media(min-width: 760px){
-  body{
-    width: 760px;
-    margin:auto;
-  }
-}
