@@ -3,8 +3,12 @@ require('dotenv').config();
 const fetch = require('node-fetch');
 const PORT = process.env.PORT || 9999;
 const percentile = require('stats-percentile');
+const pg = require('pg');
 
 const app = express();
+
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('error', error => console.error(error));
 
 app.use(express.static('./public'));
 app.use(express.urlencoded({extended:true}));
@@ -99,6 +103,8 @@ const v2RoundDetails = roundNumber => `{
 
 // Route Paths
 app.get('/', getHomepage);
+app.post('/detail', getUserName);
+app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
 app.get('/horseracemobile', getHorsePage);
 
@@ -196,22 +202,42 @@ async function horse_race(username){
 
 
 //Homepage Route Function
-async function getHomepage(req,res){
-  const [currentNmr, userData] = await Promise.all([
-    // retrieveObject(roundResolve(190)),
-    retrieveObject(latestNmrPrice()),
-    horse_race('gerstej9')
-  ]);
-  // const roundCloseDate = roundClose.rounds[0].resolveTime;
-  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  // console.log(userData);
-  res.render('index.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userData, latestRounds: userData[latestRoundsPosition]});
+function getHomepage(req, res){
+  res.render('pages/home.ejs');
 }
 
-async function multiHorse(){
+function getUserName(req, res){
+  // console.log(req.body.username);
+  res.redirect(`/detail/${req.body.username}`);
+}
+
+async function retrieveUserModels(user){
+  let modelArr = [];
+  await client.query(`SELECT * FROM userProfile WHERE username = '${user}' `)
+    .then(result => {
+      modelArr = result.rows[0].models;
+      console.log(modelArr);
+      return modelArr;
+    });
+  return modelArr;
+}
+//Model Detail Page
+async function getModelDetails(req,res){
+  const username = req.params.user;
+  const modelArr = await retrieveUserModels(username);
+  console.log(modelArr);
+  const gBoyModelArr = await multiHorse(modelArr);
+  const currentNmr = await retrieveObject(latestNmrPrice());
+  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
+  const date = gBoyModelArr[0].activeRounds[3].date.substring(0,10);
+
+  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: gBoyModelArr, date: date, username: username});
+}
+
+async function multiHorse(arr){
   let gBoyModelArr = [];
-  for(let i = 0; i < gBoys.length; i++){
-    const user = await retrieveObject(userProfile(gBoys[i]));
+  for(let i = 0; i < arr.length; i++){
+    const user = await retrieveObject(userProfile(arr[i]));
     const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
     [
       user.v2UserProfile.latestRanks.mmcRank,
@@ -231,7 +257,7 @@ async function multiHorse(){
 }
 //Horse Race Page function
 async function getHorsePage(req,res){
-  const gBoyModelArr = await multiHorse();
+  const gBoyModelArr = await multiHorse(gBoys);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = gBoyModelArr[0].activeRounds[3].date.substring(0,10);
@@ -311,4 +337,6 @@ async function calculateRoundInfo(round, modelArr){
 
 app.use('*', (req, res) => res.status(404).send('Route you are looking for is not available'));
 
-app.listen(PORT,() => console.log(`Listening on: ${PORT}`));
+client.connect().then(() => {
+  app.listen(PORT,() => console.log(`Listening on: ${PORT}`));
+});
