@@ -276,8 +276,8 @@ async function getHorsePage(req,res){
 }
 
 async function userAddModel(req, res){
-  // const username = req.params.username;
-  // const newModel = req.body.model;
+  const username = req.params.username;
+  const newModel = req.body.model;
   client.query(`UPDATE userProfile SET models = models || '{${newModel}}' WHERE username = '${username}'`)
     .then(()=>{
       console.log(newModel);
