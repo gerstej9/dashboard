@@ -105,7 +105,8 @@ const v2RoundDetails = roundNumber => `{
 
 // Route Paths
 app.get('/', getHomepage);
-app.post('/detail', getUserName);
+app.post('/user', getUserName);
+app.post('/newuser', createNewUser);
 app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
 app.get('/horseracemobile', getHorsePage);
@@ -213,11 +214,25 @@ function getUserName(req, res){
   // console.log(req.body.username);
   client.query(`SELECT * FROM userProfile WHERE username = '${req.body.username}'`)
     .then(result =>{
-      console.log(result.rows[0]); 
+      // console.log(result.rows[0]);
       if(result.rows[0] === undefined){
         res.render('pages/home.ejs', {userExist: 'no'});
       }else{
         res.redirect(`/detail/${req.body.username}`);
+      }
+    });
+}
+
+function createNewUser(req, res){
+  client.query(`SELECT * FROM userProfile WHERE username = '${req.body.username}'`)
+    .then(result =>{
+      if(result.rows[0] !== undefined){
+        res.render('pages/home.ejs', {userExist: 'yes'});
+      }else{
+        client.query(`INSERT INTO userProfile (username, models) VALUES('${req.body.username}', ARRAY ['${req.body.model}'])`)
+          .then(() => {
+            res.redirect(`/detail/${req.body.username}`);
+          });
       }
     });
 }

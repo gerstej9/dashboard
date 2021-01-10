@@ -13,11 +13,25 @@
       <h1>NMRai Dashboard</h1>
     </header>
     <main>
-      <form action = "/detail" method ="POST">
-        <label id ="<%=userExist%>">Username</label>
-        <input class = "username-input" type = "text" name = "username"></input>
-        <input type=submit></input>
-        <span id="user-not">Username Does Not Exist</span><br>
+      <form action = "/user" method ="POST">
+        <fieldset>
+          <legend>Returning User</legend>
+          <label class = "userNot" id ="<%=userExist%>">Username</label>
+          <input class = "username-input" type = "text" name = "username" required></input>
+          <input type="submit"></input>
+          <span id="user-not">Username Does Not Exist</span><br>
+      </fieldset>
+      </form><br>
+      <form action ="/newuser" method = "POST">
+        <fieldset>
+          <legend>New User</legend>
+          <label class = "userDoes" id= "<%=userExist%>">Username</label>
+          <input class = "username-input" type = "text" name = "username" required></input><br>
+          <label>Add Model</label>
+          <input class = "username-input" type ="text" name ="model" required></input>
+          <input type = "submit"></input>
+          <span id="user-does">Username Already Exists</span><br>
+        </fieldset>
       </form>
     </main>
     <footer>

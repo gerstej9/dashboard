@@ -1,10 +1,14 @@
 'use strict';
 
-const userStatus = $('label').attr('id');
+const userStatus = $('.userNot').attr('id');
+const newUserStatus = $('.userDoes').attr('id');
 
 function hideUserStatus(){
-  if (userStatus === 'none'){
-    $('span').hide();
+  if (userStatus !== 'no'){
+    $('#user-not').hide();
+  }
+  if(newUserStatus !== 'yes'){
+    $('#user-does').hide();
   }
 }
 
