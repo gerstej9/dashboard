@@ -111,6 +111,7 @@ app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
 app.get('/horseracemobile', getHorsePage);
 app.put('/:username/addmodel', userAddModel);
+app.put('/:username/removemodel',userRemoveModel);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -241,12 +242,14 @@ async function retrieveUserModels(user){
   let modelArr = [];
   await client.query(`SELECT * FROM userProfile WHERE username = '${user}' `)
     .then(result => {
+      console.log(result.rows[0]);
       modelArr = result.rows[0].models;
       // console.log(modelArr);
       return modelArr;
     });
   return modelArr;
 }
+
 //Model Detail Page
 async function getModelDetails(req,res){
   const username = req.params.user;
@@ -301,14 +304,16 @@ async function getHorsePage(req,res){
 async function userAddModel(req, res){
   const username = req.params.username;
   const newModel = req.body.model;
-  client.query(`UPDATE userProfile SET models = models || '{${newModel}}' WHERE username = '${username}'`)
-    .then(()=>{
-      console.log(newModel);
-      console.log(username);
-      res.redirect(`/detail/${username}`);
-    });
+  await client.query(`UPDATE userProfile SET models = models || '{${newModel}}' WHERE username = '${username}'`);
+  res.redirect(`/detail/${username}`);
 }
 
+async function userRemoveModel(req, res){
+  const username = req.params;
+  const removeModel = req.body.model;
+  await client.query(`UPDATE userProfile SET models = array_remove(models, '${removeModel}')`);
+  res.redirect(`/detail/${username}`);
+}
 
 // Function to retrieve list of all users from leaderboard
 async function getUsers(){
