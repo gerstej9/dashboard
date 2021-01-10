@@ -66,6 +66,16 @@
           <input class ="model-input" type="text" name ="model"></input>
           <input type = "submit"></input>
         </form>
+        <form action="/<%=username%>/removemodel?_method=PUT" method="POST">
+          <label>Remove Model</label>
+          <select name = "model">
+            <option value = "default">Choose Model</option>
+            <%for(let i = 0; i< userData.length; i++){%>
+              <option value = "<%=userData[i].modelName%>"><%=userData[i].modelName%></option>
+              <%}%>
+          </select>
+          <input type = "submit"></input>
+        </form>
       </div>
     </main>
     <footer>
