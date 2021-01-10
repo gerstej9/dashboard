@@ -206,12 +206,20 @@ async function horse_race(username){
 
 //Homepage Route Function
 function getHomepage(req, res){
-  res.render('pages/home.ejs');
+  res.render('pages/home.ejs', {userExist: 'none'});
 }
 
 function getUserName(req, res){
   // console.log(req.body.username);
-  res.redirect(`/detail/${req.body.username}`);
+  client.query(`SELECT * FROM userProfile WHERE username = '${req.body.username}'`)
+    .then(result =>{
+      console.log(result.rows[0]); 
+      if(result.rows[0] === undefined){
+        res.render('pages/home.ejs', {userExist: 'no'});
+      }else{
+        res.redirect(`/detail/${req.body.username}`);
+      }
+    });
 }
 
 async function retrieveUserModels(user){
