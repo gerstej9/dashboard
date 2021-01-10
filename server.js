@@ -105,11 +105,13 @@ const v2RoundDetails = roundNumber => `{
 
 // Route Paths
 app.get('/', getHomepage);
-app.post('/detail', getUserName);
+app.post('/user', getUserName);
+app.post('/newuser', createNewUser);
 app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
 app.get('/horseracemobile', getHorsePage);
 app.put('/:username/addmodel', userAddModel);
+app.put('/:username/removemodel',userRemoveModel);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -206,24 +208,48 @@ async function horse_race(username){
 
 //Homepage Route Function
 function getHomepage(req, res){
-  res.render('pages/home.ejs');
+  res.render('pages/home.ejs', {userExist: 'none'});
 }
 
 function getUserName(req, res){
   // console.log(req.body.username);
-  res.redirect(`/detail/${req.body.username}`);
+  client.query(`SELECT * FROM userProfile WHERE username = '${req.body.username}'`)
+    .then(result =>{
+      // console.log(result.rows[0]);
+      if(result.rows[0] === undefined){
+        res.render('pages/home.ejs', {userExist: 'no'});
+      }else{
+        res.redirect(`/detail/${req.body.username}`);
+      }
+    });
+}
+
+function createNewUser(req, res){
+  client.query(`SELECT * FROM userProfile WHERE username = '${req.body.username}'`)
+    .then(result =>{
+      if(result.rows[0] !== undefined){
+        res.render('pages/home.ejs', {userExist: 'yes'});
+      }else{
+        client.query(`INSERT INTO userProfile (username, models) VALUES('${req.body.username}', ARRAY ['${req.body.model}'])`)
+          .then(() => {
+            res.redirect(`/detail/${req.body.username}`);
+          });
+      }
+    });
 }
 
 async function retrieveUserModels(user){
   let modelArr = [];
   await client.query(`SELECT * FROM userProfile WHERE username = '${user}' `)
     .then(result => {
+      console.log(result.rows[0]);
       modelArr = result.rows[0].models;
       // console.log(modelArr);
       return modelArr;
     });
   return modelArr;
 }
+
 //Model Detail Page
 async function getModelDetails(req,res){
   const username = req.params.user;
@@ -278,14 +304,16 @@ async function getHorsePage(req,res){
 async function userAddModel(req, res){
   const username = req.params.username;
   const newModel = req.body.model;
-  client.query(`UPDATE userProfile SET models = models || '{${newModel}}' WHERE username = '${username}'`)
-    .then(()=>{
-      console.log(newModel);
-      console.log(username);
-      res.redirect(`/detail/${username}`);
-    });
+  await client.query(`UPDATE userProfile SET models = models || '{${newModel}}' WHERE username = '${username}'`);
+  res.redirect(`/detail/${username}`);
 }
 
+async function userRemoveModel(req, res){
+  const username = req.params;
+  const removeModel = req.body.model;
+  await client.query(`UPDATE userProfile SET models = array_remove(models, '${removeModel}')`);
+  res.redirect(`/detail/${username}`);
+}
 
 // Function to retrieve list of all users from leaderboard
 async function getUsers(){
