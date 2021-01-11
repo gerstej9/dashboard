@@ -112,6 +112,7 @@ app.get('/percent', getPercentile);
 app.get('/horseracemobile', getHorsePage);
 app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
+app.get('/modelnewscore',synthModelComparison);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -123,6 +124,13 @@ function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds
   this.totalStake = totalStake;
   this.modelName = modelName;
   this.dailyChange = dailyChange;
+}
+
+function NewScore(model, corr, mmc, newscore){
+  this.model = model;
+  this.corr = corr;
+  this.mmc = mmc;
+  this.newscore = newscore;
 }
 
 //Helper Functions
@@ -242,7 +250,7 @@ async function retrieveUserModels(user){
   let modelArr = [];
   await client.query(`SELECT * FROM userProfile WHERE username = '${user}' `)
     .then(result => {
-      console.log(result.rows[0]);
+      // console.log(result.rows[0]);
       modelArr = result.rows[0].models;
       // console.log(modelArr);
       return modelArr;
@@ -301,6 +309,20 @@ async function getHorsePage(req,res){
   res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date});
 }
 
+async function synthModelComparison(req, res){
+  const ***REMOVED*** = await multiHorse(***REMOVED***);
+  // console.log(***REMOVED***[0]);
+  let newScoreArr = ***REMOVED***.map(model => {
+    let modelName = model.modelName;
+    let mmc = model.activeRounds[0].mmc;
+    let corr = model.activeRounds[0].correlation;
+    let newscore = Number(mmc)+Number(corr);
+    return new NewScore(modelName, corr, mmc, newscore);
+  });
+  console.log(newScoreArr);
+  res.render('pages/newscore.ejs', {userData: newScoreArr});
+}
+
 async function userAddModel(req, res){
   const username = req.params.username;
   const newModel = req.body.model;
@@ -309,9 +331,11 @@ async function userAddModel(req, res){
 }
 
 async function userRemoveModel(req, res){
-  const username = req.params;
+  const username = req.params.username;
   const removeModel = req.body.model;
-  await client.query(`UPDATE userProfile SET models = array_remove(models, '${removeModel}')`);
+  // console.log(username);
+  // console.log(removeModel);
+  await client.query(`UPDATE userProfile SET models = array_remove(models, '${removeModel}') WHERE username = '${username}'`);
   res.redirect(`/detail/${username}`);
 }
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Numerai Dashboard</title>
+    <link href= "../style/reset.css" rel= "stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href= "../style/base.css" rel= "stylesheet">
+    <link href= "../style/layout.css" rel= "stylesheet">
+    <link href= "../style/modules.css" rel= "stylesheet">
+  </head>
+  <body>
+    <header>
+      <h1>Synth NewScore Comparison</h1>
+    </header>
+    <main>
+      <h2 class ="user">New Score for Synth Eras</h2>
+      <div class = "titleRow ***REMOVED***">
+      </div>
+      <%for(let i = 0; i< userData.length; i++){%>
+      <div class = "modelRow ***REMOVED***">
+        <p><%=userData[i].model%></p>
+        <p><%=userData[i].corr%></p>
+        <p><%userData[i].mmc%> </p>
+        <p><%=userData[i].newscore%> </p>
+        %>}%>
+      </div>
+      </div>
+    </main>
+    <footer>
+
+    </footer>
+  </body>
+</html>
