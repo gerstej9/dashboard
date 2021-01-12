@@ -154,9 +154,19 @@ const sortUsersMmc = (leftModel, rightModel) =>{
   }
 };
 
+const sortUsersNewscore = (leftModel, rightModel) =>{
+  if(leftModel.newscore < rightModel.newscore){
+    return 1;
+  }else if(leftModel.newscore > rightModel.newscore){
+    return -1;
+  }else{
+    return 0;
+  }
+};
+
 //90th percentile function
-function p90(arr){
-  const ninety = percentile(arr, 90);
+function percentileValue(arr, threshold){
+  const ninety = percentile(arr, threshold);
   return ninety;
 }
 
@@ -185,7 +195,7 @@ async function getPercentile(roundNumber, modelArr){
   const endDate = userPerformanceArr[0].date;
   const filteredArr = userPerformanceArr.filter(user => user.date === endDate);
   const corrArr = filteredArr.map(user => user.correlation);
-  const ninentyPercentile = p90(corrArr);
+  const ninentyPercentile = percentileValue(corrArr, 90);
   const ***REMOVED***ModelArr = filteredArr.filter(user => modelArr.includes(user.username));
   console.log(roundNumber);
   const ***REMOVED***Ninety = ***REMOVED***ModelArr.filter(user => user.correlation > ninentyPercentile);
@@ -311,7 +321,9 @@ async function getHorsePage(req,res){
 
 async function synthModelComparison(req, res){
   const ***REMOVED*** = await multiHorse(***REMOVED***);
-  // console.log(***REMOVED***[0]);
+  const date = ***REMOVED***[0].activeRounds[0].date.substring(0,10);
+  // console.log(***REMOVED***[0].activeRounds[0]);
+  const round = ***REMOVED***[0].activeRounds[0].roundNumber;
   let newScoreArr = ***REMOVED***.map(model => {
     let modelName = model.modelName;
     let mmc = model.activeRounds[0].mmc;
@@ -319,8 +331,15 @@ async function synthModelComparison(req, res){
     let newscore = Number(mmc)+Number(corr);
     return new NewScore(modelName, corr, mmc, newscore);
   });
-  console.log(newScoreArr);
-  res.render('pages/newscore.ejs', {userData: newScoreArr});
+  let sortedArray = newScoreArr.sort(sortUsersNewscore);
+  const ninetyArr = sortedArray.map(user => user.newscore);
+  const ninentyPercentile = percentileValue(ninetyArr, 90);
+  const ninetyModelArr = sortedArray.filter(model => model.newscore > ninentyPercentile);
+  const underNinetyModelArr = sortedArray.filter(model => model.newscore < ninentyPercentile);
+  console.log(ninetyModelArr);
+  console.log(underNinetyModelArr);
+  //TODO user percentile ability
+  res.render('pages/newscore.ejs', {userData: underNinetyModelArr, ninetyModelArr: ninetyModelArr, date: date, round: round});
 }
 
 async function userAddModel(req, res){
@@ -375,7 +394,7 @@ async function calculateRoundInfo(round, modelArr){
   const filteredMmcArr = mmcArr.filter(m => m !== null);
   // console.log(filteredMmcArr);
   // console.log(modelMmcArr);
-  const ninentyPercentile = p90(filteredMmcArr);
+  const ninentyPercentile = percentileValue(filteredMmcArr, 90);
   console.log(round);
   const ***REMOVED***Ninety = modelMmcArr.filter(user => user.mmc > ninentyPercentile);
   ***REMOVED***Ninety.sort(sortUsersMmc);

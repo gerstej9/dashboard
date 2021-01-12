@@ -12,18 +12,35 @@
   <body>
     <header>
       <h1>Synth NewScore Comparison</h1>
+      <h2><%=date%></h2>
     </header>
     <main>
       <h2 class ="user">New Score for Synth Eras</h2>
       <div class = "titleRow ***REMOVED***">
+        <p>Model</p>
+        <p>Corr</p>
+        <p>MMC</p>
+        <p>New Score</p>
+        <p>Round</p>
       </div>
-      <%for(let i = 0; i< userData.length; i++){%>
+      <% for(let i =0; i< ninetyModelArr.length; i++ ){%>
+        <div class = "modelRow ***REMOVED***">
+          <p><%=ninetyModelArr[i].model%></p>
+          <p><%=ninetyModelArr[i].corr.toFixed(3)%></p>
+          <p><%=ninetyModelArr[i].mmc.toFixed(3)%></p>
+          <p><%=ninetyModelArr[i].newscore.toFixed(3)%></p>
+          <p><%=round%></p>
+        </div>
+      <%}%>
+      <% for(let i =0; i< userData.length; i++ ){%>
       <div class = "modelRow ***REMOVED***">
         <p><%=userData[i].model%></p>
-        <p><%=userData[i].corr%></p>
-        <p><%userData[i].mmc%> </p>
-        <p><%=userData[i].newscore%> </p>
-        %>}%>
+        <p><%=userData[i].corr.toFixed(3)%></p>
+        <p><%=userData[i].mmc.toFixed(3)%></p>
+        <p><%=userData[i].newscore.toFixed(3)%></p>
+        <p><%=round%></p>
+      </div>
+    <%}%>
       </div>
       </div>
     </main>
