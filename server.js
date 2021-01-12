@@ -113,6 +113,7 @@ app.get('/horseracemobile', getHorsePage);
 app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
 app.get('/modelnewscore',synthModelComparison);
+app.get('/download', downloadSQL);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -136,9 +137,9 @@ function NewScore(model, corr, mmc, newscore){
 //Helper Functions
 const sortUsersCorr = (leftModel, rightModel) =>{
   if(leftModel.correlation < rightModel.correlation){
-    return -1;
-  }else if(leftModel.correlation > rightModel.correlation){
     return 1;
+  }else if(leftModel.correlation > rightModel.correlation){
+    return -1;
   }else{
     return 0;
   }
@@ -195,13 +196,14 @@ async function getPercentile(roundNumber, modelArr){
   const endDate = userPerformanceArr[0].date;
   const filteredArr = userPerformanceArr.filter(user => user.date === endDate);
   const corrArr = filteredArr.map(user => user.correlation);
-  const ninentyPercentile = percentileValue(corrArr, 90);
+  const ninentyPercentile = percentileValue(corrArr, 80);
   const gboyModelArr = filteredArr.filter(user => modelArr.includes(user.username));
-  console.log(roundNumber);
+  // console.log(roundNumber);
   const gBoyNinety = gboyModelArr.filter(user => user.correlation > ninentyPercentile);
   gBoyNinety.sort(sortUsersCorr);
-  gBoyNinety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
-  console.log(gBoyNinety.length);
+  // gBoyNinety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
+  // console.log(gBoyNinety.length);
+  return {value: ninentyPercentile, gBoy: gBoyNinety};
 }
 
 //Individual user profile information retrieval
@@ -331,16 +333,39 @@ async function synthModelComparison(req, res){
     let newscore = Number(mmc)+Number(corr);
     return new NewScore(modelName, corr, mmc, newscore);
   });
+  let gBoyPercentile = await getPercentile(round, gBoys);
+  console.log(gBoyPercentile);
   let sortedArray = newScoreArr.sort(sortUsersNewscore);
   const ninetyArr = sortedArray.map(user => user.newscore);
-  const ninentyPercentile = percentileValue(ninetyArr, 90);
+  const ninentyPercentile = percentileValue(ninetyArr, 80);
   const ninetyModelArr = sortedArray.filter(model => model.newscore > ninentyPercentile);
   const underNinetyModelArr = sortedArray.filter(model => model.newscore < ninentyPercentile);
-  // console.log(ninetyModelArr);
-  // console.log(underNinetyModelArr);
-  //TODO user percentile ability
-  client.query(`\copy (SELECT * FROM userProfile) TO STDOUT 'public/data/hello.csv' csv header`);
+  newScoreArr.forEach(model => {
+    client.query(`INSERT INTO synthModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore, percentileNewscoreRelativeGboy, abovePercentNewscoreRelativeGboy, percentvalueNewscoreRelativeGboy) VALUES('${round}', '${model.modelName}', '${model.corr}', '80', 'YES/NO!!!!', '${gBoyPercentile.value.toFixed(3)}', '${model.mmc}', '${model.newscore}', '80', 'YES/NO!!!!', '${ninentyPercentile}')`);
+  });
+
   res.render('pages/newscore.ejs', {userData: underNinetyModelArr, ninetyModelArr: ninetyModelArr, date: date, round: round});
+}
+
+
+
+// ID SERIAL PRIMARY KEY,
+// round DECIMAL,
+// model VARCHAR(255),
+// corr DECIMAL,
+// percentileAllModelCorr DECIMAL,
+// passingPercentile VARCHAR(255),
+// percentileValue DECIMAL,
+// mmc DECIMAL,
+// newscore DECIMAL,
+// percentileNewscoreRelativeGboy DECIMAL,
+// abovePercentNewscoreRelativeGboy VARCHAR(255),
+// percentvalueNewscoreRelativeGboy DECIMAL
+
+
+async function downloadSQL(req, res){
+  client.query(`\copy (SELECT * FROM userProfile) TO '/tmp/products.csv' csv header`);
+  res.download('/tmp/products.csv');
 }
 
 async function userAddModel(req, res){
