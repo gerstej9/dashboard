@@ -336,9 +336,10 @@ async function synthModelComparison(req, res){
   const ninentyPercentile = percentileValue(ninetyArr, 90);
   const ninetyModelArr = sortedArray.filter(model => model.newscore > ninentyPercentile);
   const underNinetyModelArr = sortedArray.filter(model => model.newscore < ninentyPercentile);
-  console.log(ninetyModelArr);
-  console.log(underNinetyModelArr);
+  // console.log(ninetyModelArr);
+  // console.log(underNinetyModelArr);
   //TODO user percentile ability
+  client.query(`COPY (SELECT * FROM userProfile) to '/Users/jamesagerstenberger/Desktop/test.csv' CSV HEADER`);
   res.render('pages/newscore.ejs', {userData: underNinetyModelArr, ninetyModelArr: ninetyModelArr, date: date, round: round});
 }
 
