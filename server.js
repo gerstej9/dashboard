@@ -339,7 +339,7 @@ async function synthModelComparison(req, res){
   // console.log(ninetyModelArr);
   // console.log(underNinetyModelArr);
   //TODO user percentile ability
-  client.query(`\copy (SELECT * FROM userProfile) to '/Users/jamesagerstenberger/Desktop/test.csv' with csv header`);
+  client.query(`\copy (SELECT * FROM userProfile) TO STDOUT 'public/data/hello.csv' csv header`);
   res.render('pages/newscore.ejs', {userData: underNinetyModelArr, ninetyModelArr: ninetyModelArr, date: date, round: round});
 }
 
