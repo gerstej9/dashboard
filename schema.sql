@@ -9,12 +9,15 @@ CREATE TABLE userProfile(
 
 CREATE TABLE synthModelData(
 ID SERIAL PRIMARY KEY,
+round DECIMAL,
 model VARCHAR(255),
 corr DECIMAL,
+percentileAllModelCorr DECIMAL,
+passingPercentile VARCHAR(255),
+percentileValue DECIMAL,
 mmc DECIMAL,
 newscore DECIMAL,
-round DECIMAL,
-abovePercent VARCHAR(255),
-percentvalue DECIMAL,
-percentile DECIMAL
+percentileNewscoreRelativeGboy DECIMAL,
+abovePercentNewscoreRelativeGboy VARCHAR(255),
+percentvalueNewscoreRelativeGboy DECIMAL
 );
