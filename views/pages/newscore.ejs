@@ -14,9 +14,17 @@
       <h1>Synth NewScore Comparison</h1>
       <h2><%=date%></h2>
     </header>
-    <main>
+    <main class = "synth">
       <h2 class ="user">New Score for Synth Eras</h2>
-      <div>
+      <p>This page provides a table of ***REMOVED*** models for the oldest active round and can be downloaded as a csv file using the link</p><br>
+      <p> 80th percentile is used to analyze the models, for correlation this corresponds to 80th percentile across all models (n=2400) </p><br>
+      <p>For New Score the 80th percentile is strictly based on analysis of ***REMOVED*** models in relation to each other (n=33)</p><br>
+      <p>Colors indicate category<p>
+      <p>Green = >80% Both Categories</p>
+      <p>Blue = >80% Correlation Only</p>
+      <p>Pink = >80% New Score Only</p>
+      <p>Purple = Less Than 80% Both Categories</p><br>
+      <div class = "download">
         <a href = "/download">Download</a>
       </div>
       <div class = "titleRow ***REMOVED***">
@@ -24,6 +32,8 @@
         <p>Corr</p>
         <p>MMC</p>
         <p>New Score</p>
+        <p>Corr >80%</p>
+        <p>NewScore >80%</p>
         <p>Round</p>
       </div>
       <% for(let i =0; i< ninetyModelArr.length; i++ ){%>
@@ -32,6 +42,30 @@
           <p><%=ninetyModelArr[i].corr.toFixed(3)%></p>
           <p><%=ninetyModelArr[i].mmc.toFixed(3)%></p>
           <p><%=ninetyModelArr[i].newscore.toFixed(3)%></p>
+          <p><%=ninetyModelArr[i].corrPassing%></p>
+          <p><%=ninetyModelArr[i].newScorePassing%></p>
+          <p><%=round%></p>
+        </div>
+      <%}%>
+      <% for(let i =0; i< topCorrPassing.length; i++ ){%>
+        <div class = "modelRow ***REMOVED***">
+          <p><%=topCorrPassing[i].model%></p>
+          <p><%=topCorrPassing[i].corr.toFixed(3)%></p>
+          <p><%=topCorrPassing[i].mmc.toFixed(3)%></p>
+          <p><%=topCorrPassing[i].newscore.toFixed(3)%></p>
+          <p><%=topCorrPassing[i].corrPassing%></p>
+          <p><%=topCorrPassing[i].newScorePassing%></p>
+          <p><%=round%></p>
+        </div>
+      <%}%>
+      <% for(let i =0; i< newScorePass.length; i++ ){%>
+        <div class = "modelRow orange">
+          <p><%=newScorePass[i].model%></p>
+          <p><%=newScorePass[i].corr.toFixed(3)%></p>
+          <p><%=newScorePass[i].mmc.toFixed(3)%></p>
+          <p><%=newScorePass[i].newscore.toFixed(3)%></p>
+          <p><%=newScorePass[i].corrPassing%></p>
+          <p><%=newScorePass[i].newScorePassing%></p>
           <p><%=round%></p>
         </div>
       <%}%>
@@ -41,6 +75,8 @@
         <p><%=userData[i].corr.toFixed(3)%></p>
         <p><%=userData[i].mmc.toFixed(3)%></p>
         <p><%=userData[i].newscore.toFixed(3)%></p>
+        <p><%=userData[i].corrPassing%></p>
+        <p><%=userData[i].newScorePassing%></p>
         <p><%=round%></p>
       </div>
     <%}%>

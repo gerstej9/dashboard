@@ -85,10 +85,24 @@ background-color: #926AA6
   background-color:#A0DAA9
 }
 
+.orange{
+  background-color:#caa0da
+}
+
 .username-input, .model-input{
   font-family: Helvetica, sans-serif;
 }
 
+.synth p{
+  margin-left: 2%
+}
+
+.download a{
+  width: 95%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: .5%;
+}
 
 @media(min-width: 760px){
   body{

@@ -127,18 +127,31 @@ function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds
   this.dailyChange = dailyChange;
 }
 
-function NewScore(model, corr, mmc, newscore){
+function NewScore(model, corr, mmc, newscore, corrPassing, newScorePassing){
   this.model = model;
   this.corr = corr;
   this.mmc = mmc;
   this.newscore = newscore;
+  this.corrPassing = corrPassing || false;
+  this.newScorePassing = newScorePassing || false;
+
 }
 
 //Helper Functions
-const sortUsersCorr = (leftModel, rightModel) =>{
+const sortUsersCorrelation = (leftModel, rightModel) =>{
   if(leftModel.correlation < rightModel.correlation){
     return 1;
   }else if(leftModel.correlation > rightModel.correlation){
+    return -1;
+  }else{
+    return 0;
+  }
+};
+
+const sortUsersCorr = (leftModel, rightModel) =>{
+  if(leftModel.corr < rightModel.corr){
+    return 1;
+  }else if(leftModel.corr > rightModel.corr){
     return -1;
   }else{
     return 0;
@@ -203,7 +216,8 @@ async function getPercentile(roundNumber, modelArr){
   ***REMOVED***Ninety.sort(sortUsersCorr);
   // ***REMOVED***Ninety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
   // console.log(***REMOVED***Ninety.length);
-  return {value: ninentyPercentile, ***REMOVED***: ***REMOVED***Ninety};
+  const ***REMOVED***FinalArr = ***REMOVED***Ninety.map(model => model.username);
+  return {value: ninentyPercentile, ***REMOVED***: ***REMOVED***FinalArr};
 }
 
 //Individual user profile information retrieval
@@ -326,6 +340,9 @@ async function synthModelComparison(req, res){
   const date = ***REMOVED***[0].activeRounds[0].date.substring(0,10);
   // console.log(***REMOVED***[0].activeRounds[0]);
   const round = ***REMOVED***[0].activeRounds[0].roundNumber;
+  const percentile = 80;
+  let ***REMOVED***Percentile = await getPercentile(round, ***REMOVED***);
+  // console.log(***REMOVED***Percentile);
   let newScoreArr = ***REMOVED***.map(model => {
     let modelName = model.modelName;
     let mmc = model.activeRounds[0].mmc;
@@ -333,39 +350,40 @@ async function synthModelComparison(req, res){
     let newscore = Number(mmc)+Number(corr);
     return new NewScore(modelName, corr, mmc, newscore);
   });
-  let ***REMOVED***Percentile = await getPercentile(round, ***REMOVED***);
-  console.log(***REMOVED***Percentile);
-  let sortedArray = newScoreArr.sort(sortUsersNewscore);
+  // console.log(newScoreArr);
+  let sortedArray = newScoreArr.sort(sortUsersCorr);
   const ninetyArr = sortedArray.map(user => user.newscore);
   const ninentyPercentile = percentileValue(ninetyArr, 80);
   const ninetyModelArr = sortedArray.filter(model => model.newscore > ninentyPercentile);
+  const ninetyModelArrNames = ninetyModelArr.filter(model => model.model);
   const underNinetyModelArr = sortedArray.filter(model => model.newscore < ninentyPercentile);
-  newScoreArr.forEach(model => {
-    client.query(`INSERT INTO synthModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore, percentileNewscoreRelativeGboy, abovePercentNewscoreRelativeGboy, percentvalueNewscoreRelativeGboy) VALUES('${round}', '${model.modelName}', '${model.corr}', '80', 'YES/NO!!!!', '${***REMOVED***Percentile.value.toFixed(3)}', '${model.mmc}', '${model.newscore}', '80', 'YES/NO!!!!', '${ninentyPercentile}')`);
+  sortedArray.forEach(model =>{
+    if(***REMOVED***Percentile.***REMOVED***.includes(model.model)){
+      model.corrPassing = true;
+    }
+    if(ninetyModelArrNames.includes(model)){
+      model.newScorePassing = true;
+    }
   });
-
-  res.render('pages/newscore.ejs', {userData: underNinetyModelArr, ninetyModelArr: ninetyModelArr, date: date, round: round});
+  client.query(`SELECT * FROM synthModelData WHERE round = ${round}`)
+    .then(result => {
+      if(!result.rows[0]){
+        sortedArray.forEach(model => {
+          client.query(`INSERT INTO synthModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore, percentileNewscoreRelativeGboy, abovePercentNewscoreRelativeGboy, percentvalueNewscoreRelativeGboy) VALUES('${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${***REMOVED***Percentile.value}', '${model.mmc}', '${model.newscore}', '${percentile}', '${model.newScorePassing}', '${ninentyPercentile}')`);
+        });
+      }
+    });
+  const topPercentileArr = sortedArray.filter(model => model.corrPassing === true && model.newScorePassing === true);
+  const topCorrArr = sortedArray.filter(model => model.corrPassing === true && model.newScorePassing === false);
+  const topNewScore = sortedArray.filter(model => model.corrPassing === false && model.newScorePassing === true);
+  const bottomArr = sortedArray.filter(model => model.corrPassing === false && model.newScorePassing === false);
+  res.render('pages/newscore.ejs', {userData: bottomArr, ninetyModelArr: topPercentileArr, newScorePass: topNewScore, topCorrPassing: topCorrArr,date: date, round: round});
 }
 
 
-
-// ID SERIAL PRIMARY KEY,
-// round DECIMAL,
-// model VARCHAR(255),
-// corr DECIMAL,
-// percentileAllModelCorr DECIMAL,
-// passingPercentile VARCHAR(255),
-// percentileValue DECIMAL,
-// mmc DECIMAL,
-// newscore DECIMAL,
-// percentileNewscoreRelativeGboy DECIMAL,
-// abovePercentNewscoreRelativeGboy VARCHAR(255),
-// percentvalueNewscoreRelativeGboy DECIMAL
-
-
 async function downloadSQL(req, res){
-  client.query(`\copy (SELECT * FROM userProfile) TO '/tmp/products.csv' csv header`);
-  res.download('/tmp/products.csv');
+  client.query(`\copy (SELECT * FROM synthModelData) TO '/tmp/products.csv' csv header`);
+  res.download('/tmp/numerai_synth_comparison.csv');
 }
 
 async function userAddModel(req, res){
