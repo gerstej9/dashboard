@@ -382,7 +382,7 @@ async function synthModelComparison(req, res){
 
 
 async function downloadSQL(req, res){
-  client.query(`\copy (SELECT * FROM synthModelData) TO '/tmp/products.csv' csv header`);
+  client.query(`\copy (SELECT * FROM synthModelData) TO '/tmp/numerai_synth_comparison.csv' csv header`);
   res.download('/tmp/numerai_synth_comparison.csv');
 }
 
