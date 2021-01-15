@@ -1,13 +1,10 @@
 const express = require('express');
 const dotenvParseVariables = require('dotenv-parse-variables');
-let env = require('dotenv').config({path: __dirname + '/.env', silent:true});
-if(env.error) throw env.error;
-env = dotenvParseVariables(env.parsed);
+require('dotenv').config({});
 const fetch = require('node-fetch');
-const PORT = env.PORT || 9999;
-const HORSE = env.HORSE;
-const MNS = env.MNS;
-const gBoys = env.GBOYS;
+const PORT = process.env.PORT || 9999;
+const HORSE = process.env.HORSE;
+const MNS = process.env.MNS;
 const percentile = require('stats-percentile');
 const pg = require('pg');
 const methodOverride = require('method-override');
@@ -26,6 +23,10 @@ app.set('view engine', 'ejs');
 //Global Constant
 const latestRoundsPosition = 4;
 
+async function getGboys(){
+  let gBoys =  await client.query('SELECT * FROM gBoy');
+  return gBoys.rows[0].models;
+}
 
 //Query Constants
 
@@ -291,6 +292,7 @@ async function multiHorse(arr){
 }
 //Horse Race Page function
 async function getHorsePage(req,res){
+  let gBoys = await getGboys();
   const gBoyModelArr = await multiHorse(gBoys);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
@@ -307,6 +309,7 @@ async function getHorsePage(req,res){
 }
 
 async function ModelComparison(req, res){
+  let gBoys = await getGboys();
   const gBoyModelArr = await multiHorse(gBoys);
   const date = gBoyModelArr[0].activeRounds[0].date.substring(0,10);
   // console.log(gBoyModelArr[0].activeRounds[0]);
