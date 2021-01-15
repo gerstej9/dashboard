@@ -73,15 +73,15 @@ header h2{
   justify-content: center;
 }
 
-.david{
-background-color: #926AA6
+.monkey{
+background-color: #FAFA66;
 }
 
-.rob{
+.fox{
   background-color: #9BB7D4;
 }
 
-.james{
+.cat{
   background-color:#A0DAA9
 }
 
@@ -93,7 +93,7 @@ background-color: #926AA6
   font-family: Helvetica, sans-serif;
 }
 
-.synth p{
+.newscore p{
   margin-left: 2%
 }
 
