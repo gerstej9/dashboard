@@ -110,11 +110,6 @@ function NewScore(model, corr, mmc, newscore, corrPassing, newScorePassing){
 
 }
 
-function initiate***REMOVED***(req, res){
-  client.query(`INSERT INTO ***REMOVED*** VALUES(1, ARRAY['***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***ot_sam','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***'])`);
-  console.log('hello');
-  res.redirect('/');
-}
 
 //Helper Functions
 const sortUsersCorrelation = (leftModel, rightModel) =>{
