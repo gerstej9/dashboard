@@ -86,7 +86,7 @@ app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
 app.get(`${MNS}`,ModelComparison);
 app.get('/download', downloadSQL);
-app.get(`/${INIT}`, initiateGboys);
+app.get(`${INIT}`, initiateGboys);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -110,8 +110,10 @@ function NewScore(model, corr, mmc, newscore, corrPassing, newScorePassing){
 
 }
 
-function initiateGboys(){
+function initiateGboys(req, res){
   client.query(`INSERT INTO gBoy VALUES(1, ARRAY['rgb_arp','rgb_moog','burning_flash','as_i_was','all_were_connected','by_this_illusive','all_that_eye','____cycles____','robot_sam','mistborn','jules_verne','dies','sauce_files','pizzadragon','parfection','mediocrity','cash_me_outside','cat_and_dog','gerstej9','lottery_of_babylon','vincent_moon','kafka_murakami','fuka_eri','miss_may','bamboo_cat','baby_dragon','kira_bella','wallingford_nut','kokedama','cyanesce','wild_sheep','equinox','three_kingdoms'])`);
+  console.log('hello');
+  res.redirect('/');
 }
 
 //Helper Functions
