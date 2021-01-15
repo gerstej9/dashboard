@@ -86,7 +86,6 @@ app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
 app.get(`${MNS}`,ModelComparison);
 app.get('/download', downloadSQL);
-app.get(`${INIT}`, initiate***REMOVED***);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
