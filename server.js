@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const dotenvParseVariables = require('dotenv-parse-variables');
-let env = dotenv.config({path: __dirname + '/.env'});
+let env = dotenv.config({path: __dirname + '/.env', silent:true});
 if(env.error) throw env.error;
 env = dotenvParseVariables(env.parsed);
 const fetch = require('node-fetch');
