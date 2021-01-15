@@ -194,7 +194,7 @@ async function getPercentile(roundNumber, modelArr){
 }
 
 //Individual user profile information retrieval
-async function horse_race(username){
+async function modelComp(username){
   const user = await retrieveObject(userProfile(username));
   const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
   [
@@ -291,7 +291,7 @@ async function multiHorse(arr){
   }
   return gBoyModelArr;
 }
-//Horse Race Page function
+//Horse Page function
 async function getHorsePage(req,res){
   let gBoys = await getGboys();
   const gBoyModelArr = await multiHorse(gBoys);
@@ -434,7 +434,6 @@ async function calculateRoundInfo(round, modelArr){
 // getPercentile(239, gBoys);
 // getPercentile(240, gBoys);
 // getPercentile(241, gBoys);
-// horse_race("gerstej9");
 // retrieveObject(latestNmrPrice())
 //   .then(result => console.log(result));
 
