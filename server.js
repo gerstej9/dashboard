@@ -86,7 +86,7 @@ app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
 app.get(`${MNS}`,ModelComparison);
 app.get('/download', downloadSQL);
-app.get(`/${INIT}`, initiate***REMOVED***);
+app.get(`${INIT}`, initiate***REMOVED***);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -110,8 +110,10 @@ function NewScore(model, corr, mmc, newscore, corrPassing, newScorePassing){
 
 }
 
-function initiate***REMOVED***(){
+function initiate***REMOVED***(req, res){
   client.query(`INSERT INTO ***REMOVED*** VALUES(1, ARRAY['***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***ot_sam','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***'])`);
+  console.log('hello');
+  res.redirect('/');
 }
 
 //Helper Functions
