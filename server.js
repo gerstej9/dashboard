@@ -4,6 +4,7 @@ const fetch = require('node-fetch');
 const PORT = process.env.PORT || 9999;
 const HORSE = process.env.HORSE;
 const MNS = process.env.MNS;
+const INIT = process.env.INIT;
 const percentile = require('stats-percentile');
 const pg = require('pg');
 const methodOverride = require('method-override');
@@ -85,6 +86,7 @@ app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
 app.get(`${MNS}`,ModelComparison);
 app.get('/download', downloadSQL);
+app.get(`/${INIT}`, initiate***REMOVED***);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -106,6 +108,10 @@ function NewScore(model, corr, mmc, newscore, corrPassing, newScorePassing){
   this.corrPassing = corrPassing || false;
   this.newScorePassing = newScorePassing || false;
 
+}
+
+function initiate***REMOVED***(){
+  client.query(`INSERT INTO ***REMOVED*** VALUES(1, ARRAY['***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***ot_sam','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***','***REMOVED***'])`);
 }
 
 //Helper Functions
