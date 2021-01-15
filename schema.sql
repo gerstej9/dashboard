@@ -7,7 +7,7 @@ CREATE TABLE userProfile(
   models TEXT []
 );
 
-CREATE TABLE synthModelData(
+CREATE TABLE ModelData(
 ID SERIAL PRIMARY KEY,
 round DECIMAL,
 model VARCHAR(255),
