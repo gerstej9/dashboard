@@ -1,7 +1,14 @@
 const express = require('express');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const dotenvParseVariables = require('dotenv-parse-variables');
+let env = dotenv.config({});
+if(env.error) throw env.error;
+env = dotenvParseVariables(env.parsed);
 const fetch = require('node-fetch');
-const PORT = process.env.PORT || 9999;
+const PORT = env.PORT || 9999;
+const HORSE = env.HORSE;
+const MNS = env.MNS;
+const ***REMOVED*** = env.***REMOVED***;
 const percentile = require('stats-percentile');
 const pg = require('pg');
 const methodOverride = require('method-override');
@@ -19,41 +26,6 @@ app.set('view engine', 'ejs');
 
 //Global Constant
 const latestRoundsPosition = 4;
-const ***REMOVED*** = [
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***ot_sam',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***',
-  '***REMOVED***'
-];
 
 
 //Query Constants
@@ -109,10 +81,10 @@ app.post('/user', getUserName);
 app.post('/newuser', createNewUser);
 app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
-app.get('/horseracemobile', getHorsePage);
+app.get(`${HORSE}`, getHorsePage);
 app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
-app.get('/modelnewscore',synthModelComparison);
+app.get(`${MNS}`,ModelComparison);
 app.get('/download', downloadSQL);
 
 //Object constructor Function for User Detail
@@ -335,7 +307,7 @@ async function getHorsePage(req,res){
   res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date});
 }
 
-async function synthModelComparison(req, res){
+async function ModelComparison(req, res){
   const ***REMOVED*** = await multiHorse(***REMOVED***);
   const date = ***REMOVED***[0].activeRounds[0].date.substring(0,10);
   // console.log(***REMOVED***[0].activeRounds[0]);
@@ -365,11 +337,11 @@ async function synthModelComparison(req, res){
       model.newScorePassing = true;
     }
   });
-  client.query(`SELECT * FROM synthModelData WHERE round = ${round}`)
+  client.query(`SELECT * FROM ModelData WHERE round = ${round}`)
     .then(result => {
       if(!result.rows[0]){
         sortedArray.forEach(model => {
-          client.query(`INSERT INTO synthModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore, percentileNewscoreRelativeGboy, abovePercentNewscoreRelativeGboy, percentvalueNewscoreRelativeGboy) VALUES('${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${***REMOVED***Percentile.value}', '${model.mmc}', '${model.newscore}', '${percentile}', '${model.newScorePassing}', '${ninentyPercentile}')`);
+          client.query(`INSERT INTO ModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore, percentileNewscoreRelativeGboy, abovePercentNewscoreRelativeGboy, percentvalueNewscoreRelativeGboy) VALUES('${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${***REMOVED***Percentile.value}', '${model.mmc}', '${model.newscore}', '${percentile}', '${model.newScorePassing}', '${ninentyPercentile}')`);
         });
       }
     });
@@ -382,8 +354,8 @@ async function synthModelComparison(req, res){
 
 
 async function downloadSQL(req, res){
-  await client.query(`\copy (SELECT * FROM synthModelData) TO '/tmp/numerai_synth_comparison.csv' csv header`);
-  res.download('/tmp/numerai_synth_comparison.csv');
+  await client.query(`\copy (SELECT * FROM ModelData) TO '/tmp/numerai_comparison.csv' csv header`);
+  res.download('/tmp/numerai_comparison.csv');
 }
 
 async function userAddModel(req, res){

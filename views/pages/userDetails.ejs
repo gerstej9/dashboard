@@ -18,7 +18,7 @@
     </header>
     <main>
       <h2 class ="user">User: <%=username%></h2>
-      <div class = "titleRow ***REMOVED***">
+      <div class = "titleRow monkey">
         <p>Model</p>
         <p>Staked</p>
         <p>Payout</p>
@@ -31,7 +31,7 @@
       <%let activeTotalAllModels = 0%>
       <%let dailyChangeAllModels = 0%>
       <%for(let i = 0; i< userData.length; i++){%>
-      <div class = "modelRow ***REMOVED***">
+      <div class = "modelRow monkey">
         <p><%=userData[i].modelName%></p>
         <p><%=userData[i].totalStake%> NMR</p>
         <% userTotalStake+=Number(userData[i].totalStake)%>
@@ -45,7 +45,7 @@
         <p><%=userData[i].mmcCurrent%></p>
       </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
-      <div class = "totalRow ***REMOVED***">
+      <div class = "totalRow monkey">
         <p>Daily Change NMR: <%=dailyChangeAllModels.toFixed(2)%> NMR</p>
         <% let dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
         <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>

@@ -8,14 +8,15 @@
     <link href= "../style/base.css" rel= "stylesheet">
     <link href= "../style/layout.css" rel= "stylesheet">
     <link href= "../style/modules.css" rel= "stylesheet">
+    <link href= "../style/horse.css" rel= "stylesheet">
   </head>
   <body>
     <header>
-      <h1>Synth NewScore Comparison</h1>
+      <h1>NewScore Comparison</h1>
       <h2><%=date%></h2>
     </header>
-    <main class = "synth">
-      <h2 class ="user">New Score for Synth Eras</h2>
+    <main class = "newscore">
+      <h2 class ="user">New Score</h2>
       <p>This page provides a table of ***REMOVED*** models for the oldest active round and can be downloaded as a csv file using the link</p><br>
       <p> 80th percentile is used to analyze the models, for correlation this corresponds to 80th percentile across all models (n=2400) </p><br>
       <p>For New Score the 80th percentile is strictly based on analysis of ***REMOVED*** models in relation to each other (n=33)</p><br>
@@ -27,7 +28,7 @@
       <div class = "download">
         <a href = "./download">Download</a>
       </div>
-      <div class = "titleRow ***REMOVED***">
+      <div class = "titleRow monkey">
         <p>Model</p>
         <p>Corr</p>
         <p>MMC</p>
@@ -37,7 +38,7 @@
         <p>Round</p>
       </div>
       <% for(let i =0; i< ninetyModelArr.length; i++ ){%>
-        <div class = "modelRow ***REMOVED***">
+        <div class = "modelRow cat">
           <p><%=ninetyModelArr[i].model%></p>
           <p><%=ninetyModelArr[i].corr.toFixed(3)%></p>
           <p><%=ninetyModelArr[i].mmc.toFixed(3)%></p>
@@ -48,7 +49,7 @@
         </div>
       <%}%>
       <% for(let i =0; i< topCorrPassing.length; i++ ){%>
-        <div class = "modelRow ***REMOVED***">
+        <div class = "modelRow fox">
           <p><%=topCorrPassing[i].model%></p>
           <p><%=topCorrPassing[i].corr.toFixed(3)%></p>
           <p><%=topCorrPassing[i].mmc.toFixed(3)%></p>
@@ -70,7 +71,7 @@
         </div>
       <%}%>
       <% for(let i =0; i< userData.length; i++ ){%>
-      <div class = "modelRow ***REMOVED***">
+      <div class = "modelRow monkey">
         <p><%=userData[i].model%></p>
         <p><%=userData[i].corr.toFixed(3)%></p>
         <p><%=userData[i].mmc.toFixed(3)%></p>

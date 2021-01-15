@@ -8,16 +8,18 @@
     <link href= "../style/base.css" rel= "stylesheet">
     <link href= "../style/layout.css" rel= "stylesheet">
     <link href= "../style/modules.css" rel= "stylesheet">
+    <link href= "../style/horse.css" rel= "stylesheet">
   </head>
   <body>
     <header>
       <h1>Daily Horse Race</h1>
       <h2>Date: <%=date%></h2>
       <h2>Live Rounds: <%=userData[0].activeRounds[0].roundNumber%> to <%=userData[0].activeRounds[3].roundNumber%></h2>
+      <h2>NMR Price: <%=nmrPrice%></h2>
     </header>
     <main>
-      <h2 class ="user">User: ***REMOVED***</h2>
-      <div class = "titleRow ***REMOVED***">
+      <h2 class ="user">User: Monkey</h2>
+      <div class = "titleRow monkey">
         <p>Model</p>
         <p>Staked</p>
         <p>Payout</p>
@@ -30,7 +32,7 @@
       <%let activeTotalAllModels = 0%>
       <%let dailyChangeAllModels = 0%>
       <%for(let i = 0; i< 8; i++){%>
-      <div class = "modelRow ***REMOVED***">
+      <div class = "modelRow monkey">
         <p><%=userData[i].modelName%></p>
         <p><%=userData[i].totalStake%> NMR</p>
         <% userTotalStake+=Number(userData[i].totalStake)%>
@@ -44,7 +46,7 @@
         <p><%=userData[i].mmcCurrent%></p>
       </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
-      <div class = "totalRow ***REMOVED***">
+      <div class = "totalRow monkey">
         <p>Daily Change NMR: <%=dailyChangeAllModels.toFixed(2)%> NMR</p>
         <% let dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
         <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
@@ -60,8 +62,8 @@
         <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
       </div>
 
-      <h2 class ="user">User: ***REMOVED***</h2>
-      <div class = "titleRow ***REMOVED***">
+      <h2 class ="user">User: Fox</h2>
+      <div class = "titleRow fox">
         <p>Model</p>
         <p>Staked</p>
         <p>Payout</p>
@@ -74,7 +76,7 @@
       <% userTotalStake = 0%>
       <%activeTotalAllModels = 0%>
       <%for(let i = 8; i< 18; i++){%>
-      <div class = "modelRow ***REMOVED***">
+      <div class = "modelRow fox">
         <p><%=userData[i].modelName%></p>
         <p><%=userData[i].totalStake%> NMR</p>
         <% userTotalStake+=Number(userData[i].totalStake)%>
@@ -88,7 +90,7 @@
         <p><%=userData[i].mmcCurrent%></p>
       </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
-      <div class = "totalRow ***REMOVED***">
+      <div class = "totalRow fox">
         <p>Daily Change NMR: <%= dailyChangeAllModels.toFixed(2)%> NMR</p>
         <% dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
         <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
@@ -104,8 +106,8 @@
         <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
       </div>
 
-      <h2 class ="user">User: ***REMOVED***</h2>
-        <div class = "titleRow ***REMOVED***">
+      <h2 class ="user">User: Cat</h2>
+        <div class = "titleRow cat">
           <p>Model</p>
           <p>Staked</p>
           <p>Payout</p>
@@ -118,7 +120,7 @@
         <% userTotalStake = 0%>
         <%activeTotalAllModels = 0%>
         <%for(let i = 18; i< 33; i++){%>
-        <div class = "modelRow ***REMOVED***">
+        <div class = "modelRow cat">
           <p><%=userData[i].modelName%></p>
           <p><%=userData[i].totalStake%> NMR</p>
           <% userTotalStake+=Number(userData[i].totalStake)%>
@@ -132,7 +134,7 @@
           <p><%=userData[i].mmcCurrent%></p>
         </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
-      <div class = "totalRow ***REMOVED***">
+      <div class = "totalRow cat">
         <p>Daily Change NMR: <%= dailyChangeAllModels.toFixed(2)%> NMR</p>
         <% dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
         <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
