@@ -79,8 +79,8 @@ app.get('/percent', getPercentile);
 app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
 app.get('/:user/model_not_found', modelNotFound);
-app.get(`${MNS}`,ModelComparison);
-app.get('/download', downloadSQL);
+app.get('/:user/modelcomparison', ModelComparison);
+app.get('/:user/download', downloadSQL);
 
 //Object constructor Function for User Detail
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
@@ -307,11 +307,13 @@ async function getHorsePage(req,res){
 
 async function ModelComparison(req, res){
   // array = comparison array
-  const userModelArr = await multiHorse(array);
+  const username = req.params.user;
+  const modelArr = await retrieveUserModels(username);
+  const userModelArr = await multiHorse(modelArr);
   const date = userModelArr[0].activeRounds[0].date.substring(0,10);
   const round = userModelArr[0].activeRounds[0].roundNumber;
   const percentile = 80;
-  let userPercentile = await getPercentile(round, array);
+  let userPercentile = await getPercentile(round, modelArr);
   let newScoreArr = userModelArr.map(model => {
     let modelName = model.modelName;
     let mmc = model.activeRounds[0].mmc;
@@ -334,13 +336,21 @@ async function ModelComparison(req, res){
       model.newScorePassing = true;
     }
   });
-  client.query(`SELECT * FROM ModelData WHERE round = ${round}`)
+  client.query(`SELECT * FROM ModelData WHERE round = ${round} AND username = '${username}'`)
     .then(result => {
-      if(!result.rows[0]){
-        sortedArray.forEach(model => {
-          client.query(`INSERT INTO ModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore) VALUES('${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${ninentyPercentile.value}', '${model.mmc}', '${model.newscore}')`);
-        });
-      }
+      // console.log(result.rows[0]);
+      const modelArr = result.rows.map(model => model.model);
+      console.log(modelArr);
+      // if(!result.rows[0])
+      // console.log(result.rows);
+      // console.log(sortedArray.model);
+      sortedArray.forEach(model => {
+        console.log(model.model);
+        if(!modelArr.includes(model.model)){
+          client.query(`INSERT INTO ModelData (username, round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore) VALUES('${username}','${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${userPercentile.value}', '${model.mmc}', '${model.newscore}')`);
+        }
+      });
+      // }
     });
   const topPercentileArr = sortedArray.filter(model => model.corrPassing === true && model.newScorePassing === true);
   const topCorrArr = sortedArray.filter(model => model.corrPassing === true && model.newScorePassing === false);
@@ -351,7 +361,8 @@ async function ModelComparison(req, res){
 
 
 async function downloadSQL(req, res){
-  await client.query(`\copy (SELECT * FROM ModelData) TO '/tmp/numerai_comparison.csv' csv header`);
+  const username = req.params.user;
+  await client.query(`\copy (SELECT * FROM ModelData WHERE username = '${username}') TO '/tmp/numerai_comparison.csv' csv header`);
   res.download('/tmp/numerai_comparison.csv');
 }
 
@@ -359,6 +370,7 @@ async function userAddModel(req, res){
   const username = req.params.username;
   const newModel = req.body.model;
   let test = await retrieveObject(userProfile(`${newModel}`));
+  console.log(test.v2UserProfile);
   if(test.v2UserProfile === null){
     res.redirect(`/${username}/model_not_found`);
   }else{
@@ -438,7 +450,6 @@ async function calculateRoundInfo(round, modelArr){
 
 //TODO uncouple model new score and create for each individual
 //Change pocketmonkey to monkey
-//Remove ***REMOVED*** mentions
 
 
 app.use('*', (req, res) => res.status(404).send('Route you are looking for is not available'));
