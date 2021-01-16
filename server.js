@@ -2,9 +2,7 @@ const express = require('express');
 require('dotenv').config({});
 const fetch = require('node-fetch');
 const PORT = process.env.PORT || 9999;
-const HORSE = process.env.HORSE;
 const MNS = process.env.MNS;
-const INIT = process.env.INIT;
 const percentile = require('stats-percentile');
 const pg = require('pg');
 const methodOverride = require('method-override');
@@ -22,6 +20,7 @@ app.set('view engine', 'ejs');
 
 //Global Constant
 const latestRoundsPosition = 4;
+let modelFound = true;
 
 async function get***REMOVED***(){
   let ***REMOVED*** =  await client.query('SELECT * FROM ***REMOVED***');
@@ -81,9 +80,9 @@ app.post('/user', getUserName);
 app.post('/newuser', createNewUser);
 app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
-app.get(`${HORSE}`, getHorsePage);
 app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
+app.get('/:user/model_not_found', modelNotFound);
 app.get(`${MNS}`,ModelComparison);
 app.get('/download', downloadSQL);
 
@@ -257,9 +256,11 @@ async function retrieveUserModels(user){
   return modelArr;
 }
 
+
 //Model Detail Page
 async function getModelDetails(req,res){
   const username = req.params.user;
+  modelFound = true;
   const modelArr = await retrieveUserModels(username);
   // console.log(modelArr);
   const ***REMOVED*** = await multiHorse(modelArr);
@@ -267,27 +268,45 @@ async function getModelDetails(req,res){
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = ***REMOVED***[0].activeRounds[3].date.substring(0,10);
 
-  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date, username: username});
+  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date, username: username, modelFound: modelFound});
 }
 
 async function multiHorse(arr){
   let ***REMOVED*** = [];
   for(let i = 0; i < arr.length; i++){
-    const user = await retrieveObject(userProfile(arr[i]));
-    const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
-    [
-      user.v2UserProfile.latestRanks.mmcRank,
-      user.v2UserProfile.latestRanks.prevMmcRank,
-      user.v2UserProfile.latestRanks.rank,
-      user.v2UserProfile.latestRanks.prevRank,
-      user.v2UserProfile.latestRoundPerformances.slice(-4),
-      Number(user.v2UserProfile.totalStake).toFixed(2),
-      user.v2UserProfile.username,
-      Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
-    ];
-    // console.log(user.v2UserProfile.dailyUserPerformances[0]);
-    // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
-    ***REMOVED***.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+    try{
+      const user = await retrieveObject(userProfile(arr[i]));
+      const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
+      [
+        user.v2UserProfile.latestRanks.mmcRank,
+        user.v2UserProfile.latestRanks.prevMmcRank,
+        user.v2UserProfile.latestRanks.rank,
+        user.v2UserProfile.latestRanks.prevRank,
+        user.v2UserProfile.latestRoundPerformances.slice(-4),
+        Number(user.v2UserProfile.totalStake).toFixed(2),
+        user.v2UserProfile.username,
+        Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
+      ];
+      // console.log(user.v2UserProfile.dailyUserPerformances[0]);
+      // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
+      ***REMOVED***.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+    }
+    catch(error){
+      const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
+      [
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        0.00,
+        arr[i],
+        0.00
+      ];
+      // console.log(user.v2UserProfile.dailyUserPerformances[0]);
+      // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
+      ***REMOVED***.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+    }
   }
   return ***REMOVED***;
 }
@@ -364,15 +383,34 @@ async function downloadSQL(req, res){
 async function userAddModel(req, res){
   const username = req.params.username;
   const newModel = req.body.model;
-  await client.query(`UPDATE userProfile SET models = models || '{${newModel}}' WHERE username = '${username}'`);
-  res.redirect(`/detail/${username}`);
+  let test = await retrieveObject(userProfile(`${newModel}`));
+  if(test.v2UserProfile === null){
+    res.redirect(`/${username}/model_not_found`);
+  }else{
+    await client.query(`UPDATE userProfile SET models = models || '{${newModel}}' WHERE username = '${username}'`);
+    res.redirect(`/detail/${username}`);
+  }
+}
+
+async function modelNotFound(req, res){
+  console.log(req.params);
+  const username = req.params.user;
+  const modelArr = await retrieveUserModels(username);
+  // console.log(modelArr);
+  const ***REMOVED*** = await multiHorse(modelArr);
+  const currentNmr = await retrieveObject(latestNmrPrice());
+  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
+  const date = ***REMOVED***[0].activeRounds[3].date.substring(0,10);
+  modelFound = false;
+  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date, username: username, modelFound: modelFound});
 }
 
 async function userRemoveModel(req, res){
   const username = req.params.username;
   const removeModel = req.body.model;
   // console.log(username);
-  // console.log(removeModel);
+  client.query(`SELECT * FROM userProfile WHERE username = '${username}'`)
+    .then(result => console.log(result.rows));
   await client.query(`UPDATE userProfile SET models = array_remove(models, '${removeModel}') WHERE username = '${username}'`);
   res.redirect(`/detail/${username}`);
 }
@@ -436,6 +474,10 @@ async function calculateRoundInfo(round, modelArr){
 // getPercentile(241, ***REMOVED***);
 // retrieveObject(latestNmrPrice())
 //   .then(result => console.log(result));
+
+//TODO uncouple model new score and create for each individual
+//Change pocketmonkey to monkey
+//Remove ***REMOVED*** mentions
 
 
 app.use('*', (req, res) => res.status(404).send('Route you are looking for is not available'));
