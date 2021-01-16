@@ -9,6 +9,7 @@ CREATE TABLE userProfile(
 
 CREATE TABLE ModelData(
 ID SERIAL PRIMARY KEY,
+username VARCHAR(255),
 round DECIMAL,
 model VARCHAR(255),
 corr DECIMAL,
