@@ -22,10 +22,10 @@ app.set('view engine', 'ejs');
 const latestRoundsPosition = 4;
 let modelFound = true;
 
-async function get***REMOVED***(){
-  let ***REMOVED*** =  await client.query('SELECT * FROM ***REMOVED***');
-  return ***REMOVED***.rows[0].models;
-}
+// async function get***REMOVED***(){
+//   let ***REMOVED*** =  await client.query('SELECT * FROM ***REMOVED***');
+//   return ***REMOVED***.rows[0].models;
+// }
 
 //Query Constants
 
@@ -110,15 +110,6 @@ function NewScore(model, corr, mmc, newscore, corrPassing, newScorePassing){
 
 
 //Helper Functions
-const sortUsersCorrelation = (leftModel, rightModel) =>{
-  if(leftModel.correlation < rightModel.correlation){
-    return 1;
-  }else if(leftModel.correlation > rightModel.correlation){
-    return -1;
-  }else{
-    return 0;
-  }
-};
 
 const sortUsersCorr = (leftModel, rightModel) =>{
   if(leftModel.corr < rightModel.corr){
@@ -150,7 +141,7 @@ const sortUsersNewscore = (leftModel, rightModel) =>{
   }
 };
 
-//90th percentile function
+//percentile function
 function percentileValue(arr, threshold){
   const ninety = percentile(arr, threshold);
   return ninety;
@@ -182,14 +173,14 @@ async function getPercentile(roundNumber, modelArr){
   const filteredArr = userPerformanceArr.filter(user => user.date === endDate);
   const corrArr = filteredArr.map(user => user.correlation);
   const ninentyPercentile = percentileValue(corrArr, 80);
-  const ***REMOVED***ModelArr = filteredArr.filter(user => modelArr.includes(user.username));
+  const userModelArr = filteredArr.filter(user => modelArr.includes(user.username));
   // console.log(roundNumber);
-  const ***REMOVED***Ninety = ***REMOVED***ModelArr.filter(user => user.correlation > ninentyPercentile);
-  ***REMOVED***Ninety.sort(sortUsersCorr);
+  const userNinety = userModelArr.filter(user => user.correlation > ninentyPercentile);
+  userNinety.sort(sortUsersCorr);
   // ***REMOVED***Ninety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
   // console.log(***REMOVED***Ninety.length);
-  const ***REMOVED***FinalArr = ***REMOVED***Ninety.map(model => model.username);
-  return {value: ninentyPercentile, ***REMOVED***: ***REMOVED***FinalArr};
+  const userFinalArr = userNinety.map(model => model.username);
+  return {value: ninentyPercentile, userArr: userFinalArr};
 }
 
 //Individual user profile information retrieval
@@ -263,16 +254,16 @@ async function getModelDetails(req,res){
   modelFound = true;
   const modelArr = await retrieveUserModels(username);
   // console.log(modelArr);
-  const ***REMOVED*** = await multiHorse(modelArr);
+  const userModelArr = await multiHorse(modelArr);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  const date = ***REMOVED***[0].activeRounds[3].date.substring(0,10);
+  const date = userModelArr[0].activeRounds[3].date.substring(0,10);
 
-  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date, username: username, modelFound: modelFound});
+  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound});
 }
 
 async function multiHorse(arr){
-  let ***REMOVED*** = [];
+  let userModelArr = [];
   for(let i = 0; i < arr.length; i++){
     try{
       const user = await retrieveObject(userProfile(arr[i]));
@@ -289,7 +280,7 @@ async function multiHorse(arr){
       ];
       // console.log(user.v2UserProfile.dailyUserPerformances[0]);
       // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
-      ***REMOVED***.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+      userModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
     }
     catch(error){
       const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
@@ -305,18 +296,18 @@ async function multiHorse(arr){
       ];
       // console.log(user.v2UserProfile.dailyUserPerformances[0]);
       // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
-      ***REMOVED***.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+      userModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
     }
   }
-  return ***REMOVED***;
+  return userModelArr;
 }
 //Horse Page function
 async function getHorsePage(req,res){
-  let ***REMOVED*** = await get***REMOVED***();
-  const ***REMOVED*** = await multiHorse(***REMOVED***);
+  // array = array for user
+  const userModelArr = await multiHorse(array);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  const date = ***REMOVED***[0].activeRounds[3].date.substring(0,10);
+  const date = userModelArr[0].activeRounds[3].date.substring(0,10);
   // console.log(***REMOVED***[0].activeRounds.length);
   // console.log(***REMOVED***[5]);
   // console.log(***REMOVED***.slice(0,15));
@@ -325,19 +316,17 @@ async function getHorsePage(req,res){
   // console.log(***REMOVED***);
   // console.log(currentNmr);
   // console.log(latestRounds);
-  res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date});
+  res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date});
 }
 
 async function ModelComparison(req, res){
-  let ***REMOVED*** = await get***REMOVED***();
-  const ***REMOVED*** = await multiHorse(***REMOVED***);
-  const date = ***REMOVED***[0].activeRounds[0].date.substring(0,10);
-  // console.log(***REMOVED***[0].activeRounds[0]);
-  const round = ***REMOVED***[0].activeRounds[0].roundNumber;
+  // array = comparison array
+  const userModelArr = await multiHorse(array);
+  const date = userModelArr[0].activeRounds[0].date.substring(0,10);
+  const round = userModelArr[0].activeRounds[0].roundNumber;
   const percentile = 80;
-  let ***REMOVED***Percentile = await getPercentile(round, ***REMOVED***);
-  // console.log(***REMOVED***Percentile);
-  let newScoreArr = ***REMOVED***.map(model => {
+  let userPercentile = await getPercentile(round, array);
+  let newScoreArr = userModelArr.map(model => {
     let modelName = model.modelName;
     let mmc = model.activeRounds[0].mmc;
     let corr = model.activeRounds[0].correlation;
@@ -352,7 +341,7 @@ async function ModelComparison(req, res){
   const ninetyModelArrNames = ninetyModelArr.filter(model => model.model);
   const underNinetyModelArr = sortedArray.filter(model => model.newscore < ninentyPercentile);
   sortedArray.forEach(model =>{
-    if(***REMOVED***Percentile.***REMOVED***.includes(model.model)){
+    if(userPercentile.userArr.includes(model.model)){
       model.corrPassing = true;
     }
     if(ninetyModelArrNames.includes(model)){
@@ -363,7 +352,7 @@ async function ModelComparison(req, res){
     .then(result => {
       if(!result.rows[0]){
         sortedArray.forEach(model => {
-          client.query(`INSERT INTO ModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore, percentileNewscoreRelativeGboy, abovePercentNewscoreRelativeGboy, percentvalueNewscoreRelativeGboy) VALUES('${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${***REMOVED***Percentile.value}', '${model.mmc}', '${model.newscore}', '${percentile}', '${model.newScorePassing}', '${ninentyPercentile}')`);
+          client.query(`INSERT INTO ModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore) VALUES('${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${***REMOVED***Percentile.value}', '${model.mmc}', '${model.newscore}')`);
         });
       }
     });
