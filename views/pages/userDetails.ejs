@@ -2,13 +2,13 @@
 <html>
   <head>
     <title>Numerai Dashboard</title>
-    <link href= "../style/reset.css" rel= "stylesheet">
+    <link href= "/style/reset.css" rel= "stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link href= "../style/base.css" rel= "stylesheet">
-    <link href= "../style/layout.css" rel= "stylesheet">
-    <link href= "../style/modules.css" rel= "stylesheet">
-    <link href= "../style/horse.css" rel= "stylesheet">
+    <link href= "/style/base.css" rel= "stylesheet">
+    <link href= "/style/layout.css" rel= "stylesheet">
+    <link href= "/style/modules.css" rel= "stylesheet">
+    <link href= "/style/horse.css" rel= "stylesheet">
   </head>
   <body>
     <header>
@@ -38,6 +38,7 @@
         <% userTotalStake+=Number(userData[i].totalStake)%>
         <% let activeTotal = 0%>
         <%for(let j =0; j< userData[i].activeRounds.length; j++){activeTotal+= Number(userData[i].activeRounds[j].payoutPending)}%>
+        <%if(isNaN(activeTotal) === true){activeTotal = 0}%>
         <p><%=activeTotal.toFixed(2)%> NMR </p>
         <p><%=userData[i].dailyChange%> NMR </p>
         <%dailyChangeAllModels += Number(userData[i].dailyChange)%>
@@ -62,6 +63,7 @@
         <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
       </div>
       <div>
+        <p class = "modelFound" id = "<%=modelFound%>"> Model Does Not Exist</p>
         <form action ="/<%=username%>/addmodel?_method=PUT" method = "POST">
           <label>Add Model</label>
           <input class ="model-input" type="text" name ="model"></input>
