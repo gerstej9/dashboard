@@ -16,5 +16,5 @@ percentileAllModelCorr DECIMAL,
 passingPercentile VARCHAR(255),
 percentileValue DECIMAL,
 mmc DECIMAL,
-newscore DECIMAL,
+newscore DECIMAL
 );

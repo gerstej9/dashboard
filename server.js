@@ -22,10 +22,6 @@ app.set('view engine', 'ejs');
 const latestRoundsPosition = 4;
 let modelFound = true;
 
-// async function get***REMOVED***(){
-//   let ***REMOVED*** =  await client.query('SELECT * FROM ***REMOVED***');
-//   return ***REMOVED***.rows[0].models;
-// }
 
 //Query Constants
 
@@ -177,8 +173,6 @@ async function getPercentile(roundNumber, modelArr){
   // console.log(roundNumber);
   const userNinety = userModelArr.filter(user => user.correlation > ninentyPercentile);
   userNinety.sort(sortUsersCorr);
-  // ***REMOVED***Ninety.forEach(user => console.log(`${user.username}: ${user.correlation.toFixed(3)}`));
-  // console.log(***REMOVED***Ninety.length);
   const userFinalArr = userNinety.map(model => model.username);
   return {value: ninentyPercentile, userArr: userFinalArr};
 }
@@ -308,14 +302,6 @@ async function getHorsePage(req,res){
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
-  // console.log(***REMOVED***[0].activeRounds.length);
-  // console.log(***REMOVED***[5]);
-  // console.log(***REMOVED***.slice(0,15));
-  // console.log(***REMOVED***.slice(15,25));
-  // console.log(***REMOVED***.slice(25,40));
-  // console.log(***REMOVED***);
-  // console.log(currentNmr);
-  // console.log(latestRounds);
   res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date});
 }
 
@@ -352,7 +338,7 @@ async function ModelComparison(req, res){
     .then(result => {
       if(!result.rows[0]){
         sortedArray.forEach(model => {
-          client.query(`INSERT INTO ModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore) VALUES('${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${***REMOVED***Percentile.value}', '${model.mmc}', '${model.newscore}')`);
+          client.query(`INSERT INTO ModelData (round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore) VALUES('${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${ninentyPercentile.value}', '${model.mmc}', '${model.newscore}')`);
         });
       }
     });
@@ -382,16 +368,14 @@ async function userAddModel(req, res){
 }
 
 async function modelNotFound(req, res){
-  console.log(req.params);
   const username = req.params.user;
   const modelArr = await retrieveUserModels(username);
-  // console.log(modelArr);
-  const ***REMOVED*** = await multiHorse(modelArr);
+  const userModelArr = await multiHorse(modelArr);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  const date = ***REMOVED***[0].activeRounds[3].date.substring(0,10);
+  const date = userModelArr[0].activeRounds[3].date.substring(0,10);
   modelFound = false;
-  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: ***REMOVED***, date: date, username: username, modelFound: modelFound});
+  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound});
 }
 
 async function userRemoveModel(req, res){
@@ -442,27 +426,15 @@ async function calculateRoundInfo(round, modelArr){
   // console.log(modelMmcArr);
   const ninentyPercentile = percentileValue(filteredMmcArr, 90);
   console.log(round);
-  const ***REMOVED***Ninety = modelMmcArr.filter(user => user.mmc > ninentyPercentile);
-  ***REMOVED***Ninety.sort(sortUsersMmc);
-  ***REMOVED***Ninety.forEach(user => console.log(`${user.username}: ${user.mmc.toFixed(3)}`));
-  console.log(***REMOVED***Ninety.length);
+  const userNinety = modelMmcArr.filter(user => user.mmc > ninentyPercentile);
+  userNinety.sort(sortUsersMmc);
+  userNinety.forEach(user => console.log(`${user.username}: ${user.mmc.toFixed(3)}`));
+  console.log(userNinety.length);
 }
 
 
 //Executable functions
-// userProfileMmc('***REMOVED***', 239);
-// getHorsePage(***REMOVED***);
-// calculateRoundInfo(238, ***REMOVED***);
-// calculateRoundInfo(239, ***REMOVED***);
-// calculateRoundInfo(240, ***REMOVED***);
-// calculateRoundInfo(241, ***REMOVED***);
-// getUsers();
-// getPercentile(238, ***REMOVED***);
-// getPercentile(239, ***REMOVED***);
-// getPercentile(240, ***REMOVED***);
-// getPercentile(241, ***REMOVED***);
-// retrieveObject(latestNmrPrice())
-//   .then(result => console.log(result));
+
 
 //TODO uncouple model new score and create for each individual
 //Change pocketmonkey to monkey
