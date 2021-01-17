@@ -336,10 +336,31 @@ async function ModelComparison(req, res){
 }
 
 
+// async function downloadSQL(req, res){
+//   const username = req.params.user;
+//   await client.query(`\copy (SELECT round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore FROM ModelData WHERE username = '${username}') TO '/tmp/numerai_comparison.csv' csv header`);
+//   res.download('/tmp/numerai_comparison.csv');
+// }
+// round	model	corr	percentileallmodelcorr	passingpercentile	percentilevalue	mmc	newscore
+// 242	***REMOVED***	0.013594668	80	TRUE	0.029695973	0.012317861	0.025912528
+// 242	***REMOVED***	0.013335187	80	FALSE	0.029695973	0.012128109	0.025463296
+
 async function downloadSQL(req, res){
   const username = req.params.user;
-  await client.query(`\copy (SELECT round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore FROM ModelData WHERE username = '${username}') TO '/tmp/numerai_comparison.csv' csv header`);
-  res.download('/tmp/numerai_comparison.csv');
+
+  const result = await client.query(`SELECT round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore FROM ModelData WHERE username = '${username}'`);
+  const rows = result.rows;
+  console.log(rows);
+  const headerRow = '"round","model","corr","percentile","passing percentile","percentile value","mmc","newscore"\r\n';
+  const dataRows = rows.reduce(function (csvDataString, row) {
+    csvDataString += `"${row.round}","${row.model}","${row.corr}","${row.percentileallmodelcorr}","${row.passingpercentile}","${row.percentilevalue}","${row.mmc}","${row.newscore}"`;
+    csvDataString += '\r\n';
+
+    return csvDataString;
+  }, '');
+  res.header('Content-Type', 'text/csv');
+  res.attachment('numerai_model_comparison.csv');
+  return res.send(headerRow + dataRows);
 }
 
 async function userAddModel(req, res){
@@ -424,7 +445,7 @@ async function calculateRoundInfo(round, modelArr){
 //Executable functions
 
 
-//TODO uncouple model new score and create for each individual
+//TODO uncouple model new score and c reate for each individual
 //Change pocketmonkey to monkey
 
 
@@ -433,3 +454,11 @@ app.use('*', (req, res) => res.status(404).send('Route you are looking for is no
 client.connect().then(() => {
   app.listen(PORT,() => console.log(`Listening on: ${PORT}`));
 });
+
+//Get every model for every round
+//Get rid of rest of database
+//Make model comparison dynamically rendered
+
+// All Data
+// round Number, model name, mmc, cor, stake, nmr PriceUSD
+
