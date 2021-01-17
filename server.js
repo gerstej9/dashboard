@@ -323,46 +323,22 @@ async function ModelComparison(req, res){
   });
   // console.log(newScoreArr);
   let sortedArray = newScoreArr.sort(sortUsersCorr);
-  const ninetyArr = sortedArray.map(user => user.newscore);
-  const ninentyPercentile = percentileValue(ninetyArr, 80);
-  const ninetyModelArr = sortedArray.filter(model => model.newscore > ninentyPercentile);
-  const ninetyModelArrNames = ninetyModelArr.filter(model => model.model);
-  const underNinetyModelArr = sortedArray.filter(model => model.newscore < ninentyPercentile);
+  client.query(`DELETE FROM ModelData WHERE round = ${round} AND username = '${username}'`);
   sortedArray.forEach(model =>{
     if(userPercentile.userArr.includes(model.model)){
       model.corrPassing = true;
     }
-    if(ninetyModelArrNames.includes(model)){
-      model.newScorePassing = true;
-    }
+    client.query(`INSERT INTO ModelData (username, round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore) VALUES('${username}','${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${userPercentile.value}', '${model.mmc}', '${model.newscore}')`);
   });
-  client.query(`SELECT * FROM ModelData WHERE round = ${round} AND username = '${username}'`)
-    .then(result => {
-      // console.log(result.rows[0]);
-      const modelArr = result.rows.map(model => model.model);
-      console.log(modelArr);
-      // if(!result.rows[0])
-      // console.log(result.rows);
-      // console.log(sortedArray.model);
-      sortedArray.forEach(model => {
-        console.log(model.model);
-        if(!modelArr.includes(model.model)){
-          client.query(`INSERT INTO ModelData (username, round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore) VALUES('${username}','${round}', '${model.model}', '${model.corr}', '${percentile}', '${model.corrPassing}', '${userPercentile.value}', '${model.mmc}', '${model.newscore}')`);
-        }
-      });
-      // }
-    });
-  const topPercentileArr = sortedArray.filter(model => model.corrPassing === true && model.newScorePassing === true);
-  const topCorrArr = sortedArray.filter(model => model.corrPassing === true && model.newScorePassing === false);
-  const topNewScore = sortedArray.filter(model => model.corrPassing === false && model.newScorePassing === true);
-  const bottomArr = sortedArray.filter(model => model.corrPassing === false && model.newScorePassing === false);
-  res.render('pages/newscore.ejs', {userData: bottomArr, ninetyModelArr: topPercentileArr, newScorePass: topNewScore, topCorrPassing: topCorrArr,date: date, round: round});
+  const topPercentileArr = sortedArray.filter(model => model.corrPassing === true);
+  const bottomArr = sortedArray.filter(model => model.corrPassing === false);
+  res.render('pages/newscore.ejs', {userData: bottomArr, ninetyModelArr: topPercentileArr, date: date, round: round});
 }
 
 
 async function downloadSQL(req, res){
   const username = req.params.user;
-  await client.query(`\copy (SELECT * FROM ModelData WHERE username = '${username}') TO '/tmp/numerai_comparison.csv' csv header`);
+  await client.query(`\copy (SELECT round, model, corr, percentileAllModelCorr, passingPercentile, percentileValue, mmc, newscore FROM ModelData WHERE username = '${username}') TO '/tmp/numerai_comparison.csv' csv header`);
   res.download('/tmp/numerai_comparison.csv');
 }
 
