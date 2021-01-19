@@ -1,6 +1,14 @@
+body{
+  background-color:#000000 !important;
+  color: lightgrey !important ;
+}
+
+.monkey, .fox, .cat, .orange{
+  color: black;
+}
+
 header{
   display:flex;
-  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   margin:2% 2% 5% 2%;
@@ -23,6 +31,11 @@ header h2{
   display:flex;
   justify-content: center;
   width:100%;
+}
+
+a{
+  color: #b030b0;
+  margin-left:2%;
 }
 
 
@@ -74,7 +87,7 @@ header h2{
 }
 
 .monkey{
-background-color: #FAFA66;
+background-color: #bc6ff1;
 }
 
 .fox{
@@ -82,7 +95,7 @@ background-color: #FAFA66;
 }
 
 .cat{
-  background-color:#A0DAA9
+  background-color:#80ffdb
 }
 
 .orange{
