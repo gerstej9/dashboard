@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href= "/style/base.css" rel= "stylesheet">
-    <link id = "theme"  href= "/style/lightlayout.css" rel= "stylesheet">
+    <link id = "theme" href= "../style/<%=theme%>layout.css" rel= "stylesheet"> 
     <link href= "/style/modules.css" rel= "stylesheet">
   </head>
   <body>
@@ -15,9 +15,11 @@
       <h2>Daily Performance</h2>
       <h2>Date: <%=date%></h2>
       <h2>Live Rounds: <%=userData[0].activeRounds[0].roundNumber%> to <%=userData[0].activeRounds[3].roundNumber%></h2>
-      <nav>
-        <button class = "toggle">Dark Mode</button>
-      </nav>
+      <label class="switch">
+        <input class = "toggle" type="checkbox" <%if(theme === 'dark'){%>checked<%}%>>
+        <span class="slider round"></span>
+      </label>
+      <h3>Dark Mode</h3>
     </header>
     <main>
       <h2 class ="user">User: <%=username%></h2>
