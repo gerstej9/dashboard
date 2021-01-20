@@ -19,23 +19,18 @@
       <h3>Dark Mode</h3>
     </header>
     <main>
-      <form action = "/user" method ="POST">
+      <h2>Saved Model Collections</h2>
+      <ul class = "existing-collections">
+      </ul><br>
+      <form id = "newCollection">
         <fieldset>
-          <legend>Returning User</legend>
-          <label class = "userNot" id ="<%=userExist%>">Username</label>
-          <input class = "username-input" type = "text" name = "username" required></input>
-          <input type="submit"></input>
-          <span id="user-not">Username Does Not Exist</span><br>
-      </fieldset>
-      </form><br>
-      <form action ="/newuser" method = "POST">
-        <fieldset>
-          <legend>New User</legend>
-          <label class = "userDoes" id= "<%=userExist%>">Username</label>
-          <input class = "username-input" type = "text" name = "username" required></input><br>
+          <legend>New Model Collection</legend>
+          <label class = "userDoes" id= "<%=userExist%>">Collection Name</label>
+          <input class = "username-input" id = "collectionName" type = "text" name = "username" required></input><br>
           <label>Add Model</label>
-          <input class = "username-input" type ="text" name ="model" required></input>
-          <input type = "submit"></input>
+          <input id = "model-to-add" class = "username-input" class = "model" type ="text" name ="model" required></input>
+          <input id = "addModel" name = "model" type = "checkbox"></input>
+          <input id = "collectionSubmit" type = "submit"></input>
           <span id="user-does">Username Already Exists</span><br>
         </fieldset>
       </form>
