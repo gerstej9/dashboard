@@ -2,10 +2,10 @@ const express = require('express');
 require('dotenv').config({});
 const fetch = require('node-fetch');
 const PORT = process.env.PORT || 9999;
-const MNS = process.env.MNS;
 const percentile = require('stats-percentile');
 const pg = require('pg');
 const methodOverride = require('method-override');
+const cookies = require('cookie-parser');
 
 const app = express();
 
@@ -16,6 +16,7 @@ app.use(methodOverride('_method'));
 app.use(express.static('./public'));
 app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
+app.use(cookies());
 
 
 //Global Constant
@@ -107,6 +108,7 @@ function NewScore(model, corr, mmc, newscore, corrPassing, newScorePassing){
 
 //Helper Functions
 
+
 const sortUsersCorr = (leftModel, rightModel) =>{
   if(leftModel.corr < rightModel.corr){
     return 1;
@@ -141,6 +143,10 @@ const sortUsersNewscore = (leftModel, rightModel) =>{
 function percentileValue(arr, threshold){
   const ninety = percentile(arr, threshold);
   return ninety;
+}
+
+function getTheme(req){
+  return req.cookies.theme || 'light';
 }
 
 //Base api graphql call
@@ -199,7 +205,7 @@ async function modelComp(username){
 
 //Homepage Route Function
 function getHomepage(req, res){
-  res.render('pages/home.ejs', {userExist: 'none'});
+  res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req)});
 }
 
 function getUserName(req, res){
@@ -208,25 +214,36 @@ function getUserName(req, res){
     .then(result =>{
       // console.log(result.rows[0]);
       if(result.rows[0] === undefined){
-        res.render('pages/home.ejs', {userExist: 'no'});
+        res.render('pages/home.ejs', {userExist: 'no', theme: getTheme(req)});
       }else{
         res.redirect(`/detail/${req.body.username}`);
       }
     });
 }
 
+// function createNewUser(req, res){
+//   const theme = req.cookies.theme;
+//   client.query(`SELECT * FROM userProfile WHERE username = '${req.body.username}'`)
+//     .then(result =>{
+//       if(result.rows[0] !== undefined){
+//         res.render('pages/home.ejs', {userExist: 'yes', theme: theme});
+//       }else{
+//         client.query(`INSERT INTO userProfile (username, models) VALUES('${req.body.username}', ARRAY ['${req.body.model}'])`)
+//           .then(() => {
+//             res.redirect(`/detail/${req.body.username}`);
+//           });
+//       }
+//     });
+// }
+
 function createNewUser(req, res){
-  client.query(`SELECT * FROM userProfile WHERE username = '${req.body.username}'`)
-    .then(result =>{
-      if(result.rows[0] !== undefined){
-        res.render('pages/home.ejs', {userExist: 'yes'});
-      }else{
-        client.query(`INSERT INTO userProfile (username, models) VALUES('${req.body.username}', ARRAY ['${req.body.model}'])`)
-          .then(() => {
-            res.redirect(`/detail/${req.body.username}`);
-          });
-      }
-    });
+  const newUser = req.body.username;
+  if(req.cookies.username.includes(`${newUser}`)){
+    res.render('pages/home.ejs', {userExist: 'yes', theme: getTheme(req)});
+  }else{
+    res.cookie('username', `${newUser}`);
+    res.redirect(`/detail/${newUser}`);
+  }
 }
 
 async function retrieveUserModels(user){
@@ -252,8 +269,7 @@ async function getModelDetails(req,res){
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
-
-  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound});
+  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound, theme: getTheme(req)});
 }
 
 async function multiHorse(arr){
@@ -302,7 +318,7 @@ async function getHorsePage(req,res){
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
-  res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date});
+  res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, theme: getTheme(req)});
 }
 
 async function ModelComparison(req, res){
@@ -332,7 +348,7 @@ async function ModelComparison(req, res){
   });
   const topPercentileArr = sortedArray.filter(model => model.corrPassing === true);
   const bottomArr = sortedArray.filter(model => model.corrPassing === false);
-  res.render('pages/newscore.ejs', {userData: bottomArr, ninetyModelArr: topPercentileArr, date: date, round: round});
+  res.render('pages/newscore.ejs', {userData: bottomArr, ninetyModelArr: topPercentileArr, date: date, round: round, theme: getTheme(req)});
 }
 
 
@@ -384,7 +400,7 @@ async function modelNotFound(req, res){
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
   modelFound = false;
-  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound});
+  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound, theme: getTheme(req)});
 }
 
 async function userRemoveModel(req, res){
