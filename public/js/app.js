@@ -1,5 +1,6 @@
 'use strict';
 
+
 const userStatus = $('.userNot').attr('id');
 const newUserStatus = $('.userDoes').attr('id');
 
@@ -24,13 +25,15 @@ function createModelCollection(event){
   }
   modelCollections.push({collectionName: collectionName, modelCollection:model});
   localStorage.setItem('collections', JSON.stringify(modelCollections));
+  renderModelCollection();
 }
 
-function addModel(event){
-  event.preventDefault();
-  console.log('hello');
-  console.log($('#model-to-add').val());
-  $('#collectionSubmit').before($('<h2></h2>'));
+function addModel(){
+  const modelToAdd = $('#model-to-add').val();
+  $('#modelList').append($(`<li class = "modelArray"><h2>${modelToAdd}</h2><span>X</span></li>`));
+  $('span').on('click', deleteModel);
+  $('#addModel').prop('checked', false);
+  $('#model-to-add').val('');
 }
 
 function renderModelCollection(){
@@ -46,6 +49,11 @@ function renderModelCollection(){
       $('.existing-collections').append(`<h2>${collection.collectionName}</h2>`);
     });
   }
+}
+
+function deleteModel(){
+  console.log('hello');
+  $('span').closest('li').remove();
 }
 
 $('#addModel').change(addModel);
