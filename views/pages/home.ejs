@@ -27,13 +27,16 @@
           <legend>New Model Collection</legend>
           <label class = "userDoes" id= "<%=userExist%>">Collection Name</label>
           <input class = "username-input" id = "collectionName" type = "text" name = "username" required></input><br>
-          <label>Add Model</label>
+          <label id = "beforeAddModel">Add Model</label>
           <input id = "model-to-add" class = "username-input" class = "model" type ="text" name ="model" required></input>
           <input id = "addModel" name = "model" type = "checkbox"></input>
           <input id = "collectionSubmit" type = "submit"></input>
           <span id="user-does">Username Already Exists</span><br>
         </fieldset>
       </form>
+      <ul id = "modelList">
+        <h2>Collection Models</h2>
+      </ul>
       <img src="/data/Num_3d_20210115.PNG" alt="Numerai 3-D">
     </main>
     <footer>
