@@ -22,6 +22,7 @@ app.use(cookies());
 //Global Constant
 const latestRoundsPosition = 4;
 let modelFound = true;
+// localStorage.setItem('modelCollections', modelCollections);
 
 
 //Query Constants
@@ -74,10 +75,10 @@ const v2RoundDetails = roundNumber => `{
 // Route Paths
 app.get('/', getHomepage);
 app.post('/user', getUserName);
-app.post('/newuser', createNewUser);
+// app.post('/newuser', createNewUser);
 app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
-app.put('/:username/addmodel', userAddModel);
+// app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
 app.get('/:user/model_not_found', modelNotFound);
 app.get('/:user/modelcomparison', ModelComparison);
@@ -236,15 +237,17 @@ function getUserName(req, res){
 //     });
 // }
 
-function createNewUser(req, res){
-  const newUser = req.body.username;
-  if(req.cookies.username.includes(`${newUser}`)){
-    res.render('pages/home.ejs', {userExist: 'yes', theme: getTheme(req)});
-  }else{
-    res.cookie('username', `${newUser}`);
-    res.redirect(`/detail/${newUser}`);
-  }
-}
+// function createNewUser(req, res){
+//   const newCollection = req.body.username;
+//   const LSmodels = localStorage.getItem('modelCollections');
+//   const modelCollections = JSON.parse(LSmodels);
+//   if(modelCollections[0].collectionName === newCollection){
+//     res.render('pages/home.ejs', {userExist: 'yes', theme: getTheme(req)});
+//   }else{
+//     res.cookie('username', `${newCollection}`);
+//     res.redirect(`/detail/${newCollection}`);
+//   }
+// }
 
 async function retrieveUserModels(user){
   let modelArr = [];
