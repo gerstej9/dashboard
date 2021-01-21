@@ -19,25 +19,25 @@
       <h3>Dark Mode</h3>
     </header>
     <main>
-      <form action = "/user" method ="POST">
-        <fieldset>
-          <legend>Returning User</legend>
-          <label class = "userNot" id ="<%=userExist%>">Username</label>
-          <input class = "username-input" type = "text" name = "username" required></input>
-          <input type="submit"></input>
-          <span id="user-not">Username Does Not Exist</span><br>
-      </fieldset>
+      <h2>Saved Model Collections</h2>
+      <ul class = "existing-collections">
+      </ul><br>
+      <form id = "newCollection">
+          <label class = "userDoes" id= "<%=userExist%>">Collection Name</label>
+          <input class = "username-input" id = "collectionName" type = "text" name = "username"></input><br>
       </form><br>
-      <form action ="/newuser" method = "POST">
-        <fieldset>
-          <legend>New User</legend>
-          <label class = "userDoes" id= "<%=userExist%>">Username</label>
-          <input class = "username-input" type = "text" name = "username" required></input><br>
-          <label>Add Model</label>
-          <input class = "username-input" type ="text" name ="model" required></input>
-          <input type = "submit"></input>
-          <span id="user-does">Username Already Exists</span><br>
-        </fieldset>
+      <h2>Collection Models</h2>
+      <ul id = "modelList">
+      </ul>
+      <form>
+        <label id = "beforeAddModel">Add Model</label>
+        <input id = "model-to-add" class = "username-input" class = "model" type ="text" name ="model" ></input>
+        <input id = "addModel" name = "model" type = "checkbox"></input><br><br>
+        <button id = "saveCollection">Save Collection</button><br>
+        <button id = "deleteCollection">Delete Collection</button>
+      </form><br>
+      <form id = "detailPage" action = "" method = "GET">
+        <button id = "detailButton">View Collection Detail Page</button>
       </form>
       <img src="/data/Num_3d_20210115.PNG" alt="Numerai 3-D">
     </main>
