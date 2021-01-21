@@ -264,11 +264,18 @@ async function retrieveUserModels(user){
 
 //Model Detail Page
 async function getModelDetails(req,res){
+  console.log(req.query.model);
+  console.log(req.params);
+  let modelArray = req.query.model;
+  console.log(typeof(modelArray));
+  if(typeof(modelArray) === 'string'){
+    modelArray = [modelArray];
+  }
   const username = req.params.user;
   modelFound = true;
-  const modelArr = await retrieveUserModels(username);
+  // const modelArr = await retrieveUserModels(username);
   // console.log(modelArr);
-  const userModelArr = await multiHorse(modelArr);
+  const userModelArr = await multiHorse(modelArray);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);

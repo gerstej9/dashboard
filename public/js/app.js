@@ -27,13 +27,14 @@ function deleteModelCollection(event){
   $('#collectionName').val('');
   $('#modelList').html('');
   renderModelCollectionNames();
+  $('#detailPage').find('input').remove();
 }
 
 function saveModelCollection(event){
   event.preventDefault();
   // const model = $('#model').val();
   const models = [];
-  $( ".modelArray" ).find('h2').each(function() {
+  $( '.modelArray' ).find('h2').each(function() {
     models.push($(this).text());
   });
   console.log(models);
@@ -45,17 +46,18 @@ function saveModelCollection(event){
   }
   modelCollections.push({collectionName: collectionName, modelCollection:models});
   localStorage.setItem('collections', JSON.stringify(modelCollections));
-  $('#collectionName').val('');
-  $('ul').html('');
+  $('.existing-collections').html('');
   renderModelCollectionNames();
 }
 
 function addModel(){
   const modelToAdd = $('#model-to-add').val();
   $('#modelList').append($(`<li class = "modelArray"><h2>${modelToAdd}</h2><span class = "removeModels">X</span></li>`));
+  $('#detailButton').before(`<input type = "hidden" name = "model" value = "${modelToAdd}"></input>`);
   $('.removeModels').on('click', deleteModel);
   $('#addModel').prop('checked', false);
   $('#model-to-add').val('');
+  changeFormAction();
 }
 
 function renderModelCollectionNames(){
@@ -76,6 +78,7 @@ function renderModelCollectionNames(){
 }
 
 function renderExistingCollectionModels(){
+  $('#detailPage').find('input').remove();
   $('#modelList').html('');
   const collectionToRetrieve = $(this).text();
   const LSmodels = localStorage.getItem('collections');
@@ -90,7 +93,13 @@ function renderExistingCollectionModels(){
     $('.removeModels').on('click', deleteModel);
     $('#addModel').prop('checked', false);
     $('#model-to-add').val('');
+    $('#detailButton').before(`<input type = "hidden" name = "model" value = "${model}"></input>`);
   });
+  changeFormAction();
+}
+
+function changeFormAction(){
+  $('#detailPage').attr('action', '/detail/'+ $('#collectionName').val());
 }
 
 function deleteModel(){
@@ -109,6 +118,9 @@ renderModelCollectionNames();
 
 //TODO prevent repeat names in local storage for collection names
 
+// $('#detailPage').find('input').remove()
+
+// $('#detailPage').attr('action', '/detail/'+ $('#collectionName').val())
 
 // $( "li" ).find('h2').each(function() {
 //   console.log($( this ).text() );
