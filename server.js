@@ -264,10 +264,7 @@ async function retrieveUserModels(user){
 
 //Model Detail Page
 async function getModelDetails(req,res){
-  console.log(req.query.model);
-  console.log(req.params);
   let modelArray = req.query.model;
-  console.log(typeof(modelArray));
   if(typeof(modelArray) === 'string'){
     modelArray = [modelArray];
   }
@@ -334,12 +331,15 @@ async function getHorsePage(req,res){
 async function ModelComparison(req, res){
   // array = comparison array
   const username = req.params.user;
-  const modelArr = await retrieveUserModels(username);
-  const userModelArr = await multiHorse(modelArr);
+  let modelArray = req.query.model;
+  if(typeof(modelArray) === 'string'){
+    modelArray = [modelArray];
+  }
+  const userModelArr = await multiHorse(modelArray);
   const date = userModelArr[0].activeRounds[0].date.substring(0,10);
   const round = userModelArr[0].activeRounds[0].roundNumber;
   const percentile = 80;
-  let userPercentile = await getPercentile(round, modelArr);
+  let userPercentile = await getPercentile(round, modelArray);
   let newScoreArr = userModelArr.map(model => {
     let modelName = model.modelName;
     let mmc = model.activeRounds[0].mmc;
