@@ -23,20 +23,19 @@
       <ul class = "existing-collections">
       </ul><br>
       <form id = "newCollection">
-        <fieldset>
-          <legend>New Model Collection</legend>
           <label class = "userDoes" id= "<%=userExist%>">Collection Name</label>
-          <input class = "username-input" id = "collectionName" type = "text" name = "username" required></input><br>
-          <label id = "beforeAddModel">Add Model</label>
-          <input id = "model-to-add" class = "username-input" class = "model" type ="text" name ="model" required></input>
-          <input id = "addModel" name = "model" type = "checkbox"></input>
-          <input id = "collectionSubmit" type = "submit"></input>
-          <span id="user-does">Username Already Exists</span><br>
-        </fieldset>
-      </form>
+          <input class = "username-input" id = "collectionName" type = "text" name = "username"></input><br>
+      </form><br>
+      <h2>Collection Models</h2>
       <ul id = "modelList">
-        <h2>Collection Models</h2>
       </ul>
+      <form>
+        <label id = "beforeAddModel">Add Model</label>
+        <input id = "model-to-add" class = "username-input" class = "model" type ="text" name ="model" ></input>
+        <input id = "addModel" name = "model" type = "checkbox"></input>
+        <button id = "saveCollection">Save Collection</button>
+        <button id = "deleteCollection">Delete Collection</button>
+      </form>
       <img src="/data/Num_3d_20210115.PNG" alt="Numerai 3-D">
     </main>
     <footer>
