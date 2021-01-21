@@ -15,15 +15,21 @@
       <h2>Daily Performance</h2>
       <h2>Date: <%=date%></h2>
       <h2>Live Rounds: <%=userData[0].activeRounds[0].roundNumber%> to <%=userData[0].activeRounds[3].roundNumber%></h2>
+      <h2>NMR Price: <%=nmrPrice%></h2>
       <label class="switch">
         <input class = "toggle" type="checkbox" <%if(theme === 'dark'){%>checked<%}%>>
         <span class="slider round"></span>
       </label>
       <h3>Dark Mode</h3>
+      <nav>
+        <a href = "/">Home</a>
+      </nav>
     </header>
     <main>
-      <h2 class ="user">User: <%=username%></h2>
-      <a href = "/<%=username%>/modelcomparison">Model Comparsion by Round</a><br>
+      <h2 class ="user"><%=username%></h2>
+      <form id = "modelComparisonPage" action = "" method = "GET">
+        <button id = "comparisonRoundButton">View Comparison by Round</button>
+      </form>
       <div class = "titleRow monkey">
         <p>Model</p>
         <p>Staked</p>
@@ -38,7 +44,7 @@
       <%let dailyChangeAllModels = 0%>
       <%for(let i = 0; i< userData.length; i++){%>
       <div class = "modelRow monkey">
-        <p><%=userData[i].modelName%></p>
+        <p class = "collectionModelNames"><%=userData[i].modelName%></p>
         <p><%=userData[i].totalStake%> NMR</p>
         <% userTotalStake+=Number(userData[i].totalStake)%>
         <% let activeTotal = 0%>
