@@ -12,4 +12,17 @@ function hideModelFound(){
   }
 }
 
+function prepareModelComparisonPage(){
+  $('#modelComparisonPage').attr('action', '/'+$('.user').text()+'/modelcomparison');
+  $( '.collectionModelNames' ).each(function() {
+    let model = $(this).text();
+    $('#comparisonRoundButton').before(`<input type = "hidden" name = "model" value = "${model}"></input>`);
+  });
+}
+
+
+
+
+prepareModelComparisonPage();
 hideModelFound();
+// comparisonRoundButton

@@ -22,6 +22,7 @@ app.use(cookies());
 //Global Constant
 const latestRoundsPosition = 4;
 let modelFound = true;
+// localStorage.setItem('modelCollections', modelCollections);
 
 
 //Query Constants
@@ -74,10 +75,10 @@ const v2RoundDetails = roundNumber => `{
 // Route Paths
 app.get('/', getHomepage);
 app.post('/user', getUserName);
-app.post('/newuser', createNewUser);
+// app.post('/newuser', createNewUser);
 app.get('/detail/:user', getModelDetails);
 app.get('/percent', getPercentile);
-app.put('/:username/addmodel', userAddModel);
+// app.put('/:username/addmodel', userAddModel);
 app.put('/:username/removemodel',userRemoveModel);
 app.get('/:user/model_not_found', modelNotFound);
 app.get('/:user/modelcomparison', ModelComparison);
@@ -236,15 +237,17 @@ function getUserName(req, res){
 //     });
 // }
 
-function createNewUser(req, res){
-  const newUser = req.body.username;
-  if(req.cookies.username.includes(`${newUser}`)){
-    res.render('pages/home.ejs', {userExist: 'yes', theme: getTheme(req)});
-  }else{
-    res.cookie('username', `${newUser}`);
-    res.redirect(`/detail/${newUser}`);
-  }
-}
+// function createNewUser(req, res){
+//   const newCollection = req.body.username;
+//   const LSmodels = localStorage.getItem('modelCollections');
+//   const modelCollections = JSON.parse(LSmodels);
+//   if(modelCollections[0].collectionName === newCollection){
+//     res.render('pages/home.ejs', {userExist: 'yes', theme: getTheme(req)});
+//   }else{
+//     res.cookie('username', `${newCollection}`);
+//     res.redirect(`/detail/${newCollection}`);
+//   }
+// }
 
 async function retrieveUserModels(user){
   let modelArr = [];
@@ -261,11 +264,15 @@ async function retrieveUserModels(user){
 
 //Model Detail Page
 async function getModelDetails(req,res){
+  let modelArray = req.query.model;
+  if(typeof(modelArray) === 'string'){
+    modelArray = [modelArray];
+  }
   const username = req.params.user;
   modelFound = true;
-  const modelArr = await retrieveUserModels(username);
+  // const modelArr = await retrieveUserModels(username);
   // console.log(modelArr);
-  const userModelArr = await multiHorse(modelArr);
+  const userModelArr = await multiHorse(modelArray);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
@@ -324,12 +331,15 @@ async function getHorsePage(req,res){
 async function ModelComparison(req, res){
   // array = comparison array
   const username = req.params.user;
-  const modelArr = await retrieveUserModels(username);
-  const userModelArr = await multiHorse(modelArr);
+  let modelArray = req.query.model;
+  if(typeof(modelArray) === 'string'){
+    modelArray = [modelArray];
+  }
+  const userModelArr = await multiHorse(modelArray);
   const date = userModelArr[0].activeRounds[0].date.substring(0,10);
   const round = userModelArr[0].activeRounds[0].roundNumber;
   const percentile = 80;
-  let userPercentile = await getPercentile(round, modelArr);
+  let userPercentile = await getPercentile(round, modelArray);
   let newScoreArr = userModelArr.map(model => {
     let modelName = model.modelName;
     let mmc = model.activeRounds[0].mmc;
