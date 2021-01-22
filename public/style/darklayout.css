@@ -117,6 +117,14 @@ background-color: #bc6ff1;
   margin-bottom: .5%;
 }
 
+.collections{
+  border: 3px double white;
+  width: 10%;
+  display: flex;
+  justify-content: center;
+}
+
+
 @media(min-width: 760px){
   body{
     width: 760px;
