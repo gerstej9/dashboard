@@ -110,6 +110,13 @@ color: white;
   margin-bottom: .5%;
 }
 
+.collections{
+  border: 5px double Black;
+  width: 10%;
+  display: flex;
+  justify-content: center;
+}
+
 @media(min-width: 760px){
   body{
     width: 760px;

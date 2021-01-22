@@ -1,4 +1,4 @@
-img{
+#numerai-image{
   width: 80%;
   height: 400px;
   margin: 10%;
@@ -69,4 +69,25 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.plus-sign{
+  height: 17px;
+  width: 17px;
+  border-radius: 10px;
+}
+
+.removeModels{
+  height: 15px;
+  width:15px;
+  border-radius:11px;
+}
+
+
+
+.modelArray{
+  width: 25%;
+  display: flex;
+  justify-content: space-between;
+  margin: 1% 0% 1% 0%;
 }
