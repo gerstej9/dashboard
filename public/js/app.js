@@ -20,39 +20,47 @@ function deleteModelCollection(event){
   let LSmodels = localStorage.getItem('collections');
   let modelCollections = JSON.parse(LSmodels);
   let targetIndex = modelCollections.findIndex(i => i.collectionName === collectionName);
-  modelCollections.splice(targetIndex, 1);
-  console.log(modelCollections);
-  localStorage.setItem('collections', JSON.stringify(modelCollections));
-  $('.existing-collections').html('');
-  $('#collectionName').val('');
-  $('#modelList').html('');
-  renderModelCollectionNames();
-  $('#detailPage').find('input').remove();
+  if(targetIndex >=0){
+    modelCollections.splice(targetIndex, 1);
+    localStorage.setItem('collections', JSON.stringify(modelCollections));
+    $('.existing-collections').html('');
+    $('#collectionName').val('');
+    $('#modelList').html('');
+    renderModelCollectionNames();
+    $('#detailPage').find('input').remove();
+  }
 }
 
 function saveModelCollection(event){
   event.preventDefault();
   // const model = $('#model').val();
-  const models = [];
-  $( '.modelArray' ).find('h2').each(function() {
-    models.push($(this).text());
-  });
-  console.log(models);
   const collectionName = $('#collectionName').val();
-  let LSmodels = localStorage.getItem('collections');
-  let modelCollections = JSON.parse(LSmodels);
-  if(modelCollections === null){
-    modelCollections = [];
+  if(collectionName){
+    const models = [];
+    $( '.modelArray' ).find('h2').each(function() {
+      models.push($(this).text());
+    });
+    let LSmodels = localStorage.getItem('collections');
+    let modelCollections = JSON.parse(LSmodels);
+    if(modelCollections === null){
+      modelCollections = [];
+    }
+    let targetIndex = modelCollections.findIndex(i => i.collectionName === collectionName);
+    if(targetIndex >=0){console.log('same name');
+      modelCollections[targetIndex].modelCollection = models;
+    }else{
+      console.log('howdy');
+      modelCollections.push({collectionName: collectionName, modelCollection:models});
+    }
+    localStorage.setItem('collections', JSON.stringify(modelCollections));
+    $('.existing-collections').html('');
+    renderModelCollectionNames();
   }
-  modelCollections.push({collectionName: collectionName, modelCollection:models});
-  localStorage.setItem('collections', JSON.stringify(modelCollections));
-  $('.existing-collections').html('');
-  renderModelCollectionNames();
 }
 
 function addModel(){
   const modelToAdd = $('#model-to-add').val();
-  $('#modelList').append($(`<li class = "modelArray"><h2>${modelToAdd}</h2><span class = "removeModels">X</span></li>`));
+  $('#modelList').append($(`<li class = "modelArray"><h2>${modelToAdd}</h2><img class = "removeModels" src = "https://p.kindpng.com/picc/s/19-191468_png-file-svg-minus-sign-icon-transparent-png.png"></li>`));
   $('#detailButton').before(`<input type = "hidden" name = "model" value = "${modelToAdd}"></input>`);
   $('.removeModels').on('click', deleteModel);
   $('#addModel').prop('checked', false);
@@ -89,7 +97,7 @@ function renderExistingCollectionModels(){
   const targetCollection = modelCollections.filter(collection => collection.collectionName === collectionToRetrieve);
   const models = targetCollection[0].modelCollection;
   models.forEach(model => {
-    $('#modelList').append($(`<li class = "modelArray"><h2>${model}</h2><span class = "removeModels">X</span></li>`));
+    $('#modelList').append($(`<li class = "modelArray"><h2>${model}</h2><img class = "removeModels" src = "https://p.kindpng.com/picc/s/19-191468_png-file-svg-minus-sign-icon-transparent-png.png"></li>`));
     $('.removeModels').on('click', deleteModel);
     $('#addModel').prop('checked', false);
     $('#model-to-add').val('');
@@ -113,7 +121,7 @@ $('#saveCollection').on('click', saveModelCollection);
 $('#deleteCollection').on('click', deleteModelCollection);
 hideUserStatus();
 renderModelCollectionNames();
-
+$('#addModel').hide();
 
 
 //TODO prevent repeat names in local storage for collection names
