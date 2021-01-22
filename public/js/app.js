@@ -32,7 +32,9 @@ function deleteModelCollection(event){
 }
 
 function saveModelCollection(event){
-  event.preventDefault();
+  if(event){
+    event.preventDefault();
+  }
   // const model = $('#model').val();
   const collectionName = $('#collectionName').val();
   if(collectionName){
@@ -46,10 +48,9 @@ function saveModelCollection(event){
       modelCollections = [];
     }
     let targetIndex = modelCollections.findIndex(i => i.collectionName === collectionName);
-    if(targetIndex >=0){console.log('same name');
+    if(targetIndex >=0){
       modelCollections[targetIndex].modelCollection = models;
     }else{
-      console.log('howdy');
       modelCollections.push({collectionName: collectionName, modelCollection:models});
     }
     localStorage.setItem('collections', JSON.stringify(modelCollections));
@@ -66,6 +67,7 @@ function addModel(){
   $('#addModel').prop('checked', false);
   $('#model-to-add').val('');
   changeFormAction();
+  saveModelCollection();
 }
 
 function renderModelCollectionNames(){
@@ -111,7 +113,17 @@ function changeFormAction(){
 }
 
 function deleteModel(){
+  const parentHtml = $(this).parent();
+  const modelToRemove = parentHtml.find('h2').html();
   $(this).parent().html('');
+  $( `input[value|='${modelToRemove}']` ).remove();
+  saveModelCollection();
+}
+
+function newCollection(){
+  $('#detailPage').find('input').remove();
+  $('#modelList').html('');
+  $('#collectionName').val('');
 }
 
 
@@ -122,6 +134,8 @@ $('#deleteCollection').on('click', deleteModelCollection);
 hideUserStatus();
 renderModelCollectionNames();
 $('#addModel').hide();
+$('#newCollectionButton').on('click', newCollection);
+
 
 
 //TODO prevent repeat names in local storage for collection names

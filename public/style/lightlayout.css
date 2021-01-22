@@ -112,7 +112,14 @@ color: white;
 
 .collections{
   border: 5px double Black;
-  width: 10%;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+}
+
+#newCollectionButton{
+  border: 5px double Black;
+  width: 13%;
   display: flex;
   justify-content: center;
 }

@@ -124,6 +124,13 @@ background-color: #bc6ff1;
   justify-content: center;
 }
 
+#newCollectionButton{
+  border: 3px double white;
+  width: 13%;
+  display: flex;
+  justify-content: center;
+}
+
 
 @media(min-width: 760px){
   body{
