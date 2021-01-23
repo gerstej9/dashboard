@@ -276,6 +276,7 @@ async function getModelDetails(req,res){
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
+  console.log(userModelArr[0].activeRounds);
   res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound, theme: getTheme(req)});
 }
 

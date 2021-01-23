@@ -8,6 +8,7 @@
     <link href= "/style/base.css" rel= "stylesheet">
     <link id = "theme" href= "../style/<%=theme%>layout.css" rel= "stylesheet"> 
     <link href= "/style/modules.css" rel= "stylesheet">
+    <link href= "/style/userdetailmodal.css" rel= "stylesheet">
   </head>
   <body>
     <header>
@@ -56,6 +57,16 @@
         <p><%=userData[i].corrPrev%></p>
         <p><%=userData[i].corrCurrent%></p>
         <p><%=userData[i].mmcCurrent%></p>
+      </div>
+      <div class="modal myModal <%=userData[i].modelName%>">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2><%=userData[i].modelName%></h2>
+          <p><%=userData[i].activeRounds[0].correlation.toFixed(3)%></p>
+        </div>
+      
       </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
       <div class = "totalRow monkey">
