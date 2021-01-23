@@ -8,6 +8,7 @@
     <link href= "/style/base.css" rel= "stylesheet">
     <link id = "theme" href= "../style/<%=theme%>layout.css" rel= "stylesheet"> 
     <link href= "/style/modules.css" rel= "stylesheet">
+    <link href= "/style/userdetailmodal.css" rel= "stylesheet">
   </head>
   <body>
     <header>
@@ -56,6 +57,58 @@
         <p><%=userData[i].corrPrev%></p>
         <p><%=userData[i].corrCurrent%></p>
         <p><%=userData[i].mmcCurrent%></p>
+      </div>
+      <div class="modal myModal <%=userData[i].modelName%>">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2><%=userData[i].modelName%></h2>
+          <div class = "modalTitleRow">
+            <p>Round</p>
+            <p>Corr</p>
+            <p>MMC</p>
+            <p>Stake</p>
+            <p>Payout</p>
+          </div>
+          <div class = "modalTitleRow">
+            <p><%=userData[i].activeRounds[3].roundNumber%></p>
+            <p><%=userData[i].activeRounds[3].correlation.toFixed(3)%></p>
+            <p><%=userData[i].activeRounds[3].mmc.toFixed(3)%></p>
+            <% let stake = Number(userData[i].activeRounds[3].selectedStakeValue)%>
+            <p><%=stake.toFixed(2)%></p>
+            <% let payout = Number(userData[i].activeRounds[3].payoutPending)%>
+            <p><%=payout.toFixed(2)%></p>
+          </div>
+          <div class = "modalTitleRow">
+            <p><%=userData[i].activeRounds[2].roundNumber%></p>
+            <p><%=userData[i].activeRounds[2].correlation.toFixed(3)%></p>
+            <p><%=userData[i].activeRounds[2].mmc.toFixed(3)%></p>
+            <% stake = Number(userData[i].activeRounds[2].selectedStakeValue)%>
+            <p><%=stake.toFixed(2)%></p>
+            <% payout = Number(userData[i].activeRounds[2].payoutPending)%>
+            <p><%=payout.toFixed(2)%></p>
+          </div>
+          <div class = "modalTitleRow">
+            <p><%=userData[i].activeRounds[1].roundNumber%></p>
+            <p><%=userData[i].activeRounds[1].correlation.toFixed(3)%></p>
+            <p><%=userData[i].activeRounds[1].mmc.toFixed(3)%></p>
+            <% stake = Number(userData[i].activeRounds[1].selectedStakeValue)%>
+            <p><%=stake.toFixed(2)%></p>
+            <% payout = Number(userData[i].activeRounds[1].payoutPending)%>
+            <p><%=payout.toFixed(2)%></p>
+          </div>
+          <div class = "modalTitleRow">
+            <p><%=userData[i].activeRounds[0].roundNumber%></p>
+            <p><%=userData[i].activeRounds[0].correlation.toFixed(3)%></p>
+            <p><%=userData[i].activeRounds[0].mmc.toFixed(3)%></p>
+            <% stake = Number(userData[i].activeRounds[0].selectedStakeValue)%>
+            <p><%=stake.toFixed(2)%></p>
+            <% payout = Number(userData[i].activeRounds[0].payoutPending)%>
+            <p><%=payout.toFixed(2)%></p>
+          </div>
+        </div>
+      
       </div>
       <%activeTotalAllModels+= Number(activeTotal)}%>
       <div class = "totalRow monkey">

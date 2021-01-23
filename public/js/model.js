@@ -3,7 +3,6 @@
 const modelFound = $('.modelFound').attr('id');
 
 function hideModelFound(){
-  console.log(modelFound);
   if(modelFound === 'true'){
     $('.modelFound').hide();
   }
@@ -20,9 +19,22 @@ function prepareModelComparisonPage(){
   });
 }
 
+function displayModal(){
+  const modalTargetModel = $(this).find('.collectionModelNames').html();
+  $(`.${modalTargetModel}`).css('display', 'block');
+}
+
+function closeModal(){
+  $('.myModal').css('display', 'none');
+}
 
 
 
+
+
+$('.myModal').on('click', closeModal);
+$('.modelRow').on('click', displayModal);
+$('span').on('click', closeModal);
 prepareModelComparisonPage();
 hideModelFound();
 // comparisonRoundButton
