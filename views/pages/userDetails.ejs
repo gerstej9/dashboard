@@ -72,6 +72,19 @@
             <p>Payout</p>
           </div>
           <div class = "modalTitleRow">
+            <p>Live Avg</p>
+            <%let corrSum = 0%>
+            <% for(let j =0; j< 4; j++){ corrSum+= userData[i].activeRounds[j].correlation}%>
+            <% let avgCorr = (corrSum/4)%>
+            <p><%=avgCorr.toFixed(3)%></p>
+            <%let mmcSum = 0%>
+            <% for(j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc}%>
+            <% let avgMmc = (mmcSum/4)%>
+            <p><%=avgMmc.toFixed(3)%></p>
+            <p>-</p>
+            <p>-</p>
+          </div>
+          <div class = "modalTitleRow">
             <p><%=userData[i].activeRounds[3].roundNumber%></p>
             <p><%=userData[i].activeRounds[3].correlation.toFixed(3)%></p>
             <p><%=userData[i].activeRounds[3].mmc.toFixed(3)%></p>
@@ -125,24 +138,6 @@
         <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
         <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
         <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
-      </div>
-      <div>
-        <p class = "modelFound" id = "<%=modelFound%>"> Model Does Not Exist</p>
-        <form action ="/<%=username%>/addmodel?_method=PUT" method = "POST">
-          <label>Add Model</label>
-          <input class ="model-input" type="text" name ="model"></input>
-          <input type = "submit"></input>
-        </form>
-        <form action="/<%=username%>/removemodel?_method=PUT" method="POST">
-          <label>Remove Model</label>
-          <select name = "model">
-            <option value = "default">Choose Model</option>
-            <%for(let i = 0; i< userData.length; i++){%>
-              <option value = "<%=userData[i].modelName%>"><%=userData[i].modelName%></option>
-              <%}%>
-          </select>
-          <input type = "submit"></input>
-        </form>
       </div>
     </main>
     <footer>

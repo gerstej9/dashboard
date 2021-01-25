@@ -276,7 +276,6 @@ async function getModelDetails(req,res){
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
-  console.log(userModelArr[0].activeRounds);
   res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound, theme: getTheme(req)});
 }
 
@@ -489,3 +488,15 @@ client.connect().then(() => {
 // All Data
 // round Number, model name, mmc, cor, stake, nmr PriceUSD
 
+//TODO
+//NEW postsgres table for historic graphql data
+//Catch for wrong models that redirects to homepage with indication of wrong model
+//Avg corr for model of all live rounds
+//Avg corr for all models across all live rounds
+//Avg corr for all models across individual round
+//Slope for each model over previous 12 closed rounds
+//README
+//About us page
+//HEROKU link in github description
+//Clean up code
+//CSS
