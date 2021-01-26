@@ -11,12 +11,17 @@
   <body>
     <header> 
 
-      <h1>NMRai Dashboard</h1>
+      <h1>
+        <a href = "/">NMRai Dashboard </a>
+      </h1>
       <label class="switch">
         <input class = "toggle" type="checkbox" <%if(theme === 'dark'){%>checked<%}%>>
         <span class="slider round"></span>
       </label>
       <h3>Dark Mode</h3>
+      <nav>
+        <a href = "/about_us">About</a>
+      </nav>
     </header>
     <main>
       <input type = "hidden" value = "<%=modelName%>" name = "modelName" id = "modelFound">
@@ -46,7 +51,7 @@
       <form id = "detailPage" action = "" method = "GET">
         <button id = "detailButton">View Collection Detail Page</button>
       </form>
-      <img id = "numerai-image" src="/data/Num_3d_20210115.PNG" alt="Numerai 3-D">
+      <img id = "numerai-image" src="/assets/Num_3d_20210115.PNG" alt="Numerai 3-D">
     </main>
     <footer>
 
