@@ -126,7 +126,32 @@ function newCollection(){
   $('#collectionName').val('');
 }
 
+function modelNotFound(){
+  const modelFoundUser = $('#modelExistsUser').val();
+  const modelFound = $('#modelFound').val();
+  if(modelFound !== 'false'){
+    const LSmodels = localStorage.getItem('collections');
+    const modelCollections = JSON.parse(LSmodels);
+    $('#collectionName').val(`${modelFoundUser}`);
+    const targetCollection = modelCollections.filter(collection => collection.collectionName === modelFoundUser);
+    const models = targetCollection[0].modelCollection;
+    models.forEach(model => {
+      if(model === modelFound){
+        $('#modelList').append($(`<li class = "modelArray"><h2>${model}</h2><h3>(Model Not Found)</h3><img class = "removeModels" src = "https://p.kindpng.com/picc/s/19-191468_png-file-svg-minus-sign-icon-transparent-png.png"></li>`));
+      }else{
+        $('#modelList').append($(`<li class = "modelArray"><h2>${model}</h2><img class = "removeModels" src = "https://p.kindpng.com/picc/s/19-191468_png-file-svg-minus-sign-icon-transparent-png.png"></li>`));
+      }
+      $('.removeModels').on('click', deleteModel);
+      $('#addModel').prop('checked', false);
+      $('#model-to-add').val('');
+      $('#detailButton').before(`<input type = "hidden" name = "model" value = "${model}"></input>`);
+    });
+    changeFormAction();
+  }
+}
 
+
+modelNotFound();
 $('#addModel').change(addModel);
 // $('#newCollection').on('submit',createModelCollection);
 $('#saveCollection').on('click', saveModelCollection);
@@ -147,3 +172,17 @@ $('#newCollectionButton').on('click', newCollection);
 // $( "li" ).find('h2').each(function() {
 //   console.log($( this ).text() );
 // });
+
+
+//  $('#collectionName').val(`${collectionToRetrieve}`);
+// const targetCollection = modelCollections.filter(collection => collection.collectionName === collectionToRetrieve);
+// const models = targetCollection[0].modelCollection;
+// models.forEach(model => {
+//   $('#modelList').append($(`<li class = "modelArray"><h2>${model}</h2><img class = "removeModels" src = "https://p.kindpng.com/picc/s/19-191468_png-file-svg-minus-sign-icon-transparent-png.png"></li>`));
+//   $('.removeModels').on('click', deleteModel);
+//   $('#addModel').prop('checked', false);
+//   $('#model-to-add').val('');
+//   $('#detailButton').before(`<input type = "hidden" name = "model" value = "${model}"></input>`);
+// });
+// changeFormAction();
+// }

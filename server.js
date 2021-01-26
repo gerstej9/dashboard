@@ -206,7 +206,7 @@ async function modelComp(username){
 
 //Homepage Route Function
 function getHomepage(req, res){
-  res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req)});
+  res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req), modelExistsUser: false, modelName: false});
 }
 
 function getUserName(req, res){
@@ -273,18 +273,21 @@ async function getModelDetails(req,res){
   // const modelArr = await retrieveUserModels(username);
   // console.log(modelArr);
   const userModelArr = await multiHorse(modelArray);
-  const currentNmr = await retrieveObject(latestNmrPrice());
-  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  const date = userModelArr[0].activeRounds[3].date.substring(0,10);
-  console.log(userModelArr[0].activeRounds);
-  res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound, theme: getTheme(req)});
+  if(userModelArr[0] === false){
+    res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req), modelExistsUser: username, modelName: userModelArr[1]});
+  }else{
+    const currentNmr = await retrieveObject(latestNmrPrice());
+    const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
+    const date = userModelArr[0].activeRounds[3].date.substring(0,10);
+    res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound, theme: getTheme(req)});
+  }
 }
 
 async function multiHorse(arr){
   let userModelArr = [];
   for(let i = 0; i < arr.length; i++){
     try{
-      const user = await retrieveObject(userProfile(arr[i]));
+      const user = await retrieveObject(userProfile(arr[i].toLowerCase()));
       const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
       [
         user.v2UserProfile.latestRanks.mmcRank,
@@ -301,32 +304,10 @@ async function multiHorse(arr){
       userModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
     }
     catch(error){
-      const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
-      [
-        'N/A',
-        'N/A',
-        'N/A',
-        'N/A',
-        'N/A',
-        0.00,
-        arr[i],
-        0.00
-      ];
-      // console.log(user.v2UserProfile.dailyUserPerformances[0]);
-      // console.log(user.v2UserProfile.latestRoundPerformances.slice(-4));
-      userModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+      userModelArr = [false, arr[i]];
     }
   }
   return userModelArr;
-}
-//Horse Page function
-async function getHorsePage(req,res){
-  // array = array for user
-  const userModelArr = await multiHorse(array);
-  const currentNmr = await retrieveObject(latestNmrPrice());
-  const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  const date = userModelArr[0].activeRounds[3].date.substring(0,10);
-  res.render('pages/horse.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, theme: getTheme(req)});
 }
 
 async function ModelComparison(req, res){
@@ -489,3 +470,15 @@ client.connect().then(() => {
 // All Data
 // round Number, model name, mmc, cor, stake, nmr PriceUSD
 
+//TODO
+//NEW postsgres table for historic graphql data
+//Catch for wrong models that redirects to homepage with indication of wrong model
+//Avg corr for model of all live rounds
+//Avg corr for all models across all live rounds
+//Avg corr for all models across individual round
+//Slope for each model over previous 12 closed rounds
+//README
+//About us page
+//HEROKU link in github description
+//Clean up code
+//CSS
