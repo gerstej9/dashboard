@@ -175,8 +175,11 @@ async function getPercentile(roundNumber, modelArr){
 
 
 //Homepage Route Function
-function getHomepage(req, res){
-  res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req), modelExistsUser: false, modelName: false});
+async function getHomepage(req, res){
+  const queryLeaderboard = await retrieveObject(v2Leaderboard());
+  const leaderboardTen = queryLeaderboard.v2Leaderboard.slice(0,10);
+  const topTenArr = leaderboardTen.map(model => model.username);
+  res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req), modelExistsUser: false, modelName: false, topTen: topTenArr});
 }
 
 function getAboutUs(req, res){
@@ -206,7 +209,7 @@ async function getModelDetails(req,res){
   modelFound = true;
   const userModelArr = await multiHorse(modelArray);
   if(userModelArr[0] === false){
-    res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req), modelExistsUser: username, modelName: userModelArr[1]});
+    res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req), modelExistsUser: username, modelName: userModelArr[1], topTen: false});
   }else{
     const currentNmr = await retrieveObject(latestNmrPrice());
     const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
@@ -352,6 +355,8 @@ client.connect().then(() => {
 
 //TODO
 //NEW postsgres table for historic graphql data
+//2 approaches, query round details only allows for corr, model name and date,
+//OR pull info from each user query
 //Avg corr for all models across all live rounds
 //Avg corr for all models across individual round
 //Slope for each model over previous 12 closed rounds
