@@ -1,1 +1,0 @@
-Would it be possible to have mmc added to UserPerformances in v2RoundDetails query from GraphQl api 

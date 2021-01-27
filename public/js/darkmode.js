@@ -10,7 +10,6 @@ function toggleTheme(){
     theme.attr('href', '../style/darklayout.css');
     document.cookie = 'theme=dark; path=/';
   } else {
-    // ... switch it to "light-theme.css"
     theme.attr('href', '../style/lightlayout.css');
     document.cookie = `theme=light; path=/`;
   }
