@@ -1,15 +1,5 @@
 'use strict';
 
-const modelFound = $('.modelFound').attr('id');
-
-function hideModelFound(){
-  if(modelFound === 'true'){
-    $('.modelFound').hide();
-  }
-  if(modelFound === 'false'){
-    $('.modelFound').show();
-  }
-}
 
 function prepareModelComparisonPage(){
   $('#modelComparisonPage').attr('action', '/'+$('.user').text()+'/modelcomparison');
@@ -29,12 +19,7 @@ function closeModal(){
 }
 
 
-
-
-
 $('.myModal').on('click', closeModal);
 $('.modelRow').on('click', displayModal);
 $('span').on('click', closeModal);
 prepareModelComparisonPage();
-hideModelFound();
-// comparisonRoundButton
