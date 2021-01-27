@@ -142,8 +142,29 @@ function modelNotFound(){
   }
 }
 
+function topTenCollection(){
+  let topTenArr = [];
+  $('.topTen').each(function() {
+    topTenArr.push($(this).val());
+  });
+  if(topTenArr[0]){
+    let LSmodels = localStorage.getItem('collections');
+    let modelCollections = JSON.parse(LSmodels);
+    if(modelCollections === null){
+      modelCollections = [];
+    }
+    let targetIndex = modelCollections.findIndex(i => i.collectionName === 'Top Ten');
+    if(targetIndex >=0){
+      modelCollections[targetIndex].modelCollection = topTenArr;
+    }else{
+      modelCollections.push({collectionName: 'Top Ten', modelCollection:topTenArr});
+    }
+    localStorage.setItem('collections', JSON.stringify(modelCollections));
+  }
+}
 
 modelNotFound();
+topTenCollection();
 $('#addModel').change(addModel);
 $('#saveCollection').on('click', saveModelCollection);
 $('#deleteCollection').on('click', deleteModelCollection);

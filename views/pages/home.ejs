@@ -24,6 +24,10 @@
       </nav>
     </header>
     <main>
+      <% if(topTen !== false){ for (let i =0; i < topTen.length; i++){%>
+        <input type = "hidden" value = "<%=topTen[i]%>" name = "topTen" class = "topTen">
+        <%}%>
+      <%}%>
       <input type = "hidden" value = "<%=modelName%>" name = "modelName" id = "modelFound">
       <input type = "hidden" value = "<%=modelExistsUser%>" name = "modelExistsUser" id = "modelExistsUser">
       <h2>Saved Model Collections</h2>
