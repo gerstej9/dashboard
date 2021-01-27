@@ -357,11 +357,9 @@ client.connect().then(() => {
 //NEW postsgres table for historic graphql data
 //2 approaches, query round details only allows for corr, model name and date,
 //OR pull info from each user query
-//Avg corr for all models across all live rounds
 //Avg corr for all models across individual round
 //Slope for each model over previous 12 closed rounds
-//README
-//About us page
 //Add comments and rename variables to be clearer
 //CSS
 //Create Footer
+//Render download entirely from js?

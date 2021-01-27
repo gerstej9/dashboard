@@ -47,6 +47,17 @@
       <% let userTotalStake = 0%>
       <%let activeTotalAllModels = 0%>
       <%let dailyChangeAllModels = 0%>
+
+      <%let roundZeroAllModelAvgCorr= 0%>
+      <%let roundZeroAllModelAvgMmc = 0%>
+      <%let roundOneAllModelAvgCorr= 0%>
+      <%let roundOneAllModelAvgMmc = 0%>
+      <%let roundTwoAllModelAvgCorr= 0%>
+      <%let roundTwoAllModelAvgMmc = 0%>
+      <%let roundThreeAllModelAvgCorr= 0%>
+      <%let roundThreeAllModelAvgMmc = 0%>
+      <%let allLiveAllModelAvgCorr = 0%>
+      <%let allLiveAllModelAvgMmc = 0%>
       <%for(let i = 0; i< userData.length; i++){%>
       <div class = "modelRow monkey">
         <p class = "collectionModelNames"><%=userData[i].modelName%></p>
@@ -78,10 +89,12 @@
             <%let corrSum = 0%>
             <% for(let j =0; j< 4; j++){ corrSum+= userData[i].activeRounds[j].correlation}%>
             <% let avgCorr = (corrSum/4)%>
+            <% allLiveAllModelAvgCorr += avgCorr%>
             <p><%=avgCorr.toFixed(3)%></p>
             <%let mmcSum = 0%>
             <% for(j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc}%>
             <% let avgMmc = (mmcSum/4)%>
+            <% allLiveAllModelAvgMmc += avgMmc%>
             <p><%=avgMmc.toFixed(3)%></p>
             <p>-</p>
             <p>-</p>
@@ -94,6 +107,8 @@
             <p><%=stake.toFixed(2)%></p>
             <% let payout = Number(userData[i].activeRounds[3].payoutPending)%>
             <p><%=payout.toFixed(2)%></p>
+            <% roundThreeAllModelAvgCorr += userData[i].activeRounds[3].correlation %>
+            <% roundThreeAllModelAvgMmc += userData[i].activeRounds[3].mmc %>
           </div>
           <div class = "modalTitleRow">
             <p><%=userData[i].activeRounds[2].roundNumber%></p>
@@ -103,6 +118,8 @@
             <p><%=stake.toFixed(2)%></p>
             <% payout = Number(userData[i].activeRounds[2].payoutPending)%>
             <p><%=payout.toFixed(2)%></p>
+            <% roundTwoAllModelAvgCorr += userData[i].activeRounds[2].correlation %>
+            <% roundTwoAllModelAvgMmc += userData[i].activeRounds[2].mmc %>
           </div>
           <div class = "modalTitleRow">
             <p><%=userData[i].activeRounds[1].roundNumber%></p>
@@ -112,6 +129,8 @@
             <p><%=stake.toFixed(2)%></p>
             <% payout = Number(userData[i].activeRounds[1].payoutPending)%>
             <p><%=payout.toFixed(2)%></p>
+            <% roundOneAllModelAvgCorr += userData[i].activeRounds[1].correlation %>
+            <% roundOneAllModelAvgMmc += userData[i].activeRounds[1].mmc %>
           </div>
           <div class = "modalTitleRow">
             <p><%=userData[i].activeRounds[0].roundNumber%></p>
@@ -121,6 +140,8 @@
             <p><%=stake.toFixed(2)%></p>
             <% payout = Number(userData[i].activeRounds[0].payoutPending)%>
             <p><%=payout.toFixed(2)%></p>
+            <% roundZeroAllModelAvgCorr += userData[i].activeRounds[0].correlation %>
+            <% roundZeroAllModelAvgMmc += userData[i].activeRounds[0].mmc %>
           </div>
         </div>   
       </div>
@@ -139,6 +160,26 @@
         <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
         <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
         <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
+      </div>
+      <div class = "totalRowStats monkey">
+        <p></p>
+        <p>Model Collection Avg Corr</p>
+        <p>Model Collection Avg MMC</p>
+        <p>Round: <%=userData[0].activeRounds[0].roundNumber%> </p>
+        <p><%= (roundZeroAllModelAvgCorr/userData.length).toFixed(3) %></p>
+        <p><%= (roundZeroAllModelAvgMmc/userData.length).toFixed(3) %></p>
+        <p>Round: <%=userData[0].activeRounds[1].roundNumber%> </p>
+        <p><%= (roundOneAllModelAvgCorr/userData.length).toFixed(3) %></p>
+        <p><%= (roundOneAllModelAvgMmc/userData.length).toFixed(3) %></p>
+        <p>Round: <%=userData[0].activeRounds[2].roundNumber%> </p>
+        <p><%= (roundTwoAllModelAvgCorr/userData.length).toFixed(3) %></p>
+        <p><%= (roundTwoAllModelAvgMmc/userData.length).toFixed(3) %></p>
+        <p>Round: <%=userData[0].activeRounds[3].roundNumber%> </p>
+        <p><%= (roundThreeAllModelAvgCorr/userData.length).toFixed(3) %></p>
+        <p><%= (roundThreeAllModelAvgMmc/userData.length).toFixed(3) %></p>
+        <p>All Live Rounds: </p>
+        <p><%=(allLiveAllModelAvgCorr/userData.length).toFixed(3)%></p>
+        <p><%=(allLiveAllModelAvgMmc/userData.length).toFixed(3)%></p>
       </div>
     </main>
     <footer>
