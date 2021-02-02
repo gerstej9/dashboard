@@ -9,7 +9,10 @@
     <link href= "../style/reset.css" rel= "stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href= "../style/base.css" rel= "stylesheet">
-    <link id = "theme" href= "../style/<%=theme%>layout.css" rel= "stylesheet">
+    <link id = "theme" href= "../style/lightlayout.css" rel= "stylesheet">
+    <% if (theme === 'dark'){%>
+      <link id = "dark-mode" href= "../style/darklayout.css" rel= "stylesheet">
+    <%}%>
     <link href= "../style/modules.css" rel= "stylesheet">
     <script src="https://use.fontawesome.com/0c8d08633b.js"></script>
   </head>
