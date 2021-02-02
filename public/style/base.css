@@ -1,5 +1,39 @@
-*{
+* {
   box-sizing: border-box;
-  font-family: 'Bebas Neue';
+  font-family: "Titillium Web", sans-serif;
 }
 
+:root {
+  /* Light color theme vars */
+  --background-light: #0b0c10;
+  --text-light: #c5c6c7;
+  --accent-light: #45a29e;
+  --hightlight-light: #1976d2;
+
+  /* Dark color theme vars */
+  --text-dark: #66fcf1;
+  --background-dark: #1f2833;
+  --accent: #59CFC9;
+
+  --accent-dark: #d1c9d6;
+  --button-text: #5c595d;
+
+  --hightlight-dark: #40A19A;
+  --rando: #1CA0E8;
+
+  --a: #423f48;
+  --header-text: #333a3e;
+  --c: #e5e6e7;
+  --d: #54575a;
+  --font-header: 'Montserrat', sans-serif;
+  --font-body: 'Titillium Web', sans-serif;
+  --header-background-light: linear-gradient(90deg, rgb(217 184 247) 0%, rgba(174,234,246,1) 100%);
+};
+
+/*
+#384350
+#54575a
+45494c
+linear-gradient(90deg, rgb(217 184 247) 0%, rgba(174,234,246,1) 100%)
+
+*/
