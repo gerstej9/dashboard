@@ -2,26 +2,37 @@
 <html>
   <head>
     <title>Numerai Dashboard</title>
+    <!-- Start Google Font Definitions -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto&family=Montserrat:wght@100;200;300;400;500&family=Raleway&family=PT+Sans&family=Titillium+Web&display=swap" rel="stylesheet">
+    <!-- End Google Font Definitions -->
     <link href= "../style/reset.css" rel= "stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href= "../style/base.css" rel= "stylesheet">
-    <link id = "theme" href= "../style/<%=theme%>layout.css" rel= "stylesheet">    
+    <link id = "theme" href= "../style/lightlayout.css" rel= "stylesheet">
+    <% if (theme === 'dark'){%>
+      <link id = "dark-mode" href= "../style/darklayout.css" rel= "stylesheet">
+    <%}%>
     <link href= "../style/modules.css" rel= "stylesheet">
+    <script src="https://use.fontawesome.com/0c8d08633b.js"></script>
   </head>
   <body>
-    <header> 
-
-      <h1>
-        <a href = "/">NMRai Dashboard </a>
-      </h1>
-      <label class="switch">
-        <input class = "toggle" type="checkbox" <%if(theme === 'dark'){%>checked<%}%>>
-        <span class="slider round"></span>
-      </label>
-      <h3>Dark Mode</h3>
-      <nav>
-        <a href = "/about_us">About</a>
-      </nav>
+    <header>
+      <div class="main-heading">
+        <h1>
+          <a href = "/">Numerai Insights </a>
+        </h1>
+        <nav>
+          <a href = "/about_us">About</a>
+        </nav>
+      </div>
+      <div class="sub-heading">
+        <h3>Dark Mode</h3>
+        <label class="switch">
+          <input class = "toggle" type="checkbox" <%if(theme === 'dark'){%>checked<%}%>>
+          <span class="slider round"></span>
+        </label>
+      </div>
     </header>
     <main>
       <% if(topTen !== false){ for (let i =0; i < topTen.length; i++){%>
@@ -30,28 +41,38 @@
       <%}%>
       <input type = "hidden" value = "<%=modelName%>" name = "modelName" id = "modelFound">
       <input type = "hidden" value = "<%=modelExistsUser%>" name = "modelExistsUser" id = "modelExistsUser">
-      <h2>Saved Model Collections</h2>
-      <ul class = "existing-collections">
-      </ul><br>
-      <p id = "newCollectionButton">Create New Collection</p>
+
+      <section>
+        <div class="section-heading">
+          <h2>Saved Collections</h2>
+          <div class="section-controls">
+            <input type="text" id="collection-name" />
+            <button id="add-collection-button" class="section-button"><i class="fa fa-plus"></i>New Collection</button>
+          </div>
+        </div>
+        <ul class = "existing-collections collectionList">
+        </ul>
+      </section>
+      <!-- <p id = "newCollectionButton">Create New Collection</p>
       <form id = "newCollection">
           <label class = "userDoes" id= "<%=userExist%>">Collection Name</label>
           <input class = "username-input" id = "collectionName" type = "text" name = "username"></input><br>
-      </form><br>
-      <h2>Collection Models</h2>
-      <ul id = "modelList">
-      </ul>
-      <form>
-        <label id = "beforeAddModel">Add Model</label>
-        <input id = "model-to-add" class = "username-input" class = "model" type ="text" name ="model" ></input>
-        <label>
-          <input id = "addModel" name = "model" type = "checkbox"></input>
-          <img class = "plus-sign" src = "https://p.kindpng.com/picc/s/112-1121065_plus-sign-in-circular-outline-icons-free-transparent.png">
-        </label>
-        <br><br>
-        <button id = "saveCollection">Save Collection</button><br>
-        <button id = "deleteCollection">Delete Collection</button>
-      </form><br>
+      </form><br> -->
+      <section>
+        <div class="section-heading">
+          <h2>Models</h2>
+          <div class="section-controls">
+            <button class="section-button" id="clear-model-list-button">Clear All</button>
+            <button class="section-button" id="save-collection-button">Save Collection</button>
+          </div>
+        </div>
+        <ul id = "modelList" class = "collectionList">
+        </ul>
+        <div class="section-footer">
+          <input id = "model-to-add" class = "username-input" class = "model" type ="text" name ="model" ></input>
+          <label id = "save-new-model" class="section-button"><i class="fa fa-plus"></i>Add Model</label>
+        </div>
+      </section>
       <form id = "detailPage" action = "" method = "GET">
         <button id = "detailButton">View Collection Detail Page</button>
       </form>

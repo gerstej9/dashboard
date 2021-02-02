@@ -49,11 +49,11 @@ h3{
 }
 
 input:checked + .slider {
-  background-color: #8b3ff5;
+  background-color: #5fb5af;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #8b3ff5;
+  box-shadow: 0 0 1px #5fb5af;
 }
 
 input:checked + .slider:before {
@@ -75,21 +75,6 @@ input:checked + .slider:before {
   height: 17px;
   width: 17px;
   border-radius: 13px;
-}
-
-.removeModels{
-  height: 15px;
-  width:15px;
-  border-radius:13px;
-}
-
-
-
-.modelArray{
-  width: 25%;
-  display: flex;
-  justify-content: space-between;
-  margin: 1% 0% 1% 0%;
 }
 
 #creator{

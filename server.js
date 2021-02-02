@@ -345,23 +345,33 @@ client.connect().then(() => {
 
 
 
-
 //Get every model for every round
 //Get rid of rest of database
 //Make model comparison dynamically rendered
 
 // All Data
-// round Number, model name, mmc, cor, stake, nmr PriceUSD
+// round Number, model name, mmc, cor, stake, payout type, total payout, start date, end date, nmr PriceUSD***
 
 //TODO
 //NEW postsgres table for historic graphql data
 //2 approaches, query round details only allows for corr, model name and date,
 //OR pull info from each user query
-//Avg corr for all models across all live rounds
 //Avg corr for all models across individual round
 //Slope for each model over previous 12 closed rounds
-//README
-//About us page
 //Add comments and rename variables to be clearer
 //CSS
 //Create Footer
+//Render download entirely from js
+//Change download function to pull info not from database
+
+
+//Round API call will yield corr, username, date
+
+//Second API call username
+//
+//1. postgres database
+//2. model newscore download
+//3. migrate newscore info to user detail page
+//4. CSS (Sunday 10AM)
+//5. Create new private repo
+//6. Git scrubbing
