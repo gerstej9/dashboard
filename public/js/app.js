@@ -86,7 +86,7 @@ const modalTitleRow= (userData, avgCorr, avgMmc) => `
         <p>Stake</p>
         <p>Payout</p>
       </div>
-      <div class = "modalTitleRow">
+      <div class = "modalDetailRow">
         <p>Live Avg</p>
         <p>${avgCorr.toFixed(3)}</p>
         <p>${avgMmc.toFixed(3)}</p>
@@ -95,6 +95,15 @@ const modalTitleRow= (userData, avgCorr, avgMmc) => `
       </div>
     </div>
   </div>`;
+
+const modalDetailRow = (activeRounds, stake, payout) => `
+<div class = "modalTitleRow">
+<p>${activeRounds.roundNumber}</p>
+<p>${activeRounds.correlation.toFixed(3)}</p>
+<p>${activeRounds.mmc.toFixed(3)}</p>
+<p>${stake.toFixed(2)}</p>
+<p>${payout.toFixed(2)}</p>
+</div>`;
 
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
   this.mmcCurrent = mmcCurrent;
@@ -382,7 +391,6 @@ async function retrieveObject(queryInput){
 async function getModelDetails(models){
   const userModelArr = await multiHorse(models);
   const currentNmr = await retrieveObject(latestNmrPrice());
-  console.log(currentNmr.latestNmrPrice.priceUsd);
   const nmrPrice = Number(currentNmr.latestNmrPrice.priceUsd).toFixed(2);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
   renderModelDetails(nmrPrice, userModelArr, date);
@@ -418,7 +426,6 @@ async function multiHorse(arr){
 }
 
 function displayModal(){
-  console.log($(this));
   const modalTargetModel = $(this).find('.collectionModelNames').html();
   $(`.${modalTargetModel}`).css('display', 'block');
 }
@@ -428,6 +435,8 @@ function closeModal(){
 }
 
 function renderModelDetails(nmrPrice, userData, date){
+  $('.modal').remove();
+  $('.modelRow').remove();
   $('#detail-header').html('');
   $('#detail-header').append(detailHeader(date, userData[0], nmrPrice));
   let userTotalStake = 0;
@@ -449,22 +458,26 @@ function renderModelDetails(nmrPrice, userData, date){
     for(let j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc;}
     let avgMmc = (mmcSum/4);
     $('.titleRow').after(modalTitleRow(userData[i], avgCorr, avgMmc));
+    for(let j =0; j<4; j++){
+      let stake = Number(userData[i].activeRounds[j].selectedStakeValue);
+      let payout = Number(userData[i].activeRounds[j].payoutPending);
+      let activeRounds = userData[i].activeRounds[j];
+      // $('.modalDetailRow').after(modalDetailRow(activeRounds, stake, payout));
+      $(`.${userData[i].modelName}`).find('.modalDetailRow').after(modalDetailRow(activeRounds, stake, payout));
+    }
 
-    modalTitleRow(userData, avgCorr, avgMmc);
   }
   $('.myModal').on('click', closeModal);
   $('.modelRow').on('click', displayModal);
 }
 
-//     <div class = "modalTitleRow">
-//       <p><%=userData[i].activeRounds[3].roundNumber%></p>
-//       <p><%=userData[i].activeRounds[3].correlation.toFixed(3)%></p>
-//       <p><%=userData[i].activeRounds[3].mmc.toFixed(3)%></p>
-//       <% let stake = Number(userData[i].activeRounds[3].selectedStakeValue)%>
-//       <p><%=stake.toFixed(2)%></p>
-//       <% let payout = Number(userData[i].activeRounds[3].payoutPending)%>
-//       <p><%=payout.toFixed(2)%></p>
-//     </div>
+    // <div class = "modalTitleRow">
+    //   <p>serData[i].activeRounds[3].roundNumber</p>
+    //   <p>serData[i].activeRounds[3].correlation.toFixed(3)</p>
+    //   <p>userData[i].activeRounds[3].mmc.toFixed(3)</p>
+    //   <p>stake.toFixed(2)</p>
+    //   <p><payout.toFixed(2)</p>
+    // </div>
 //     <div class = "modalTitleRow">
 //       <p><%=userData[i].activeRounds[2].roundNumber%></p>
 //       <p><%=userData[i].activeRounds[2].correlation.toFixed(3)%></p>

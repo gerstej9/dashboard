@@ -26,7 +26,22 @@
   cursor: pointer;
 }
 
-.modalTitleRow{
+.modalTitleRow {
+  display: grid;
+  align-items: center;
+  margin-left: 2%;
+  margin-right: 2%;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-column-gap: 1%;
+  font-size: 3vw;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  justify-content: center;
+}
+
+.modalDetailRow{
   display: grid;
   align-items: center;
   margin-left: 2%;
@@ -42,6 +57,13 @@
 }
 
 .modalTitleRow p {
+  margin: 2%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalDetailRow p{
   margin: 2%;
   display: flex;
   align-items: center;
