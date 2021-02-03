@@ -74,6 +74,28 @@ const detailRow = (userData, activeTotal) => `
     <p>${userData.mmcCurrent}</p>
   </div>`;
 
+const modalTitleRow= (userData, avgCorr, avgMmc) => `
+  <div class="modal myModal ${userData.modelName}">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>${userData.modelName}</h2>
+      <div class = "modalTitleRow">
+        <p>Round</p>
+        <p>Corr</p>
+        <p>MMC</p>
+        <p>Stake</p>
+        <p>Payout</p>
+      </div>
+      <div class = "modalTitleRow">
+        <p>Live Avg</p>
+        <p>${avgCorr.toFixed(3)}</p>
+        <p>${avgMmc.toFixed(3)}</p>
+        <p>-</p>
+        <p>-</p>
+      </div>
+    </div>
+  </div>`;
+
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
   this.mmcCurrent = mmcCurrent;
   this.mmcPrevRank = mmcPrevRank;
@@ -334,6 +356,7 @@ function topTenCollection(){
     }
     localStorage.setItem('collections', JSON.stringify(modelCollections));
     renderModelCollectionList(topTenArr);
+    getModelDetails(topTenArr);
   }
 }
 
@@ -394,29 +417,15 @@ async function multiHorse(arr){
   return userModelArr;
 }
 
-async function init(){
-  // const NMRprice = await retrieveObject(latestNmrPrice());
-  // console.log(NMRprice);
-  // console.log(await retrieveObject(latestNmrPrice()));
-  // modelNotFound();
-  topTenCollection();
-  $('#save-new-model').on('click', addModel);
-  $('#save-collection-button').on('click', saveModelCollection);
-  $('#clear-model-list-button').on('click', clearModels);
-  hideUserStatus();
-  renderModelCollectionNames('Top Ten');
-  $('#addModel').hide();
-
-  $('#add-collection-button').on('click', newCollection);
-  $('#collection-name').keypress(function (e) {
-    if (e.which === 13) {
-      $('#add-collection-button').trigger('click');
-    }
-  });
+function displayModal(){
+  console.log($(this));
+  const modalTargetModel = $(this).find('.collectionModelNames').html();
+  $(`.${modalTargetModel}`).css('display', 'block');
 }
 
-init();
-
+function closeModal(){
+  $('.myModal').css('display', 'none');
+}
 
 function renderModelDetails(nmrPrice, userData, date){
   $('#detail-header').html('');
@@ -433,53 +442,20 @@ function renderModelDetails(nmrPrice, userData, date){
     if(isNaN(activeTotal) === true){activeTotal = 0;}
     dailyChangedAllModels += Number(userData[i].dailyChange);
     $('.titleRow').after(detailRow(userData[i], activeTotal));
+    let corrSum = 0;
+    for(let j = 0; j<4; j++){corrSum += userData[i].activeRounds[j].correlation;}
+    let avgCorr = (corrSum/4);
+    let mmcSum = 0;
+    for(let j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc;}
+    let avgMmc = (mmcSum/4);
+    $('.titleRow').after(modalTitleRow(userData[i], avgCorr, avgMmc));
+
+    modalTitleRow(userData, avgCorr, avgMmc);
   }
+  $('.myModal').on('click', closeModal);
+  $('.modelRow').on('click', displayModal);
 }
 
-
-// </div>
-// <% let userTotalStake = 0%>
-// <%let activeTotalAllModels = 0%>
-// <%let dailyChangeAllModels = 0%>
-// <%for(let i = 0; i< userData.length; i++){%>
-// <div class = "modelRow monkey">
-//   <p class = "collectionModelNames"><%=userData[i].modelName%></p>
-//   <p><%=userData[i].totalStake%> NMR</p>
-//   <% userTotalStake+=Number(userData[i].totalStake)%>
-//   <% let activeTotal = 0%>
-//   <%for(let j =0; j< userData[i].activeRounds.length; j++){activeTotal+= Number(userData[i].activeRounds[j].payoutPending)}%>
-//   <%if(isNaN(activeTotal) === true){activeTotal = 0}%>
-//   <p><%=activeTotal.toFixed(2)%> NMR </p>
-//   <p><%=userData[i].dailyChange%> NMR </p>
-//   <%dailyChangeAllModels += Number(userData[i].dailyChange)%>
-//   <p><%=userData[i].corrPrev%></p>
-//   <p><%=userData[i].corrCurrent%></p>
-//   <p><%=userData[i].mmcCurrent%></p>
-// </div>
-// <div class="modal myModal <%=userData[i].modelName%>">
-//   <div class="modal-content">
-//     <span class="close">&times;</span>
-//     <h2><%=userData[i].modelName%></h2>
-//     <div class = "modalTitleRow">
-//       <p>Round</p>
-//       <p>Corr</p>
-//       <p>MMC</p>
-//       <p>Stake</p>
-//       <p>Payout</p>
-//     </div>
-//     <div class = "modalTitleRow">
-//       <p>Live Avg</p>
-//       <%let corrSum = 0%>
-//       <% for(let j =0; j< 4; j++){ corrSum+= userData[i].activeRounds[j].correlation}%>
-//       <% let avgCorr = (corrSum/4)%>
-//       <p><%=avgCorr.toFixed(3)%></p>
-//       <%let mmcSum = 0%>
-//       <% for(j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc}%>
-//       <% let avgMmc = (mmcSum/4)%>
-//       <p><%=avgMmc.toFixed(3)%></p>
-//       <p>-</p>
-//       <p>-</p>
-//     </div>
 //     <div class = "modalTitleRow">
 //       <p><%=userData[i].activeRounds[3].roundNumber%></p>
 //       <p><%=userData[i].activeRounds[3].correlation.toFixed(3)%></p>
@@ -534,3 +510,30 @@ function renderModelDetails(nmrPrice, userData, date){
 //   <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
 //   <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
 // </div>
+
+
+async function init(){
+  // const NMRprice = await retrieveObject(latestNmrPrice());
+  // console.log(NMRprice);
+  // console.log(await retrieveObject(latestNmrPrice()));
+  // modelNotFound();
+  $('.myModal').on('click', closeModal);
+  $('.modelRow').on('click', displayModal);
+  $('span').on('click', closeModal);
+  topTenCollection();
+  $('#save-new-model').on('click', addModel);
+  $('#save-collection-button').on('click', saveModelCollection);
+  $('#clear-model-list-button').on('click', clearModels);
+  hideUserStatus();
+  renderModelCollectionNames('Top Ten');
+  $('#addModel').hide();
+
+  $('#add-collection-button').on('click', newCollection);
+  $('#collection-name').keypress(function (e) {
+    if (e.which === 13) {
+      $('#add-collection-button').trigger('click');
+    }
+  });
+}
+
+init();

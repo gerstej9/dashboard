@@ -354,16 +354,12 @@ client.connect().then(() => {
 
 //TODO
 //NEW postsgres table for historic graphql data
-//2 approaches, query round details only allows for corr, model name and date,
-//OR pull info from each user query
-//Avg corr for all models across individual round
 //Slope for each model over previous 12 closed rounds
 //Add comments and rename variables to be clearer
 //CSS
 //Create Footer
 //Render download entirely from js
 //Change download function to pull info not from database
-
 
 //Round API call will yield corr, username, date
 
@@ -372,6 +368,3 @@ client.connect().then(() => {
 //1. postgres database
 //2. model newscore download
 //3. migrate newscore info to user detail page
-//4. CSS (Sunday 10AM)
-//5. Create new private repo
-//6. Git scrubbing
