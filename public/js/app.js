@@ -1,10 +1,61 @@
 'use strict';
 
-
+const collection = [];
 const userStatus = $('.userNot').attr('id');
 const newUserStatus = $('.userDoes').attr('id');
 
-const modelButton = (model) => `<li class = "modelArray listButton"><span>${model}</span><i class="fa fa-times-circle removeModels"></i></li>`
+const latestNmrPrice = () => `query{latestNmrPrice {
+  lastUpdated
+  priceUsd
+}}`;
+
+const userProfile = username => `query{v2UserProfile(username: "${username}") {
+  latestRanks {
+    mmcRank
+    prevMmcRank
+    prevRank
+    rank
+  }
+  latestRoundPerformances {
+    correlation
+    correlationWithMetamodel
+    date
+    mmc
+    payoutPending
+    payoutSettled
+    roundNumber
+    roundResolved
+    selectedStakeValue
+    weekPayoutSelection
+  }
+  dailyUserPerformances {
+    payoutPending
+  }
+  totalStake
+  username
+}}`;
+
+const v2Leaderboard = () => `query{v2Leaderboard{
+  username
+}
+}`;
+
+const v2RoundDetails = roundNumber => `query{
+  v2RoundDetails(roundNumber:${roundNumber}) {
+    roundNumber
+    userPerformances {
+      correlation
+      date
+      username
+    }
+  }
+}`;
+
+const modelButton = (model) => `
+  <li class = "modelArray listButton">
+    <span>${model}</span>
+    <i class="fa fa-times-circle removeModels"></i>
+  </li>`;
 
 function hideUserStatus(){
   if (userStatus !== 'no'){
@@ -34,7 +85,7 @@ function deleteModelOrCollectionCollection(event){
 }
 
 function saveModelCollection(){
-  const collectionName = $('.selected-collection').text().trim()
+  const collectionName = $('.selected-collection').text().trim();
 
   if (collectionName === 'Top Ten') {
     return;
@@ -43,7 +94,7 @@ function saveModelCollection(){
   if(collectionName){
     const models = [];
     $( '.modelArray' ).find('span').each(function() {
-      models.push($(this).text());
+      models.push($(this).text().toLowerCase());
     });
 
     let LSmodels = localStorage.getItem('collections');
@@ -82,7 +133,7 @@ function saveCollectionName(name){
 }
 
 function addModel(){
-  const modelToAdd = $('#model-to-add').val().trim();
+  const modelToAdd = $('#model-to-add').val().trim().toLowerCase();
 
   if (!modelToAdd) {
     return;
@@ -140,6 +191,7 @@ function renderExistingCollectionModels(){
       $('#model-to-add').val('');
       // $('#detailButton').before(`<input type = "hidden" name = "model" value = "${model}"></input>`);
     });
+    getModelDetails(targetCollection[0].modelCollection);
   }
   // changeFormAction();
 }
@@ -194,7 +246,7 @@ function newCollection(){
     saveCollectionName(newCollectionName);
 
 
-    renderModelCollectionNames(newCollectionName)
+    renderModelCollectionNames(newCollectionName);
 
     renderModelCollectionList([]);
 
@@ -257,18 +309,93 @@ function topTenCollection(){
   }
 }
 
-// modelNotFound();
-topTenCollection();
-$('#save-new-model').on('click', addModel);
-$('#save-collection-button').on('click', saveModelCollection);
-$('#clear-model-list-button').on('click', clearModels);
-hideUserStatus();
-renderModelCollectionNames('Top Ten');
-$('#addModel').hide();
+async function retrieveObject(queryInput){
+  return new Promise (function(resolve, reject){
+    $.ajax({url: 'https://api-tournament.numer.ai/',
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ query:  queryInput
+      }),
+      success: function (data){
+        resolve(data.data);
+      },
+      error: function(error){
+        reject(error);
+      }
+    });
+  });
+}
 
-$('#add-collection-button').on('click', newCollection);
-$('#collection-name').keypress(function (e) {
-  if (e.which == 13) {
-    $('#add-collection-button').trigger('click');
+
+//Model Detail Page
+async function getModelDetails(models){
+  let modelArray = models;
+  // console.log(models);
+  // if(typeof(modelArray) === 'string'){
+  //   modelArray = [modelArray];
+  // }
+  // const username = req.params.user;
+  // modelFound = true;
+  const userModelArr = await multiHorse(modelArray);
+  console.log(userModelArr);
+  // if(userModelArr[0] === false){
+  //   res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req), modelExistsUser: username, modelName: userModelArr[1], topTen: false});
+  // }else{
+  //   const currentNmr = await retrieveObject(latestNmrPrice());
+  //   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
+  //   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
+  //   res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound, theme: getTheme(req)});
+  // }
+}
+
+async function multiHorse(arr){
+  let userModelArr = [];
+  for(let i = 0; i < arr.length; i++){
+    try{
+      console.log(arr[i].toLowerCase());
+      const user = await retrieveObject(userProfile(arr[i]));
+      console.log(user);
+      const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
+      [
+        user.v2UserProfile.latestRanks.mmcRank,
+        user.v2UserProfile.latestRanks.prevMmcRank,
+        user.v2UserProfile.latestRanks.rank,
+        user.v2UserProfile.latestRanks.prevRank,
+        user.v2UserProfile.latestRoundPerformances.slice(-4),
+        Number(user.v2UserProfile.totalStake).toFixed(2),
+        user.v2UserProfile.username,
+        Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
+      ];
+      userModelArr.push(new Object(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+    }
+    catch(error){
+      console.log(error);
+      userModelArr = [false, arr[i]];
+    }
   }
-});
+  return userModelArr;
+}
+
+async function init(){
+  const NMRprice = await retrieveObject(latestNmrPrice());
+  console.log(NMRprice);
+  // console.log(await retrieveObject(latestNmrPrice()));
+  // modelNotFound();
+  topTenCollection();
+  $('#save-new-model').on('click', addModel);
+  $('#save-collection-button').on('click', saveModelCollection);
+  $('#clear-model-list-button').on('click', clearModels);
+  hideUserStatus();
+  renderModelCollectionNames('Top Ten');
+  $('#addModel').hide();
+
+  $('#add-collection-button').on('click', newCollection);
+  $('#collection-name').keypress(function (e) {
+    if (e.which === 13) {
+      $('#add-collection-button').trigger('click');
+    }
+  });
+}
+
+init();
+
