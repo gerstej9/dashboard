@@ -356,6 +356,21 @@ color: white;
   justify-content: center;
 }
 
+.totalRowStats {
+  font-size: 3vw;
+  display: grid;
+  grid-template-columns: .5fr 1fr 1fr;
+  margin: 2% 2% 2% 2%;
+  border: 1px solid black;
+}
+
+.totalRowStats p{
+  margin:2%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media(min-width: 760px){
   main {
     width: 760px;

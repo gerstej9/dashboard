@@ -368,3 +368,4 @@ client.connect().then(() => {
 //1. postgres database
 //2. model newscore download
 //3. migrate newscore info to user detail page
+//4. Style about page

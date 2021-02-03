@@ -118,6 +118,29 @@ const detailTotalRow = (dailyChangedAllModels, dailyChangeAllModelsUsd, activeTo
 </div>
 `;
 
+const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllModelAvgMmc, roundOneAllModelAvgCorr, roundOneAllModelAvgMmc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgMmc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgMmc, allLiveAllModelAvgCorr, allLiveAllModelAvgMmc) => `
+  <div class = "totalRowStats monkey">
+    <p></p>
+    <p>Model Collection Avg Corr</p>
+    <p>Model Collection Avg MMC</p>
+    <p>Round: ${userData.activeRounds[0].roundNumber} </p>
+    <p>${roundZeroAllModelAvgCorr}</p>
+    <p>${roundZeroAllModelAvgMmc}</p>
+    <p>Round: ${userData.activeRounds[1].roundNumber} </p>
+    <p>${roundOneAllModelAvgCorr}</p>
+    <p>${roundOneAllModelAvgMmc}</p>
+    <p>Round: ${userData.activeRounds[2].roundNumber} </p>
+    <p>${roundTwoAllModelAvgCorr}</p>
+    <p>${roundTwoAllModelAvgMmc}</p>
+    <p>Round: ${userData.activeRounds[3].roundNumber}</p>
+    <p>${roundThreeAllModelAvgCorr}</p>
+    <p>${roundThreeAllModelAvgMmc}</p>
+    <p>All Live Rounds</p>
+    <p>${allLiveAllModelAvgCorr}</p>
+    <p>${allLiveAllModelAvgMmc}</p>
+  </div>
+`;
+
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
   this.mmcCurrent = mmcCurrent;
   this.mmcPrevRank = mmcPrevRank;
@@ -451,12 +474,31 @@ function renderModelDetails(nmrPrice, userData, date){
   $('.modal').remove();
   $('.modelRow').remove();
   $('.totalRow').remove();
+  $('.totalRowStats').remove();
   $('#detail-header').html('');
   $('#detail-header').append(detailHeader(date, userData[0], nmrPrice));
   let userTotalStake = 0;
   let activeTotalAllModels = 0;
   let dailyChangedAllModels = 0;
+  let roundZeroAllModelSumCorr= 0;
+  let roundZeroAllModelSumMmc = 0;
+  let roundOneAllModelSumCorr= 0;
+  let roundOneAllModelSumMmc = 0;
+  let roundTwoAllModelSumCorr= 0;
+  let roundTwoAllModelSumMmc = 0;
+  let roundThreeAllModelSumCorr= 0;
+  let roundThreeAllModelSumMmc = 0;
+  let allLiveAllModelSumCorr = 0;
+  let allLiveAllModelSumMmc = 0;
   for(let i = 0; i<userData.length; i++){
+    roundZeroAllModelSumCorr += userData[i].activeRounds[0].correlation;
+    roundZeroAllModelSumMmc += userData[i].activeRounds[0].mmc;
+    roundOneAllModelSumCorr+= userData[i].activeRounds[1].correlation;
+    roundOneAllModelSumMmc += userData[i].activeRounds[1].mmc;
+    roundTwoAllModelSumCorr+= userData[i].activeRounds[2].correlation;
+    roundTwoAllModelSumMmc += userData[i].activeRounds[2].mmc;
+    roundThreeAllModelSumCorr+= userData[i].activeRounds[3].correlation;
+    roundThreeAllModelSumMmc += userData[i].activeRounds[3].mmc;
     userTotalStake += Number(userData[i].totalStake);
     let activeTotal = 0;
     for(let j =0; j< userData[i].activeRounds.length; j++){
@@ -468,9 +510,11 @@ function renderModelDetails(nmrPrice, userData, date){
     let corrSum = 0;
     for(let j = 0; j<4; j++){corrSum += userData[i].activeRounds[j].correlation;}
     let avgCorr = (corrSum/4);
+    allLiveAllModelSumCorr += avgCorr;
     let mmcSum = 0;
     for(let j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc;}
     let avgMmc = (mmcSum/4);
+    allLiveAllModelSumMmc += avgMmc;
     $('.titleRow').after(modalTitleRow(userData[i], avgCorr, avgMmc));
     for(let j =0; j<4; j++){
       let stake = Number(userData[i].activeRounds[j].selectedStakeValue);
@@ -487,26 +531,20 @@ function renderModelDetails(nmrPrice, userData, date){
   let userLiveTotal = Number(userTotalStake + activeTotalAllModels).toFixed(2);
   let userLiveTotalUsd = (userLiveTotal * nmrPrice);
   $('#user-detail').append(detailTotalRow(dailyChangedAllModels.toFixed(2), dailyChangeAllModelsUsd, activeTotalAllModels.toFixed(2), currPayoutUsd, userTotalStake.toFixed(2),stakedPayoutUsd, userLiveTotal, userLiveTotalUsd));
+  let roundZeroAllModelAvgCorr= (roundZeroAllModelSumCorr/ userData.length).toFixed(3);
+  let roundZeroAllModelAvgMmc = (roundZeroAllModelSumMmc/ userData.length).toFixed(3);
+  let roundOneAllModelAvgCorr= (roundOneAllModelSumCorr/ userData.length).toFixed(3);
+  let roundOneAllModelAvgMmc = (roundOneAllModelSumMmc/ userData.length).toFixed(3);
+  let roundTwoAllModelAvgCorr= (roundTwoAllModelSumCorr/ userData.length).toFixed(3);
+  let roundTwoAllModelAvgMmc = (roundTwoAllModelSumMmc/ userData.length).toFixed(3);
+  let roundThreeAllModelAvgCorr= (roundThreeAllModelSumCorr/ userData.length).toFixed(3);
+  let roundThreeAllModelAvgMmc = (roundThreeAllModelSumMmc/ userData.length).toFixed(3);
+  let allLiveAllModelAvgCorr = (allLiveAllModelSumCorr/ userData.length).toFixed(3);
+  let allLiveAllModelAvgMmc = (allLiveAllModelSumMmc/ userData.length).toFixed(3);
+  $('#user-detail').append(detailTotalStatsRow(userData[0], roundZeroAllModelAvgCorr,roundZeroAllModelAvgMmc, roundOneAllModelAvgCorr, roundOneAllModelAvgMmc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgMmc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgMmc, allLiveAllModelAvgCorr, allLiveAllModelAvgMmc));
   $('.myModal').on('click', closeModal);
   $('.modelRow').on('click', displayModal);
 }
-
-// <%activeTotalAllModels+= Number(activeTotal)}%>
-{/* <div class = "totalRow monkey">
-  <p>Daily Change NMR: <%=dailyChangeAllModels.toFixed(2)%> NMR</p>
-  <% let dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
-  <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
-  <p>Total Pending Payout: <%=activeTotalAllModels.toFixed(2)%> NMR </p>
-  <%let currPayoutUsd = (activeTotalAllModels*nmrPrice).toFixed(2)%>
-  <p>Total Pending USD: $<%=currPayoutUsd%></p>
-  <p>Total NMR Staked: <%= userTotalStake.toFixed(2)%> NMR</p>
-  <%let stakedPayoutUsd = (userTotalStake*nmrPrice).toFixed(2)%>
-  <p>Total USD Staked: $<%=stakedPayoutUsd%></p>
-  <% let userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2)%>
-  <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
-  <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
-  <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
-</div> */}
 
 
 async function init(){
