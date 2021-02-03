@@ -57,6 +57,34 @@ const modelButton = (model) => `
     <i class="fa fa-times-circle removeModels"></i>
   </li>`;
 
+const detailHeader = (date, userData, nmrPrice) => `
+  <h2>Daily Performance</h2>
+  <h2>Date: ${date}</h2>
+  <h2>Live Rounds: ${userData.activeRounds[0].roundNumber} to ${userData.activeRounds[3].roundNumber}</h2>
+  <h2>NMR Price: ${nmrPrice}</h2>`;
+
+const detailRow = (userData, activeTotal) => `
+  <div class = "modelRow monkey">
+    <p class = "collectionModelNames">${userData.modelName}</p>
+    <p>${userData.totalStake} NMR</p>
+    <p>${activeTotal.toFixed(2)} NMR </p>
+    <p>${userData.dailyChange} NMR </p>
+    <p>${userData.corrPrev}</p>
+    <p>${userData.corrCurrent}</p>
+    <p>${userData.mmcCurrent}</p>
+  </div>`;
+
+function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
+  this.mmcCurrent = mmcCurrent;
+  this.mmcPrevRank = mmcPrevRank;
+  this.corrCurrent = corrCurrent;
+  this.corrPrev = corrPrev;
+  this.activeRounds = activeRounds;
+  this.totalStake = totalStake;
+  this.modelName = modelName;
+  this.dailyChange = dailyChange;
+}
+
 function hideUserStatus(){
   if (userStatus !== 'no'){
     $('#user-not').hide();
@@ -329,32 +357,22 @@ async function retrieveObject(queryInput){
 
 //Model Detail Page
 async function getModelDetails(models){
-  let modelArray = models;
-  // console.log(models);
-  // if(typeof(modelArray) === 'string'){
-  //   modelArray = [modelArray];
-  // }
-  // const username = req.params.user;
-  // modelFound = true;
-  const userModelArr = await multiHorse(modelArray);
-  console.log(userModelArr);
-  // if(userModelArr[0] === false){
-  //   res.render('pages/home.ejs', {userExist: 'none', theme: getTheme(req), modelExistsUser: username, modelName: userModelArr[1], topTen: false});
-  // }else{
-  //   const currentNmr = await retrieveObject(latestNmrPrice());
-  //   const nmrPrice = Number(currentNmr.latestNmrPrice.PriceUSD);
-  //   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
-  //   res.render('pages/userDetails.ejs', {nmrPrice: nmrPrice.toFixed(2), userData: userModelArr, date: date, username: username, modelFound: modelFound, theme: getTheme(req)});
-  // }
+  const userModelArr = await multiHorse(models);
+  const currentNmr = await retrieveObject(latestNmrPrice());
+  console.log(currentNmr.latestNmrPrice.priceUsd);
+  const nmrPrice = Number(currentNmr.latestNmrPrice.priceUsd).toFixed(2);
+  const date = userModelArr[0].activeRounds[3].date.substring(0,10);
+  renderModelDetails(nmrPrice, userModelArr, date);
 }
+
 
 async function multiHorse(arr){
   let userModelArr = [];
   for(let i = 0; i < arr.length; i++){
     try{
-      console.log(arr[i].toLowerCase());
+      // console.log(arr[i].toLowerCase());
       const user = await retrieveObject(userProfile(arr[i]));
-      console.log(user);
+      // console.log(user);
       const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
       [
         user.v2UserProfile.latestRanks.mmcRank,
@@ -366,7 +384,7 @@ async function multiHorse(arr){
         user.v2UserProfile.username,
         Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
       ];
-      userModelArr.push(new Object(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+      userModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
     }
     catch(error){
       console.log(error);
@@ -377,8 +395,8 @@ async function multiHorse(arr){
 }
 
 async function init(){
-  const NMRprice = await retrieveObject(latestNmrPrice());
-  console.log(NMRprice);
+  // const NMRprice = await retrieveObject(latestNmrPrice());
+  // console.log(NMRprice);
   // console.log(await retrieveObject(latestNmrPrice()));
   // modelNotFound();
   topTenCollection();
@@ -399,3 +417,120 @@ async function init(){
 
 init();
 
+
+function renderModelDetails(nmrPrice, userData, date){
+  $('#detail-header').html('');
+  $('#detail-header').append(detailHeader(date, userData[0], nmrPrice));
+  let userTotalStake = 0;
+  let activeTotalAllModels = 0;
+  let dailyChangedAllModels = 0;
+  for(let i = 0; i<userData.length; i++){
+    userTotalStake += Number(userData[i].totalStake);
+    let activeTotal = 0;
+    for(let j =0; j< userData[i].activeRounds.length; j++){
+      activeTotal+= Number(userData[i].activeRounds[j].payoutPending);
+    }
+    if(isNaN(activeTotal) === true){activeTotal = 0;}
+    dailyChangedAllModels += Number(userData[i].dailyChange);
+    $('.titleRow').after(detailRow(userData[i], activeTotal));
+  }
+}
+
+
+// </div>
+// <% let userTotalStake = 0%>
+// <%let activeTotalAllModels = 0%>
+// <%let dailyChangeAllModels = 0%>
+// <%for(let i = 0; i< userData.length; i++){%>
+// <div class = "modelRow monkey">
+//   <p class = "collectionModelNames"><%=userData[i].modelName%></p>
+//   <p><%=userData[i].totalStake%> NMR</p>
+//   <% userTotalStake+=Number(userData[i].totalStake)%>
+//   <% let activeTotal = 0%>
+//   <%for(let j =0; j< userData[i].activeRounds.length; j++){activeTotal+= Number(userData[i].activeRounds[j].payoutPending)}%>
+//   <%if(isNaN(activeTotal) === true){activeTotal = 0}%>
+//   <p><%=activeTotal.toFixed(2)%> NMR </p>
+//   <p><%=userData[i].dailyChange%> NMR </p>
+//   <%dailyChangeAllModels += Number(userData[i].dailyChange)%>
+//   <p><%=userData[i].corrPrev%></p>
+//   <p><%=userData[i].corrCurrent%></p>
+//   <p><%=userData[i].mmcCurrent%></p>
+// </div>
+// <div class="modal myModal <%=userData[i].modelName%>">
+//   <div class="modal-content">
+//     <span class="close">&times;</span>
+//     <h2><%=userData[i].modelName%></h2>
+//     <div class = "modalTitleRow">
+//       <p>Round</p>
+//       <p>Corr</p>
+//       <p>MMC</p>
+//       <p>Stake</p>
+//       <p>Payout</p>
+//     </div>
+//     <div class = "modalTitleRow">
+//       <p>Live Avg</p>
+//       <%let corrSum = 0%>
+//       <% for(let j =0; j< 4; j++){ corrSum+= userData[i].activeRounds[j].correlation}%>
+//       <% let avgCorr = (corrSum/4)%>
+//       <p><%=avgCorr.toFixed(3)%></p>
+//       <%let mmcSum = 0%>
+//       <% for(j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc}%>
+//       <% let avgMmc = (mmcSum/4)%>
+//       <p><%=avgMmc.toFixed(3)%></p>
+//       <p>-</p>
+//       <p>-</p>
+//     </div>
+//     <div class = "modalTitleRow">
+//       <p><%=userData[i].activeRounds[3].roundNumber%></p>
+//       <p><%=userData[i].activeRounds[3].correlation.toFixed(3)%></p>
+//       <p><%=userData[i].activeRounds[3].mmc.toFixed(3)%></p>
+//       <% let stake = Number(userData[i].activeRounds[3].selectedStakeValue)%>
+//       <p><%=stake.toFixed(2)%></p>
+//       <% let payout = Number(userData[i].activeRounds[3].payoutPending)%>
+//       <p><%=payout.toFixed(2)%></p>
+//     </div>
+//     <div class = "modalTitleRow">
+//       <p><%=userData[i].activeRounds[2].roundNumber%></p>
+//       <p><%=userData[i].activeRounds[2].correlation.toFixed(3)%></p>
+//       <p><%=userData[i].activeRounds[2].mmc.toFixed(3)%></p>
+//       <% stake = Number(userData[i].activeRounds[2].selectedStakeValue)%>
+//       <p><%=stake.toFixed(2)%></p>
+//       <% payout = Number(userData[i].activeRounds[2].payoutPending)%>
+//       <p><%=payout.toFixed(2)%></p>
+//     </div>
+//     <div class = "modalTitleRow">
+//       <p><%=userData[i].activeRounds[1].roundNumber%></p>
+//       <p><%=userData[i].activeRounds[1].correlation.toFixed(3)%></p>
+//       <p><%=userData[i].activeRounds[1].mmc.toFixed(3)%></p>
+//       <% stake = Number(userData[i].activeRounds[1].selectedStakeValue)%>
+//       <p><%=stake.toFixed(2)%></p>
+//       <% payout = Number(userData[i].activeRounds[1].payoutPending)%>
+//       <p><%=payout.toFixed(2)%></p>
+//     </div>
+//     <div class = "modalTitleRow">
+//       <p><%=userData[i].activeRounds[0].roundNumber%></p>
+//       <p><%=userData[i].activeRounds[0].correlation.toFixed(3)%></p>
+//       <p><%=userData[i].activeRounds[0].mmc.toFixed(3)%></p>
+//       <% stake = Number(userData[i].activeRounds[0].selectedStakeValue)%>
+//       <p><%=stake.toFixed(2)%></p>
+//       <% payout = Number(userData[i].activeRounds[0].payoutPending)%>
+//       <p><%=payout.toFixed(2)%></p>
+//     </div>
+//   </div>   
+// </div>
+// <%activeTotalAllModels+= Number(activeTotal)}%>
+// <div class = "totalRow monkey">
+//   <p>Daily Change NMR: <%=dailyChangeAllModels.toFixed(2)%> NMR</p>
+//   <% let dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
+//   <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
+//   <p>Total Pending Payout: <%=activeTotalAllModels.toFixed(2)%> NMR </p>
+//   <%let currPayoutUsd = (activeTotalAllModels*nmrPrice).toFixed(2)%>
+//   <p>Total Pending USD: $<%=currPayoutUsd%></p>
+//   <p>Total NMR Staked: <%= userTotalStake.toFixed(2)%> NMR</p>
+//   <%let stakedPayoutUsd = (userTotalStake*nmrPrice).toFixed(2)%>
+//   <p>Total USD Staked: $<%=stakedPayoutUsd%></p>
+//   <% let userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2)%>
+//   <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
+//   <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
+//   <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
+// </div>
