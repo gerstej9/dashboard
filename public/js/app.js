@@ -105,6 +105,19 @@ const modalDetailRow = (activeRounds, stake, payout) => `
 <p>${payout.toFixed(2)}</p>
 </div>`;
 
+const detailTotalRow = (dailyChangedAllModels, dailyChangeAllModelsUsd, activeTotalAllModels, currPayoutUsd, userTotalStake,stakedPayoutUsd, userLiveTotal, userLiveTotalUsd) =>`
+<div class = "totalRow monkey">
+<p>Daily Change NMR: ${dailyChangedAllModels} NMR</p>
+<p>Daily Change USD: $${dailyChangeAllModelsUsd}</p>
+<p>Total Pending Payout: ${activeTotalAllModels} NMR </p>
+<p>Total Pending USD: $${currPayoutUsd}</p>
+<p>Total NMR Staked: ${userTotalStake} NMR</p>
+<p>Total USD Staked: $${stakedPayoutUsd}</p>
+<p>Live Total NMR: ${userLiveTotal} NMR</p>
+<p> Live Total USD: $${userLiveTotalUsd}</p>
+</div>
+`;
+
 function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
   this.mmcCurrent = mmcCurrent;
   this.mmcPrevRank = mmcPrevRank;
@@ -437,6 +450,7 @@ function closeModal(){
 function renderModelDetails(nmrPrice, userData, date){
   $('.modal').remove();
   $('.modelRow').remove();
+  $('.totalRow').remove();
   $('#detail-header').html('');
   $('#detail-header').append(detailHeader(date, userData[0], nmrPrice));
   let userTotalStake = 0;
@@ -465,64 +479,34 @@ function renderModelDetails(nmrPrice, userData, date){
       // $('.modalDetailRow').after(modalDetailRow(activeRounds, stake, payout));
       $(`.${userData[i].modelName}`).find('.modalDetailRow').after(modalDetailRow(activeRounds, stake, payout));
     }
-
+    activeTotalAllModels += Number(activeTotal);
   }
+  let dailyChangeAllModelsUsd = Number(dailyChangedAllModels * nmrPrice).toFixed(2);
+  let currPayoutUsd = Number(activeTotalAllModels * nmrPrice).toFixed(2);
+  let stakedPayoutUsd = Number(userTotalStake * nmrPrice).toFixed(2);
+  let userLiveTotal = Number(userTotalStake + activeTotalAllModels).toFixed(2);
+  let userLiveTotalUsd = (userLiveTotal * nmrPrice);
+  $('#user-detail').append(detailTotalRow(dailyChangedAllModels.toFixed(2), dailyChangeAllModelsUsd, activeTotalAllModels.toFixed(2), currPayoutUsd, userTotalStake.toFixed(2),stakedPayoutUsd, userLiveTotal, userLiveTotalUsd));
   $('.myModal').on('click', closeModal);
   $('.modelRow').on('click', displayModal);
 }
 
-    // <div class = "modalTitleRow">
-    //   <p>serData[i].activeRounds[3].roundNumber</p>
-    //   <p>serData[i].activeRounds[3].correlation.toFixed(3)</p>
-    //   <p>userData[i].activeRounds[3].mmc.toFixed(3)</p>
-    //   <p>stake.toFixed(2)</p>
-    //   <p><payout.toFixed(2)</p>
-    // </div>
-//     <div class = "modalTitleRow">
-//       <p><%=userData[i].activeRounds[2].roundNumber%></p>
-//       <p><%=userData[i].activeRounds[2].correlation.toFixed(3)%></p>
-//       <p><%=userData[i].activeRounds[2].mmc.toFixed(3)%></p>
-//       <% stake = Number(userData[i].activeRounds[2].selectedStakeValue)%>
-//       <p><%=stake.toFixed(2)%></p>
-//       <% payout = Number(userData[i].activeRounds[2].payoutPending)%>
-//       <p><%=payout.toFixed(2)%></p>
-//     </div>
-//     <div class = "modalTitleRow">
-//       <p><%=userData[i].activeRounds[1].roundNumber%></p>
-//       <p><%=userData[i].activeRounds[1].correlation.toFixed(3)%></p>
-//       <p><%=userData[i].activeRounds[1].mmc.toFixed(3)%></p>
-//       <% stake = Number(userData[i].activeRounds[1].selectedStakeValue)%>
-//       <p><%=stake.toFixed(2)%></p>
-//       <% payout = Number(userData[i].activeRounds[1].payoutPending)%>
-//       <p><%=payout.toFixed(2)%></p>
-//     </div>
-//     <div class = "modalTitleRow">
-//       <p><%=userData[i].activeRounds[0].roundNumber%></p>
-//       <p><%=userData[i].activeRounds[0].correlation.toFixed(3)%></p>
-//       <p><%=userData[i].activeRounds[0].mmc.toFixed(3)%></p>
-//       <% stake = Number(userData[i].activeRounds[0].selectedStakeValue)%>
-//       <p><%=stake.toFixed(2)%></p>
-//       <% payout = Number(userData[i].activeRounds[0].payoutPending)%>
-//       <p><%=payout.toFixed(2)%></p>
-//     </div>
-//   </div>   
-// </div>
 // <%activeTotalAllModels+= Number(activeTotal)}%>
-// <div class = "totalRow monkey">
-//   <p>Daily Change NMR: <%=dailyChangeAllModels.toFixed(2)%> NMR</p>
-//   <% let dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
-//   <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
-//   <p>Total Pending Payout: <%=activeTotalAllModels.toFixed(2)%> NMR </p>
-//   <%let currPayoutUsd = (activeTotalAllModels*nmrPrice).toFixed(2)%>
-//   <p>Total Pending USD: $<%=currPayoutUsd%></p>
-//   <p>Total NMR Staked: <%= userTotalStake.toFixed(2)%> NMR</p>
-//   <%let stakedPayoutUsd = (userTotalStake*nmrPrice).toFixed(2)%>
-//   <p>Total USD Staked: $<%=stakedPayoutUsd%></p>
-//   <% let userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2)%>
-//   <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
-//   <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
-//   <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
-// </div>
+{/* <div class = "totalRow monkey">
+  <p>Daily Change NMR: <%=dailyChangeAllModels.toFixed(2)%> NMR</p>
+  <% let dailyChangeAllModelsUsd = (dailyChangeAllModels *nmrPrice)%>
+  <p>Daily Change USD: $<%=dailyChangeAllModelsUsd.toFixed(2)%></p>
+  <p>Total Pending Payout: <%=activeTotalAllModels.toFixed(2)%> NMR </p>
+  <%let currPayoutUsd = (activeTotalAllModels*nmrPrice).toFixed(2)%>
+  <p>Total Pending USD: $<%=currPayoutUsd%></p>
+  <p>Total NMR Staked: <%= userTotalStake.toFixed(2)%> NMR</p>
+  <%let stakedPayoutUsd = (userTotalStake*nmrPrice).toFixed(2)%>
+  <p>Total USD Staked: $<%=stakedPayoutUsd%></p>
+  <% let userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2)%>
+  <p>Live Total NMR: <%=userLiveTotal%> NMR</p>
+  <% let userLiveTotalUsd = (userLiveTotal*nmrPrice).toFixed(2)%>
+  <p> Live Total USD: $<%=Number(userLiveTotalUsd).toFixed(2)%></p>
+</div> */}
 
 
 async function init(){
