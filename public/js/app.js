@@ -58,17 +58,16 @@ const modelButton = (model) => `
   </li>`;
 
 const detailHeader = (date, userData, nmrPrice) => `
-  <h2>Daily Performance</h2>
-  <h2>Date: ${date}</h2>
-  <h2>Live Rounds: ${userData.activeRounds[0].roundNumber} to ${userData.activeRounds[3].roundNumber}</h2>
-  <h2>NMR Price: ${nmrPrice}</h2>`;
+  <h3>Date: ${date}</h3>
+  <h3>Live Rounds: ${userData.activeRounds[0].roundNumber} to ${userData.activeRounds[3].roundNumber}</h3>
+  <h3>NMR Price: $${nmrPrice}</h3>`;
 
 const detailRow = (userData, activeTotal) => `
   <div class = "modelRow monkey">
     <p class = "collectionModelNames">${userData.modelName}</p>
-    <p>${userData.totalStake} NMR</p>
-    <p>${activeTotal.toFixed(2)} NMR </p>
-    <p>${userData.dailyChange} NMR </p>
+    <p>${userData.totalStake}</p>
+    <p>${activeTotal.toFixed(2)}</p>
+    <p>${userData.dailyChange}</p>
     <p>${userData.corrPrev}</p>
     <p>${userData.corrCurrent}</p>
     <p>${userData.mmcCurrent}</p>
@@ -477,6 +476,7 @@ function renderModelDetails(nmrPrice, userData, date){
   $('.totalRowStats').remove();
   $('#detail-header').html('');
   $('#detail-header').append(detailHeader(date, userData[0], nmrPrice));
+  $('#user').text(`Collection: ${$('.selected-collection').text()}`);
   let userTotalStake = 0;
   let activeTotalAllModels = 0;
   let dailyChangedAllModels = 0;
