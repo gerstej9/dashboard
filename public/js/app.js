@@ -77,13 +77,13 @@ const modalTitleRow= (userData, avgCorr, avgMmc) => `
   <div class="modal myModal ${userData.modelName}">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h2>${userData.modelName}</h2>
+      <h2 id = "modal-model">${userData.modelName}</h2>
       <div class = "modalTitleRow">
         <p>Round</p>
         <p>Corr</p>
         <p>MMC</p>
-        <p>Stake</p>
-        <p>Payout</p>
+        <p>NMR Stake</p>
+        <p>NMR Payout</p>
       </div>
       <div class = "modalDetailRow">
         <p>Live Avg</p>
@@ -106,14 +106,14 @@ const modalDetailRow = (activeRounds, stake, payout) => `
 
 const detailTotalRow = (dailyChangedAllModels, dailyChangeAllModelsUsd, activeTotalAllModels, currPayoutUsd, userTotalStake,stakedPayoutUsd, userLiveTotal, userLiveTotalUsd) =>`
 <div class = "totalRow monkey">
-<p>Daily Change NMR: ${dailyChangedAllModels} NMR</p>
-<p>Daily Change USD: $${dailyChangeAllModelsUsd}</p>
-<p>Total Pending Payout: ${activeTotalAllModels} NMR </p>
-<p>Total Pending USD: $${currPayoutUsd}</p>
-<p>Total NMR Staked: ${userTotalStake} NMR</p>
-<p>Total USD Staked: $${stakedPayoutUsd}</p>
-<p>Live Total NMR: ${userLiveTotal} NMR</p>
-<p> Live Total USD: $${userLiveTotalUsd}</p>
+<p>Daily Change NMR: ${parseFloat(dailyChangedAllModels).toLocaleString('en-US')} NMR</p>
+<p>Daily Change USD: $${parseFloat(dailyChangeAllModelsUsd).toLocaleString('en-US')}</p>
+<p>Total Pending Payout: ${parseFloat(activeTotalAllModels).toLocaleString('en-US')} NMR </p>
+<p>Total Pending USD: $${parseFloat(currPayoutUsd).toLocaleString('en-US')}</p>
+<p>Total NMR Staked: ${parseFloat(userTotalStake).toLocaleString('en-US')} NMR</p>
+<p>Total USD Staked: $${parseFloat(stakedPayoutUsd).toLocaleString('en-US')}</p>
+<p>Live Total NMR: ${parseFloat(userLiveTotal).toLocaleString('en-US')} NMR</p>
+<p> Live Total USD: $${parseFloat(userLiveTotalUsd).toLocaleString('en-US')}</p>
 </div>
 `;
 
@@ -528,8 +528,8 @@ function renderModelDetails(nmrPrice, userData, date){
   let dailyChangeAllModelsUsd = Number(dailyChangedAllModels * nmrPrice).toFixed(2);
   let currPayoutUsd = Number(activeTotalAllModels * nmrPrice).toFixed(2);
   let stakedPayoutUsd = Number(userTotalStake * nmrPrice).toFixed(2);
-  let userLiveTotal = Number(userTotalStake + activeTotalAllModels).toFixed(2);
-  let userLiveTotalUsd = (userLiveTotal * nmrPrice);
+  let userLiveTotal = (userTotalStake + activeTotalAllModels).toFixed(2);
+  let userLiveTotalUsd = (userLiveTotal * nmrPrice).toFixed(2);
   $('#user-detail').append(detailTotalRow(dailyChangedAllModels.toFixed(2), dailyChangeAllModelsUsd, activeTotalAllModels.toFixed(2), currPayoutUsd, userTotalStake.toFixed(2),stakedPayoutUsd, userLiveTotal, userLiveTotalUsd));
   let roundZeroAllModelAvgCorr= (roundZeroAllModelSumCorr/ userData.length).toFixed(3);
   let roundZeroAllModelAvgMmc = (roundZeroAllModelSumMmc/ userData.length).toFixed(3);

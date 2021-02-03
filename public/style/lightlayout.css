@@ -80,7 +80,6 @@ main h2 {
 }
 
 section {
-  background: #dfdfd3;
   background: var(--header-background-light);
   -webkit-box-shadow: 4px 7px 20px -1px #96d6f5;
   box-shadow: 4px 7px 20px -1px #96d6f5;
@@ -148,11 +147,11 @@ input {
 }
 
 .modal-content {
-  background-color: #018786;
-  color:white;
+  background: var(--header-background-light);
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
+  border-radius: 10px;
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
@@ -190,6 +189,11 @@ input {
 #user{
   padding: 10px 0px;
   margin: 0px;
+}
+
+#modal-model{
+  font-size: 30px;
+  margin-left: 30px !important;
 }
 
 #modal-info{
@@ -318,33 +322,16 @@ input {
   cursor: pointer;
 }
 
-.modalTitleRow {
+.modalTitleRow, .modalDetailRow{
   display: grid;
   align-items: center;
   margin-left: 2%;
   margin-right: 2%;
+  margin-bottom: 5px;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-column-gap: 1%;
   font-size: 3vw;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
-  justify-content: center;
-}
-
-.modalDetailRow{
-  display: grid;
-  align-items: center;
-  margin-left: 2%;
-  margin-right: 2%;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-column-gap: 1%;
-  font-size: 3vw;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
+  color: var(--header-text);
   justify-content: center;
 }
 
@@ -353,6 +340,7 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align:center;
 }
 
 .modalDetailRow p{
