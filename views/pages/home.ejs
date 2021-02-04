@@ -53,11 +53,6 @@
         <ul class = "existing-collections collectionList">
         </ul>
       </section>
-      <!-- <p id = "newCollectionButton">Create New Collection</p>
-      <form id = "newCollection">
-          <label class = "userDoes" id= "<%=userExist%>">Collection Name</label>
-          <input class = "username-input" id = "collectionName" type = "text" name = "username"></input><br>
-      </form><br> -->
       <section>
         <div class="section-heading">
           <h2>Models</h2>
@@ -75,17 +70,20 @@
       </section>
       <section id = "user-detail">
         <h2>Performance</h2>
+        <div class="loader-detail"></div>
         <div id = "detail-header"></div>
-        <h2 id ="user">Collection:</h2>
-        <p id = "modal-info">Click on each model to view metrics of live round performance</p>
-        <div class = "titleRow monkey">
-          <p>Model</p>
-          <p>NMR Staked</p>
-          <p>NMR Payout</p>
-          <p>NMR Daily Change</p>
-          <p>Prev Corr Rank</p>
-          <p>Rank</p>
-          <p>MMC Rank</p>
+        <div id = "hide-on-load">
+          <h2 id ="user">Collection:</h2>
+          <p id = "modal-info">Click on each model to view metrics of live round performance</p>
+          <div class = "titleRow monkey">
+            <p>Model</p>
+            <p>NMR Staked</p>
+            <p>NMR Payout</p>
+            <p>NMR Daily Change</p>
+            <p>Prev Corr Rank</p>
+            <p>Rank</p>
+            <p>MMC Rank</p>
+          </div>
         </div>
       </section>
     </main>
