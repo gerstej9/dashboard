@@ -364,11 +364,8 @@ client.connect().then(() => {
 //Round API call will yield corr, username, date
 
 //Second API call username
-//
 //1. postgres database
 //2. model newscore download
 //3. migrate newscore info to user detail page
-//4. Style about page
-//5. Style home page
 //6. Add model checker on add models
-
+//7. spinner for add model

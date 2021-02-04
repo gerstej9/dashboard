@@ -73,4 +73,7 @@ input {
   color: #C5C6C7;
 }
 
-
+.loader {
+  border: 2px solid #0B0C10; /* Light grey */
+  border-top: 2px solid #66FCF1; /* Blue */
+}
