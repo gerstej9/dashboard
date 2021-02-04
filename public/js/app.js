@@ -64,7 +64,7 @@ const detailHeader = (date, userData, nmrPrice) => `
 
 const detailRow = (userData, activeTotal) => `
   <div class = "modelRow monkey">
-    <p class = "collectionModelNames">${userData.modelName}</p>
+    <p class = "collectionModelNames"><img id = "glyph" src="/assets/numerai_glyph.PNG">${userData.modelName}</p>
     <p>${userData.totalStake}</p>
     <p>${activeTotal.toFixed(2)}</p>
     <p>${userData.dailyChange}</p>
@@ -491,7 +491,8 @@ async function multiHorse(arr){
 
 function displayModal(){
   const modalTargetModel = $(this).find('.collectionModelNames').html();
-  $(`.${modalTargetModel}`).css('display', 'block');
+  const modalTargetModelStripped = modalTargetModel.substring(48);
+  $(`.${modalTargetModelStripped}`).css('display', 'block');
 }
 
 function displayModelNotFoundModal(){

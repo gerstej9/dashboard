@@ -215,13 +215,17 @@ input {
 .titleRow, .modelRow {
   display: grid;
   align-items: center;
-  grid-template-columns: 2fr 1.3fr 1.2fr 1.2fr 1fr 1fr 1fr;
+  grid-template-columns: 3fr 1.3fr 1.2fr 1.2fr 1fr 1fr 1fr;
   grid-column-gap: 1%;
   font-size: 3vw;
   border-radius: 10px;
   margin-bottom:1%;
 }
 
+.modelRow:hover,
+.modelRow:focus {
+  cursor: pointer;
+}
 
 
 .titleRow p, .modelRow p{
@@ -230,6 +234,15 @@ input {
   align-items: center;
   justify-content: center;
 }
+
+.modelRow p {
+  justify-content: center;
+}
+
+.collectionModelNames{
+  justify-self: left;
+}
+
 
 .totalRow {
   font-size: 3vw;
@@ -315,6 +328,12 @@ input {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+#glyph{
+  width: 20px;
+  height: 20px;
+  margin-right:5px;
 }
 
 .username-input, .model-input{
