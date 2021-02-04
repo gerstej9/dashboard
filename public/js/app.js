@@ -104,6 +104,14 @@ const modalDetailRow = (activeRounds, stake, payout) => `
 <p>${payout.toFixed(2)}</p>
 </div>`;
 
+const modalModelNotFound = () => `
+<div class="modal myModal model-not-found">
+  <div id = "not-found" class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Model Not Found</h2>
+  </div>
+</div>`;
+
 const detailTotalRow = (dailyChangedAllModels, dailyChangeAllModelsUsd, activeTotalAllModels, currPayoutUsd, userTotalStake,stakedPayoutUsd, userLiveTotal, userLiveTotalUsd) =>`
 <div class = "totalRow monkey">
 <p>Daily Change NMR: ${parseFloat(dailyChangedAllModels).toLocaleString('en-US')} NMR</p>
@@ -226,18 +234,34 @@ function saveCollectionName(name){
   }
 }
 
-function addModel(){
+async function addModel(){
+  $('#model-plus').hide();
+  $('.loader').show();
   const modelToAdd = $('#model-to-add').val().trim().toLowerCase();
 
   if (!modelToAdd) {
     return;
   }
 
-  $('#modelList').append($(modelButton(modelToAdd)));
-  $('#detailButton').before(`<input type = "hidden" name = "model" value = "${modelToAdd}"></input>`);
-  $('.removeModels').on('click', deleteModelOrCollection);
-  $('#model-to-add').val('');
-  changeFormAction();
+  const modelToRetrieve =  await retrieveObject(userProfile(modelToAdd));
+  if(modelToRetrieve.v2UserProfile === null){
+    console.log(modelToRetrieve);
+    $('#model-plus').show();
+    $('.loader').hide();
+    $('#model-to-add').val('');
+    $('.section-footer').append(modalModelNotFound());
+    displayModelNotFoundModal();
+    $('.myModal').on('click', () => $('.model-not-found').remove());
+    return;
+  }else{
+    $('#modelList').append($(modelButton(modelToAdd)));
+    $('#detailButton').before(`<input type = "hidden" name = "model" value = "${modelToAdd}"></input>`);
+    $('.removeModels').on('click', deleteModelOrCollection);
+    $('#model-to-add').val('');
+    changeFormAction();
+    $('#model-plus').show();
+    $('.loader').hide();
+  }
 }
 
 function renderModelCollectionNames(selectedCollection){
@@ -465,6 +489,10 @@ function displayModal(){
   $(`.${modalTargetModel}`).css('display', 'block');
 }
 
+function displayModelNotFoundModal(){
+  $('.model-not-found').show();
+}
+
 function closeModal(){
   $('.myModal').css('display', 'none');
 }
@@ -552,6 +580,7 @@ async function init(){
   // console.log(NMRprice);
   // console.log(await retrieveObject(latestNmrPrice()));
   // modelNotFound();
+  $('.loader').hide();
   $('.myModal').on('click', closeModal);
   $('.modelRow').on('click', displayModal);
   $('span').on('click', closeModal);
