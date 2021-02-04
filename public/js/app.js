@@ -173,9 +173,7 @@ function deleteCollection(){
   let LSmodels = localStorage.getItem('collections');
   let modelCollections = JSON.parse(LSmodels);
   let targetIndex = modelCollections.findIndex(i => i.collectionName === collectionName);
-  console.log(targetIndex);
   if(targetIndex >=0){
-    console.log(modelCollections[targetIndex]);
     modelCollections.splice(targetIndex, 1);
     localStorage.setItem('collections', JSON.stringify(modelCollections));
     $('.existing-collections').html('');
@@ -245,7 +243,6 @@ async function addModel(){
 
   const modelToRetrieve =  await retrieveObject(userProfile(modelToAdd));
   if(modelToRetrieve.v2UserProfile === null){
-    console.log(modelToRetrieve);
     $('#model-plus').show();
     $('.loader').hide();
     $('#model-to-add').val('');
