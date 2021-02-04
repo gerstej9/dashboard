@@ -257,7 +257,7 @@ input {
   display: flex;
   align-items: center;
   justify-content: start;
-  margin-left: 30px;
+  margin-left: 20%;
 }
 
 .totalRowStats {
@@ -491,6 +491,10 @@ footer img {
   justify-self: center;
 }
 
+.titleRow{
+  background-color: #d4ebef !important;
+}
+
 
 @media(min-width: 760px){
   main {
@@ -513,10 +517,6 @@ footer img {
   .titleRow, .modelRow {
     font-size: 20px;
 
-  }
-
-  .titleRow{
-    background-color:#2deadd !important;
   }
 
   .totalRow {
