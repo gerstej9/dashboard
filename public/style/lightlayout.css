@@ -281,8 +281,8 @@ input {
 }
 
 .loader {
-  border: 2px solid #f3f3f3; /* Light grey */
-  border-top: 2px solid #b849ff; /* Blue */
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #b849ff; 
   border-radius: 50%;
   width: 17px;
   height: 17px;
@@ -291,6 +291,20 @@ input {
   z-index: 1;
   display: inline-block;
   margin: 0px 5px 0px 5px;
+}
+
+.loader-detail {
+  border: 20px solid #f3f3f3; 
+  border-top: 20px solid #b849ff; 
+  border-bottom: 20px solid #b849ff; 
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  z-index: 1;
+  display: inline-block;
+  margin: 10% 45%;
 }
 
 @-webkit-keyframes spin {

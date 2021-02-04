@@ -1,9 +1,9 @@
 # Numerai_Dashboard
 
 ## Authors:
-* ***REMOVED*** Gerstenberger
+* James Gerstenberger
 
-**Version**: 1.0.11
+**Version**: 1.0.13
 
 ## Overview
 An application to allow Numerai users the ability to easily compare model performance. The application provides performance statistics for each model across live rounds, pending payouts, staked amounts, and mmc and correlation rankings for each model. In addition the application provides a total sum of all staked models, pending payouts across all models and total "live" staked amount which is the sum of all pending payouts with the sum of all staked amounts.
@@ -24,15 +24,13 @@ To use this application, create a model collection by entering a name and adding
   stats-percentile: 3.1.0
   Jquery
   Google Fonts
+  Font Awesome
 
 ## Design
 CSS design follows SMACSS protocol and includes reset,base, layout, modules. and modal css files.
 
 ## API Endpoints
 https://api-tournament.numer.ai/
-
-## Database Schema
-
 
 
 ## Credits and Collaborations

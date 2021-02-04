@@ -445,11 +445,19 @@ async function retrieveObject(queryInput){
 
 //Model Detail Page
 async function getModelDetails(models){
+  $('#hide-on-load').hide();
+  $('.loader-detail').show();
+  $('.totalRow').hide();
+  $('.totalRowStats').hide();
+  $('#detail-header').hide();
   const userModelArr = await multiHorse(models);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.priceUsd).toFixed(2);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
   renderModelDetails(nmrPrice, userModelArr, date);
+  $('.loader-detail').hide();
+  $('#hide-on-load').show();
+  $('#detail-header').show();
 }
 
 
