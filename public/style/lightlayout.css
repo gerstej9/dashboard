@@ -363,6 +363,63 @@ input {
   padding: 10px 0px;
 }
 
+
+section a{
+  text-decoration: underline;
+  margin-right: 40px;
+  line-height: 40px;
+  font-size:20px
+}
+
+.about-us h2{
+  padding: 15px 0px;
+  font-size: 20px;
+  margin: 0px;
+}
+
+.about-us p{
+  line-height: 30px;
+  font-size: 18px;
+}
+
+.about-us img{
+  justify-self:center;
+  border-radius:10px;
+}
+
+.about-us h4{
+  margin: 5px 0px;
+  line-height: 20px;
+  font-size: 18px;
+}
+
+.creator-image{
+  display:flex;
+  justify-content: center;
+}
+
+#contact-info{
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  margin: 20px 50px;
+}
+
+footer{
+  margin-top: 60px;
+}
+
+#footer-heading{
+  display: flex;
+  justify-content:space-around;
+}
+
+footer img {
+  width: 7%;
+  height: 7%;
+  border-radius: 30px;
+  justify-self: center;
+}
+
 @media(min-width: 760px){
   main {
     width: 760px;

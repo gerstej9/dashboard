@@ -160,14 +160,14 @@ function hideUserStatus(){
   }
 }
 
-function deleteModelOrCollectionCollection(event){
-  event.preventDefault();
-  const collectionName = $('.selected-collection').text().trim();
-
+function deleteCollection(){
+  const collectionName = $(this).parent().text().trim();
   let LSmodels = localStorage.getItem('collections');
   let modelCollections = JSON.parse(LSmodels);
   let targetIndex = modelCollections.findIndex(i => i.collectionName === collectionName);
+  console.log(targetIndex);
   if(targetIndex >=0){
+    console.log(modelCollections[targetIndex]);
     modelCollections.splice(targetIndex, 1);
     localStorage.setItem('collections', JSON.stringify(modelCollections));
     $('.existing-collections').html('');
@@ -256,7 +256,7 @@ function renderModelCollectionNames(selectedCollection){
       `);
     });
   }
-  $('.removeCollection').on('click', deleteModelOrCollection);
+  $('.removeCollection').on('click', deleteCollection);
   $('.collections').on('click', renderExistingCollectionModels);
 }
 
