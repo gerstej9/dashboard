@@ -130,19 +130,19 @@ const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllMode
     <p></p>
     <p>Model Collection Avg Corr</p>
     <p>Model Collection Avg MMC</p>
-    <p>Round: ${userData.activeRounds[0].roundNumber} </p>
+    <p id = "stat-round">Round: ${userData.activeRounds[0].roundNumber} </p>
     <p>${roundZeroAllModelAvgCorr}</p>
     <p>${roundZeroAllModelAvgMmc}</p>
-    <p>Round: ${userData.activeRounds[1].roundNumber} </p>
+    <p id ="stat-round">Round: ${userData.activeRounds[1].roundNumber} </p>
     <p>${roundOneAllModelAvgCorr}</p>
     <p>${roundOneAllModelAvgMmc}</p>
-    <p>Round: ${userData.activeRounds[2].roundNumber} </p>
+    <p id ="stat-round">Round: ${userData.activeRounds[2].roundNumber} </p>
     <p>${roundTwoAllModelAvgCorr}</p>
     <p>${roundTwoAllModelAvgMmc}</p>
-    <p>Round: ${userData.activeRounds[3].roundNumber}</p>
+    <p id ="stat-round">Round: ${userData.activeRounds[3].roundNumber}</p>
     <p>${roundThreeAllModelAvgCorr}</p>
     <p>${roundThreeAllModelAvgMmc}</p>
-    <p>All Live Rounds</p>
+    <p id ="stat-round">All Live Rounds</p>
     <p>${allLiveAllModelAvgCorr}</p>
     <p>${allLiveAllModelAvgMmc}</p>
   </div>
