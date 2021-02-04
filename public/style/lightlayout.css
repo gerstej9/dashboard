@@ -80,7 +80,6 @@ main h2 {
 }
 
 section {
-  background: #dfdfd3;
   background: var(--header-background-light);
   -webkit-box-shadow: 4px 7px 20px -1px #96d6f5;
   box-shadow: 4px 7px 20px -1px #96d6f5;
@@ -148,11 +147,11 @@ input {
 }
 
 .modal-content {
-  background-color: #018786;
-  color:white;
+  background: var(--header-background-light);
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
+  border-radius: 10px;
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
@@ -181,29 +180,39 @@ input {
   opacity: 1
 }
 
-.user{
-  font-weight: bold;
-  margin:2% 0% 2% 2%;
-  font-size:3vw;
+#user-detail h2{
+  padding:15px 0px;
+  margin: 0px;
+  justify-self: left;
 }
+
+#user{
+  padding: 10px 0px;
+  margin: 0px;
+}
+
+#modal-model{
+  font-size: 30px;
+  margin-left: 30px !important;
+}
+
+#modal-info{
+  padding: 5px 0px 10px 0px;
+  margin: 0px;
+  justify-self:left;
+}
+
 
 .titleRow, .modelRow {
   display: grid;
   align-items: center;
-  margin-left: 2%;
-  margin-right: 2%;
   grid-template-columns: 2fr 1.3fr 1.2fr 1.2fr 1fr 1fr 1fr;
   grid-column-gap: 1%;
   font-size: 3vw;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
-}
-
-.titleRow{
+  border-radius: 10px;
   margin-bottom:1%;
 }
+
 
 
 .titleRow p, .modelRow p{
@@ -218,34 +227,35 @@ input {
   display: grid;
   grid-template-columns: 1fr 1fr;
   margin: 2% 2% 6% 2%;
-  border: 1px solid black;
+  border-radius:10px;
 }
 
 .totalRow p{
-  margin:2%;
+  margin:10px 0px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .totalRowStats {
-  font-size: 3vw;
+  font-size: 20px;
   display: grid;
   grid-template-columns: .5fr 1fr 1fr;
   margin: 2% 2% 2% 2%;
-  border: 1px solid black;
+  border-radius:10px;
+  justify-content: center;
 }
 
 .totalRowStats p{
-  margin:2%;
+  margin:5px 0px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .monkey{
-background-color: #8b3ff5;
-color: white;
+  background-color: #e2f0f3;
+  color: var(--button-text);
 }
 
 .fox{
@@ -312,33 +322,16 @@ color: white;
   cursor: pointer;
 }
 
-.modalTitleRow {
+.modalTitleRow, .modalDetailRow{
   display: grid;
   align-items: center;
   margin-left: 2%;
   margin-right: 2%;
+  margin-bottom: 5px;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-column-gap: 1%;
   font-size: 3vw;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
-  justify-content: center;
-}
-
-.modalDetailRow{
-  display: grid;
-  align-items: center;
-  margin-left: 2%;
-  margin-right: 2%;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-column-gap: 1%;
-  font-size: 3vw;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
+  color: var(--header-text);
   justify-content: center;
 }
 
@@ -347,6 +340,7 @@ color: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align:center;
 }
 
 .modalDetailRow p{
@@ -356,19 +350,74 @@ color: white;
   justify-content: center;
 }
 
-.totalRowStats {
-  font-size: 3vw;
-  display: grid;
-  grid-template-columns: .5fr 1fr 1fr;
-  margin: 2% 2% 2% 2%;
-  border: 1px solid black;
+
+#detail-header{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.totalRowStats p{
-  margin:2%;
-  display: flex;
-  align-items: center;
+
+#detail-header h3{
+  margin: 0px;
+  padding: 10px 0px;
+}
+
+
+section a{
+  text-decoration: underline;
+  margin-right: 40px;
+  line-height: 40px;
+  font-size:20px
+}
+
+.about-us h2{
+  padding: 15px 0px;
+  font-size: 20px;
+  margin: 0px;
+}
+
+.about-us p{
+  line-height: 30px;
+  font-size: 18px;
+}
+
+.about-us img{
+  justify-self:center;
+  border-radius:10px;
+}
+
+.about-us h4{
+  margin: 5px 0px;
+  line-height: 20px;
+  font-size: 18px;
+}
+
+.creator-image{
+  display:flex;
   justify-content: center;
+}
+
+#contact-info{
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  margin: 20px 50px;
+}
+
+footer{
+  margin-top: 60px;
+}
+
+#footer-heading{
+  display: flex;
+  justify-content:space-around;
+}
+
+footer img {
+  width: 7%;
+  height: 7%;
+  border-radius: 30px;
+  justify-self: center;
 }
 
 @media(min-width: 760px){
@@ -386,16 +435,16 @@ color: white;
 
   .user{
 
-    font-size:23px;
+    font-size:18px;
   }
 
   .titleRow, .modelRow {
-    font-size: 23px;
+    font-size: 20px;
 
   }
 
   .totalRow {
-    font-size: 23px;
+    font-size: 20px;
 
   }
 

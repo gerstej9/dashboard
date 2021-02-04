@@ -27,7 +27,6 @@ a{
 }
 
 section {
-  background: #dfdfd3;
   background: linear-gradient(90deg, #1f2833 0%, #1e7d79 100%);
   -webkit-box-shadow: 4px 7px 20px -1px #96d6f5;
   box-shadow: 4px 7px 20px -1px #66FCF1;
@@ -61,104 +60,17 @@ input {
   box-shadow: 10px 3px 26px 0 #66FCF1, 11px -7px 21px 0 #85c5cc; */
 }
 
-.modal-content {
-  background-color: #018786;
-  color:white;
-  border: 1px solid #888;
-}
-
-.titleRow, .modelRow {
-  display: grid;
-  align-items: center;
-  margin-left: 2%;
-  margin-right: 2%;
-  grid-template-columns: 2fr 1.3fr 1.2fr 1.2fr 1fr 1fr 1fr;
-  grid-column-gap: 1%;
-  font-size: 3vw;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
-}
-
-.titleRow{
-  margin-bottom:1%;
-}
-
-
-.titleRow p, .modelRow p{
-  margin: 2%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.totalRow {
-  font-size: 3vw;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin: 2% 2% 6% 2%;
-  border: 1px solid black;
-}
-
-.totalRow p{
-  margin:2%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.totalRowStats {
-  font-size: 3vw;
-  display: grid;
-  grid-template-columns: .5fr 1fr 1fr;
-  margin: 2% 2% 2% 2%;
-  border: 1px solid black;
-}
-
-.totalRowStats p{
-  margin:2%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .monkey{
-background-color: #8b3ff5;
-color: white;
+  background-color: #66FCF1;
+  color: #565656;
 }
 
-.fox{
-  background-color: #9BB7D4;
+.modal-content {
+  background: linear-gradient(90deg, #1f2833 0%, #1e7d79 100%);
 }
 
-.cat{
-  background-color:#018786;
-  color:white;
+.modalTitleRow, .modalDetailRow{
+  color: #C5C6C7;
 }
 
-.orange{
-  background-color:#caa0da
-}
 
-.username-input, .model-input{
-  font-family: Helvetica, sans-serif;
-}
-
-.newscore p{
-  margin-left: 2%
-}
-
-.download a{
-  width: 95%;
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: .5%;
-}
-
-#newCollectionButton{
-  border: 5px double Black;
-  width: 13%;
-  display: flex;
-  justify-content: center;
-}
