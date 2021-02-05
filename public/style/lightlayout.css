@@ -496,7 +496,14 @@ footer img {
   background-color: #d4ebef !important;
 }
 
+#mobile-scroll{
+  display: none;
+}
+
 @media(max-width: 450px){
+  #mobile-scroll{
+    display: inline;
+  }
   .main-heading{
     padding: 5% 5%;
   }
