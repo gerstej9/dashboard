@@ -86,7 +86,7 @@ const modalTitleRow= (userData, avgCorr, avgMmc) => `
         <p>NMR Payout</p>
       </div>
       <div class = "modalDetailRow">
-        <p>Live Avg</p>
+        <p>Avg</p>
         <p>${avgCorr.toFixed(3)}</p>
         <p>${avgMmc.toFixed(3)}</p>
         <p>-</p>
@@ -127,22 +127,22 @@ const detailTotalRow = (dailyChangedAllModels, dailyChangeAllModelsUsd, activeTo
 
 const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllModelAvgMmc, roundOneAllModelAvgCorr, roundOneAllModelAvgMmc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgMmc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgMmc, allLiveAllModelAvgCorr, allLiveAllModelAvgMmc) => `
   <div class = "totalRowStats monkey">
-    <p></p>
-    <p>Model Collection Avg Corr</p>
-    <p>Model Collection Avg MMC</p>
-    <p id = "stat-round">Round: ${userData.activeRounds[0].roundNumber} </p>
+    <p id = stat-round>Round</p>
+    <p>Collection Avg Corr</p>
+    <p>Collection Avg MMC</p>
+    <p id = "stat-round">${userData.activeRounds[0].roundNumber} </p>
     <p>${roundZeroAllModelAvgCorr}</p>
     <p>${roundZeroAllModelAvgMmc}</p>
-    <p id ="stat-round">Round: ${userData.activeRounds[1].roundNumber} </p>
+    <p id ="stat-round">${userData.activeRounds[1].roundNumber} </p>
     <p>${roundOneAllModelAvgCorr}</p>
     <p>${roundOneAllModelAvgMmc}</p>
-    <p id ="stat-round">Round: ${userData.activeRounds[2].roundNumber} </p>
+    <p id ="stat-round">${userData.activeRounds[2].roundNumber} </p>
     <p>${roundTwoAllModelAvgCorr}</p>
     <p>${roundTwoAllModelAvgMmc}</p>
-    <p id ="stat-round">Round: ${userData.activeRounds[3].roundNumber}</p>
+    <p id ="stat-round">${userData.activeRounds[3].roundNumber}</p>
     <p>${roundThreeAllModelAvgCorr}</p>
     <p>${roundThreeAllModelAvgMmc}</p>
-    <p id ="stat-round">All Live Rounds</p>
+    <p id ="stat-round">All Live</p>
     <p>${allLiveAllModelAvgCorr}</p>
     <p>${allLiveAllModelAvgMmc}</p>
   </div>
