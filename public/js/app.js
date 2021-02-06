@@ -63,15 +63,18 @@ const detailHeader = (date, userData, nmrPrice) => `
   <h3>NMR Price: $${nmrPrice}</h3>`;
 
 const detailRow = (userData, activeTotal) => `
-  <div class = "modelRow monkey">
-    <p class = "collectionModelNames"><img id = "glyph" src="/assets/numerai_glyph.PNG">${userData.modelName}</p>
-    <p>${userData.totalStake}</p>
-    <p>${activeTotal.toFixed(2)}</p>
-    <p>${userData.dailyChange}</p>
-    <p>${userData.corrPrev}</p>
-    <p>${userData.corrCurrent}</p>
-    <p>${userData.mmcCurrent}</p>
-  </div>`;
+  <div id = ${userData.modelName}>
+    <div class = "modelRow monkey">
+      <p class = "collectionModelNames"><img id = "glyph" src="/assets/glyph_2.PNG">${userData.modelName}</p>
+      <p class = "total-stake">${userData.totalStake}</p>
+      <p class = "active-total">${activeTotal.toFixed(2)}</p>
+      <p class = "daily-change">${userData.dailyChange}</p>
+      <p class = "prev-rank">${userData.corrPrev}</p>
+      <p class = "current-rank">${userData.corrCurrent}</p>
+      <p class = "mmc-rank">${userData.mmcCurrent}</p>
+    </div>
+  </div>
+  `;
 
 const modalTitleRow= (userData, avgCorr, avgMmc) => `
   <div class="modal myModal ${userData.modelName}">
@@ -372,29 +375,6 @@ function newCollection(){
   $(this).text(text);
 }
 
-function modelNotFound(){
-  const modelFoundUser = $('#modelExistsUser').val();
-  const modelFound = $('#modelFound').val();
-  if(modelFound !== 'false'){
-    const LSmodels = localStorage.getItem('collections');
-    const modelCollections = JSON.parse(LSmodels);
-    $('#collectionName').val(`${modelFoundUser}`);
-    const targetCollection = modelCollections.filter(collection => collection.collectionName === modelFoundUser);
-    const models = targetCollection[0].modelCollection;
-    models.forEach(model => {
-      if(model === modelFound){
-        $('#modelList').append($(`<li class = "modelArray"><h2>${model}</h2><h3>(Model Not Found)</h3><img class = "removeModels" src = "https://p.kindpng.com/picc/s/19-191468_png-file-svg-minus-sign-icon-transparent-png.png"></li>`));
-      }else{
-        $('#modelList').append($(`<li class = "modelArray"><h2>${model}</h2><img class = "removeModels" src = "https://p.kindpng.com/picc/s/19-191468_png-file-svg-minus-sign-icon-transparent-png.png"></li>`));
-      }
-      $('.removeModels').on('click', deleteModelOrCollection);
-      $('#addModel').prop('checked', false);
-      $('#model-to-add').val('');
-      $('#detailButton').before(`<input type = "hidden" name = "model" value = "${model}"></input>`);
-    });
-    changeFormAction();
-  }
-}
 
 function clearModels() {
   renderModelCollectionList([]);
@@ -491,7 +471,7 @@ async function multiHorse(arr){
 
 function displayModal(){
   const modalTargetModel = $(this).find('.collectionModelNames').html();
-  const modalTargetModelStripped = modalTargetModel.substring(48);
+  const modalTargetModelStripped = modalTargetModel.substring(42);
   $(`.${modalTargetModelStripped}`).css('display', 'block');
 }
 
@@ -540,7 +520,7 @@ function renderModelDetails(nmrPrice, userData, date){
     }
     if(isNaN(activeTotal) === true){activeTotal = 0;}
     dailyChangedAllModels += Number(userData[i].dailyChange);
-    $('.titleRow').after(detailRow(userData[i], activeTotal));
+    $('.model-detail-row-section').append(detailRow(userData[i], activeTotal));
     let corrSum = 0;
     for(let j = 0; j<4; j++){corrSum += userData[i].activeRounds[j].correlation;}
     let avgCorr = (corrSum/4);
@@ -549,7 +529,7 @@ function renderModelDetails(nmrPrice, userData, date){
     for(let j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc;}
     let avgMmc = (mmcSum/4);
     allLiveAllModelSumMmc += avgMmc;
-    $('.titleRow').after(modalTitleRow(userData[i], avgCorr, avgMmc));
+    $(`#${userData[i].modelName}`).append(modalTitleRow(userData[i], avgCorr, avgMmc));
     for(let j =0; j<4; j++){
       let stake = Number(userData[i].activeRounds[j].selectedStakeValue);
       let payout = Number(userData[i].activeRounds[j].payoutPending);
@@ -580,6 +560,26 @@ function renderModelDetails(nmrPrice, userData, date){
   $('.modelRow').on('click', displayModal);
 }
 
+function columnSort(field){
+  return function (a, b) {
+    console.log(a);
+    let aText = $(a).find(field).html();
+    console.log(aText);
+    let bText = $(b).find(field).html();
+    return aText - bText;
+  };
+}
+
+function sortDetailRows(){
+  const sortingProperty = $(this).attr('id');
+  const detailRow = $('.model-detail-row-section');
+  const detailRowList = detailRow.children('div');
+  if(sortingProperty === 'total-staked-title'){
+    detailRowList.sort(columnSort('.total-stake'));
+  }
+  detailRow.append(detailRowList);
+}
+
 
 async function init(){
   // const NMRprice = await retrieveObject(latestNmrPrice());
@@ -597,7 +597,7 @@ async function init(){
   hideUserStatus();
   renderModelCollectionNames('Top Ten');
   $('#addModel').hide();
-
+  $('#total-staked-title').on('click',sortDetailRows);
   $('#add-collection-button').on('click', newCollection);
   $('#collection-name').keypress(function (e) {
     if (e.which === 13) {
