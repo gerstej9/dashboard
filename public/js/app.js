@@ -558,24 +558,83 @@ function renderModelDetails(nmrPrice, userData, date){
   $('#user-detail').append(detailTotalStatsRow(userData[0], roundZeroAllModelAvgCorr,roundZeroAllModelAvgMmc, roundOneAllModelAvgCorr, roundOneAllModelAvgMmc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgMmc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgMmc, allLiveAllModelAvgCorr, allLiveAllModelAvgMmc));
   $('.myModal').on('click', closeModal);
   $('.modelRow').on('click', displayModal);
+  sortDetailRows();
 }
 
-function columnSort(field){
-  return function (a, b) {
-    console.log(a);
-    let aText = $(a).find(field).html();
-    console.log(aText);
-    let bText = $(b).find(field).html();
-    return aText - bText;
-  };
+function columnSort(field, direction){
+  if(field === '.collectionModelNames'){
+    return function (a, b) {
+      let aText = $(a).find(field).html().substring(42);
+      let bText = $(b).find(field).html().substring(42);
+      if ( aText < bText ) {
+        return direction[1];
+      }
+      if ( aText > bText ) {
+        return direction[2];
+      }
+      return 0;
+    };
+  }
+  else{
+    return function (a, b) {
+      let aText = $(a).find(field).html();
+      let bText = $(b).find(field).html();
+      if(direction[0] === 'up')
+        return aText - bText;
+      else if(direction[0] === 'down'){
+        return bText-aText;
+      }
+    };
+  }
+}
+
+function checkSortingIndicator(sortingIndicator){
+  if(!sortingIndicator || sortingIndicator.includes('down') || sortingIndicator === 'fa'){
+    return ['up', -1, 1];
+  }else if(sortingIndicator.includes('up')){
+    return ['down', 1, -1];
+  }
 }
 
 function sortDetailRows(){
   const sortingProperty = $(this).attr('id');
+  const sortingDirectionIndicator = $(this).find('i').attr('class');
+  const sortingDirection = checkSortingIndicator(sortingDirectionIndicator);
+  if(!sortingDirectionIndicator || sortingDirectionIndicator.includes('down')|| sortingDirectionIndicator === 'fa'){
+    $('i').removeClass('fa-sort-down');
+    $('i').removeClass('fa-sort-up');
+  }else if(sortingDirectionIndicator.includes('up')){
+    $('i').removeClass('fa-sort-up');
+  };
   const detailRow = $('.model-detail-row-section');
   const detailRowList = detailRow.children('div');
+  if(sortingProperty === 'model-name-title'){
+    $('#model-name-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
+    detailRowList.sort(columnSort('.collectionModelNames', sortingDirection));
+  }
   if(sortingProperty === 'total-staked-title'){
-    detailRowList.sort(columnSort('.total-stake'));
+    $('#total-staked-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
+    detailRowList.sort(columnSort('.total-stake', sortingDirection));
+  }
+  if(sortingProperty === 'payout-title'){
+    $('#payout-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
+    detailRowList.sort(columnSort('.active-total', sortingDirection));
+  }
+  if(sortingProperty === 'daily-change-title'){
+    $('#daily-change-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
+    detailRowList.sort(columnSort('.daily-change', sortingDirection));
+  }
+  if(sortingProperty === 'prev-rank-title'){
+    $('#prev-rank-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
+    detailRowList.sort(columnSort('.prev-rank', sortingDirection));
+  }
+  if(sortingProperty === 'rank-title' || !sortingProperty){
+    $('#rank-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
+    detailRowList.sort(columnSort('.current-rank', sortingDirection));
+  }
+  if(sortingProperty === 'mmc-rank-title'){
+    $('#mmc-rank-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
+    detailRowList.sort(columnSort('.mmc-rank', sortingDirection));
   }
   detailRow.append(detailRowList);
 }
@@ -586,6 +645,8 @@ async function init(){
   // console.log(NMRprice);
   // console.log(await retrieveObject(latestNmrPrice()));
   // modelNotFound();
+  // $('.fa-sort-up').hide();
+  // $('.fa-sort-up').hide();
   $('.loader').hide();
   $('.myModal').on('click', closeModal);
   $('.modelRow').on('click', displayModal);
@@ -597,7 +658,13 @@ async function init(){
   hideUserStatus();
   renderModelCollectionNames('Top Ten');
   $('#addModel').hide();
+  $('#model-name-title').on('click',sortDetailRows);
   $('#total-staked-title').on('click',sortDetailRows);
+  $('#payout-title').on('click',sortDetailRows);
+  $('#daily-change-title').on('click',sortDetailRows);
+  $('#prev-rank-title').on('click',sortDetailRows);
+  $('#rank-title').on('click',sortDetailRows);
+  $('#mmc-rank-title').on('click',sortDetailRows);
   $('#add-collection-button').on('click', newCollection);
   $('#collection-name').keypress(function (e) {
     if (e.which === 13) {
