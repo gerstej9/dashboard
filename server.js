@@ -342,29 +342,6 @@ client.connect().then(() => {
 
 
 
-
-
-
-//Get every model for every round
-//Get rid of rest of database
-//Make model comparison dynamically rendered
-
-// All Data
-// round Number, model name, mmc, cor, stake, payout type, total payout, start date, end date, nmr PriceUSD***
-
 //TODO
-//NEW postsgres table for historic graphql data
-//Slope for each model over previous 12 closed rounds
-//Add comments and rename variables to be clearer
-//Render download entirely from js
-//Change download function to pull info not from database
-
-//Round API call will yield corr, username, date
-
-//Second API call username
-
-//1. postgres database
-//2. model newscore download
-//3. migrate newscore info to user detail page
-//6. Work on tables
-//7. Sorting columns on detail table
+//Clean-up Code
+//Make new models render on new collection creation and add model
