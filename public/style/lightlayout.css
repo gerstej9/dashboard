@@ -471,8 +471,8 @@ section a{
 }
 
 #contact-info{
-  display: grid;
-  grid-template-columns: 2fr 2fr 1fr;
+  display: flex;
+  justify-content:space-around;
   margin: 20px 50px;
 }
 
@@ -490,6 +490,18 @@ footer img {
   height: 7%;
   border-radius: 40px;
   justify-self: center;
+}
+
+#top-footer{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  margin-bottom:20px
+}
+
+#top-footer a{
+  padding:25px 0px;
 }
 
 .titleRow{
@@ -576,9 +588,9 @@ footer img {
   }
 
   #contact-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    margin: 0px;
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px;
   }
   .totalRow {
     margin:2%;
@@ -604,6 +616,22 @@ footer img {
   .titleRow, .modelRow{
     font-size: 18px;
     width: 500px;
+  }
+
+  #top-footer a{
+    padding:25px 0px;
+  }
+
+  #top-footer{
+    margin-bottom:0px
+  }
+
+  footer img{
+    width: 10%;
+    height: 10%;
+    border-radius: 40px;
+    justify-self: center;
+    margin: 15px;
   }
 }
 
