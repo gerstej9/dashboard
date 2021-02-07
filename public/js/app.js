@@ -232,10 +232,12 @@ async function addModel(){
   const modelToAdd = $('#model-to-add').val().trim().toLowerCase();
 
   if (!modelToAdd) {
+    $('.loader').hide();
+    $('#model-plus').show();
     return;
   }
-
   const modelToRetrieve =  await retrieveObject(userProfile(modelToAdd));
+  console.log(modelToRetrieve);
   if(modelToRetrieve.v2UserProfile === null){
     $('#model-plus').show();
     $('.loader').hide();
