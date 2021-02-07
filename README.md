@@ -16,15 +16,13 @@ To use this application, create a model collection by entering a name and adding
   * dotenv: 8.2.0
   * ejs: 3.1.5
   * express: 4.17.1
-  * express-graphql: 0.12.0
-  * graphql: 15.4.0
-  * method-override: 3.0.0
   * node-fetch: 2.6.1
-  * pg: 8.5.1
-  * stats-percentile: 3.1.0
   * Jquery
   * Google Fonts
   * Font Awesome
+
+## Setup
+To utilize this application locally, clone the repository and create a .env file with ```PORT=3002```. Run npm install to download the necessary dependencies. This program utilizes node.js and therefore that must be installed as well.
 
 ## Design
 CSS design follows SMACSS protocol and includes reset,base, layout, modules. and modal css files.

@@ -1,9 +1,8 @@
 'use strict';
 
-const collection = [];
-const userStatus = $('.userNot').attr('id');
-const newUserStatus = $('.userDoes').attr('id');
+//Global variables
 
+//GraphQl API call queries
 const latestNmrPrice = () => `query{latestNmrPrice {
   lastUpdated
   priceUsd
@@ -35,33 +34,23 @@ const userProfile = username => `query{v2UserProfile(username: "${username}") {
   username
 }}`;
 
-const v2Leaderboard = () => `query{v2Leaderboard{
-  username
-}
-}`;
 
-const v2RoundDetails = roundNumber => `query{
-  v2RoundDetails(roundNumber:${roundNumber}) {
-    roundNumber
-    userPerformances {
-      correlation
-      date
-      username
-    }
-  }
-}`;
+//HTML inserts
 
+//Button for each model in a collection
 const modelButton = (model) => `
   <li class = "modelArray listButton">
     <span>${model}</span>
     <i class="fa fa-times-circle removeModels"></i>
   </li>`;
 
+//Header for detail section of homepage
 const detailHeader = (date, userData, nmrPrice) => `
   <h3>Date: ${date}</h3>
   <h3>Live Rounds: ${userData.activeRounds[0].roundNumber} to ${userData.activeRounds[3].roundNumber}</h3>
   <h3>NMR Price: $${nmrPrice}</h3>`;
 
+//Row for each model details
 const detailRow = (userData, activeTotal) => `
   <div class = "model-row-div" id = "${userData.modelName}">
     <div class = "modelRow monkey">
@@ -76,6 +65,7 @@ const detailRow = (userData, activeTotal) => `
   </div>
   `;
 
+//Title row for modal box includes name of model and round averages
 const modalTitleRow= (userData, avgCorr, avgMmc) => `
   <div class="modal myModal ${userData.modelName}">
     <div class="modal-content">
@@ -98,6 +88,7 @@ const modalTitleRow= (userData, avgCorr, avgMmc) => `
     </div>
   </div>`;
 
+//Modal details for each live round
 const modalDetailRow = (activeRounds, stake, payout) => `
 <div class = "modalTitleRow">
 <p>${activeRounds.roundNumber}</p>
@@ -107,6 +98,7 @@ const modalDetailRow = (activeRounds, stake, payout) => `
 <p>${payout.toFixed(2)}</p>
 </div>`;
 
+//Modal box for added models that do not exist in graphql database
 const modalModelNotFound = () => `
 <div class="modal myModal model-not-found">
   <div id = "not-found" class="modal-content">
@@ -115,6 +107,7 @@ const modalModelNotFound = () => `
   </div>
 </div>`;
 
+//Financial totals for detail section
 const detailTotalRow = (dailyChangedAllModels, dailyChangeAllModelsUsd, activeTotalAllModels, currPayoutUsd, userTotalStake,stakedPayoutUsd, userLiveTotal, userLiveTotalUsd) =>`
 <div class = "totalRow monkey">
 <p>Daily Change NMR: ${parseFloat(dailyChangedAllModels).toLocaleString('en-US')} NMR</p>
@@ -128,6 +121,7 @@ const detailTotalRow = (dailyChangedAllModels, dailyChangeAllModelsUsd, activeTo
 </div>
 `;
 
+//Collection corr and mmc averages for live rounds
 const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllModelAvgMmc, roundOneAllModelAvgCorr, roundOneAllModelAvgMmc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgMmc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgMmc, allLiveAllModelAvgCorr, allLiveAllModelAvgMmc) => `
   <div class = "totalRowStats monkey">
     <p id = stat-round>Round</p>
@@ -151,7 +145,8 @@ const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllMode
   </div>
 `;
 
-function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
+//Object constructor function to hold model details for each model
+function ModelDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
   this.mmcCurrent = mmcCurrent;
   this.mmcPrevRank = mmcPrevRank;
   this.corrCurrent = corrCurrent;
@@ -162,15 +157,7 @@ function UserDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds
   this.dailyChange = dailyChange;
 }
 
-function hideUserStatus(){
-  if (userStatus !== 'no'){
-    $('#user-not').hide();
-  }
-  if(newUserStatus !== 'yes'){
-    $('#user-does').hide();
-  }
-}
-
+//Function to delete model collections, run on button click on "x" on each collection tile
 function deleteCollection(){
   const collectionName = $(this).parent().text().trim();
   let LSmodels = localStorage.getItem('collections');
@@ -187,6 +174,7 @@ function deleteCollection(){
   }
 }
 
+//Functino to save collection of models after addition or deletion of models. Renders model details after initiated
 function saveModelCollection(){
   const collectionName = $('.selected-collection').text().trim();
 
@@ -216,6 +204,7 @@ function saveModelCollection(){
   }
 }
 
+//Function to create a new collection of models
 function saveCollectionName(name){
   if (name) {
     let LSmodels = localStorage.getItem('collections');
@@ -236,6 +225,7 @@ function saveCollectionName(name){
   }
 }
 
+//Function to add a new model to an existing collection, checks if model exists with graphql call
 async function addModel(){
   $('#model-plus').hide();
   $('.loader').show();
@@ -259,12 +249,12 @@ async function addModel(){
     $('#detailButton').before(`<input type = "hidden" name = "model" value = "${modelToAdd}"></input>`);
     $('.removeModels').on('click', deleteModelOrCollection);
     $('#model-to-add').val('');
-    changeFormAction();
     $('#model-plus').show();
     $('.loader').hide();
   }
 }
 
+//Renders list of all existing model collections 
 function renderModelCollectionNames(selectedCollection){
   $('.existing-collections').html('');
 
@@ -285,6 +275,7 @@ function renderModelCollectionNames(selectedCollection){
   $('.collections').on('click', renderExistingCollectionModels);
 }
 
+//Renders all models listed in a selected collection used when collection selected changes
 function renderExistingCollectionModels(){
   $('#detailPage').find('input').remove();
   $('#modelList').html('');
@@ -308,45 +299,31 @@ function renderExistingCollectionModels(){
       $('.removeModels').on('click', deleteModelOrCollection);
       $('#addModel').prop('checked', false);
       $('#model-to-add').val('');
-      // $('#detailButton').before(`<input type = "hidden" name = "model" value = "${model}"></input>`);
     });
     getModelDetails(targetCollection[0].modelCollection);
   }
-  // changeFormAction();
 }
 
+//Renders models list for given collection
 function renderModelCollectionList(models){
-  // $('#detailPage').find('input').remove();
   $('#modelList').html('');
-  // const collectionToRetrieve = $(this).text();
-  // const LSmodels = localStorage.getItem('collections');
-  // const modelCollections = JSON.parse(LSmodels);
-  // $('#collectionName').val(`${collectionToRetrieve}`);
-  // const targetCollection = modelCollections.filter(collection => collection.collectionName === collectionToRetrieve);
-  // const models = targetCollection[0].modelCollection;
   models.forEach(model => {
     $('#modelList').append($(modelButton(model)));
     $('.removeModels').on('click', deleteModelOrCollection);
     $('#addModel').prop('checked', false);
     $('#model-to-add').val('');
-    // $('#detailButton').before(`<input type = "hidden" name = "model" value = "${model}"></input>`);
   });
-  // changeFormAction();
 }
 
-function changeFormAction(){
-  $('#detailPage').attr('action', '/detail/'+ $('#collectionName').val());
-}
-
+//Function to delete models
 function deleteModelOrCollection(){
   const parentHtml = $(this).parent();
   const modelToRemove = parentHtml.find('span').text().trim();
   $(this).parent().remove();
   $( `input[value|='${modelToRemove}']` ).remove();
-
-  // TODO: Update localstorage for model and collection
 }
 
+//Creates new collection
 function newCollection(){
   const text = 'Create Collection';
 
@@ -376,13 +353,12 @@ function newCollection(){
   $(this).text(text);
 }
 
-
+//Clears all models listed in model section
 function clearModels() {
   renderModelCollectionList([]);
 }
 
-// TODO: Render selected collection button differently from others
-
+//Renders topTenCollection in local storage and on page for all users on page load
 function topTenCollection(){
   let topTenArr = [];
   $('.topTen').each(function() {
@@ -406,6 +382,7 @@ function topTenCollection(){
   }
 }
 
+//General function used for all graphql queries
 async function retrieveObject(queryInput){
   return new Promise (function(resolve, reject){
     $.ajax({url: 'https://api-tournament.numer.ai/',
@@ -424,14 +401,14 @@ async function retrieveObject(queryInput){
 }
 
 
-//Model Detail Page
+//Used to retrieve details for each model
 async function getModelDetails(models){
   $('#hide-on-load').hide();
   $('.loader-detail').show();
   $('.totalRow').hide();
   $('.totalRowStats').hide();
   $('#detail-header').hide();
-  const userModelArr = await multiHorse(models);
+  const userModelArr = await getMultipleModelDetails(models);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.priceUsd).toFixed(2);
   const date = userModelArr[0].activeRounds[3].date.substring(0,10);
@@ -441,8 +418,8 @@ async function getModelDetails(models){
   $('#detail-header').show();
 }
 
-
-async function multiHorse(arr){
+//Function used to repeat model detail retrieval for an array of models
+async function getMultipleModelDetails(arr){
   let userModelArr = [];
   for(let i = 0; i < arr.length; i++){
     try{
@@ -460,7 +437,7 @@ async function multiHorse(arr){
         user.v2UserProfile.username,
         Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
       ];
-      userModelArr.push(new UserDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+      userModelArr.push(new ModelDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
     }
     catch(error){
       console.log(error);
@@ -470,20 +447,24 @@ async function multiHorse(arr){
   return userModelArr;
 }
 
+//Function to display detail modal for each model
 function displayModal(){
   const modalTargetModel = $(this).find('.collectionModelNames').html();
   const modalTargetModelStripped = modalTargetModel.substring(42);
   $(`.${modalTargetModelStripped}`).css('display', 'block');
 }
 
+//Modal pop up for when an added model is not found in the graphql database
 function displayModelNotFoundModal(){
   $('.model-not-found').show();
 }
 
+//Function to close modal boxes
 function closeModal(){
   $('.myModal').css('display', 'none');
 }
 
+//Function used to render model detail section on homepage
 function renderModelDetails(nmrPrice, userData, date){
   $('.modal').remove();
   $('.model-row-div').remove();
@@ -562,6 +543,7 @@ function renderModelDetails(nmrPrice, userData, date){
   sortDetailRows();
 }
 
+//Helper function used as sorting callback
 function columnSort(field, direction){
   if(field === '.collectionModelNames'){
     return function (a, b) {
@@ -589,6 +571,7 @@ function columnSort(field, direction){
   }
 }
 
+//Helper function to dictate direction of sorting
 function checkSortingIndicator(sortingIndicator){
   if(!sortingIndicator || sortingIndicator.includes('down') || sortingIndicator === 'fa'){
     return ['up', -1, 1];
@@ -597,6 +580,7 @@ function checkSortingIndicator(sortingIndicator){
   }
 }
 
+//Function for sorting model detail rows based on column headers
 function sortDetailRows(){
   const sortingProperty = $(this).attr('id');
   const sortingDirectionIndicator = $(this).find('i').attr('class');
@@ -640,14 +624,8 @@ function sortDetailRows(){
   detailRow.append(detailRowList);
 }
 
-
+//Functions to be run on page load
 async function init(){
-  // const NMRprice = await retrieveObject(latestNmrPrice());
-  // console.log(NMRprice);
-  // console.log(await retrieveObject(latestNmrPrice()));
-  // modelNotFound();
-  // $('.fa-sort-up').hide();
-  // $('.fa-sort-up').hide();
   $('.loader').hide();
   $('.myModal').on('click', closeModal);
   $('.modelRow').on('click', displayModal);
@@ -656,7 +634,6 @@ async function init(){
   $('#save-new-model').on('click', addModel);
   $('#save-collection-button').on('click', saveModelCollection);
   $('#clear-model-list-button').on('click', clearModels);
-  hideUserStatus();
   renderModelCollectionNames('Top Ten');
   $('#addModel').hide();
   $('#model-name-title').on('click',sortDetailRows);
