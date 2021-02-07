@@ -63,7 +63,7 @@ const detailHeader = (date, userData, nmrPrice) => `
   <h3>NMR Price: $${nmrPrice}</h3>`;
 
 const detailRow = (userData, activeTotal) => `
-  <div id = ${userData.modelName}>
+  <div class = "model-row-div" id = "${userData.modelName}">
     <div class = "modelRow monkey">
       <p class = "collectionModelNames"><img id = "glyph" src="/assets/glyph_2.PNG">${userData.modelName}</p>
       <p class = "total-stake">${userData.totalStake}</p>
@@ -212,6 +212,7 @@ function saveModelCollection(){
       modelCollections.push({collectionName: collectionName, modelCollection:models});
     }
     localStorage.setItem('collections', JSON.stringify(modelCollections));
+    getModelDetails(models);
   }
 }
 
@@ -485,7 +486,7 @@ function closeModal(){
 
 function renderModelDetails(nmrPrice, userData, date){
   $('.modal').remove();
-  $('.modelRow').remove();
+  $('.model-row-div').remove();
   $('.totalRow').remove();
   $('.totalRowStats').remove();
   $('#detail-header').html('');

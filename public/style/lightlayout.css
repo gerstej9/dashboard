@@ -500,6 +500,16 @@ footer img {
   display: none;
 }
 
+.titleRow p:hover,
+.titleRow p:focus {
+  text-decoration: none;
+  cursor:pointer;
+}
+
+#model-margin{
+  margin-right:5px;
+}
+
 @media(max-width: 450px){
   #mobile-scroll{
     display: inline;
@@ -582,6 +592,7 @@ footer img {
   .modelRow p, .titleRow p{
     height: 40px;
   }
+
   .loader-detail{
     margin: 10% 35%;
   }
@@ -595,6 +606,7 @@ footer img {
     width: 500px;
   }
 }
+
 
 @media(min-width: 767px){
   main {
