@@ -3,9 +3,7 @@ require('dotenv').config({});
 const fetch = require('node-fetch');
 const PORT = process.env.PORT || 9999;
 const cookies = require('cookie-parser');
-import sslRedirect from 'heroku-ssl-redirect';
 const app = express();
-app.use(sslRedirect());
 
 app.use(express.static('./public'));
 app.use(express.urlencoded({extended:true}));
