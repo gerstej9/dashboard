@@ -11,7 +11,7 @@ app.use (function (req, res, next) {
     next();
   } else {
     // request was via http, so redirect to https - I don't know if you need www. or if req.path or that domain are correct here
-    res.redirect('https://' + numerai-insights.com + req.path);
+    res.redirect('https://' + req.headers.host + req.url);
   }
 });
 
