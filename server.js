@@ -6,12 +6,12 @@ const cookies = require('cookie-parser');
 const app = express();
 
 app.use (function (req, res, next) {
-  if (req.secure) {
+  if (req.secure && req.host === 'numerai-insights.com') {
     // request was via https, so do no special handling
     next();
   } else {
-    // request was via http, so redirect to https
-    res.redirect('https://' + req.headers.host + req.url);
+    // request was via http, so redirect to https - I don't know if you need www. or if req.path or that domain are correct here
+    res.redirect('https://' + numerai-insights.com + req.path);
   }
 });
 
