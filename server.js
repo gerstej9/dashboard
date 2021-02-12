@@ -11,6 +11,15 @@ app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
 app.use(cookies());
 
+app.use(function forceLiveDomain(req, res, next) {
+  // Don't allow user to hit Heroku now that we have a domain
+  const host = req.get('Host');
+  if (host === 'numerai-dashboard.herokuapp.com/') {
+    return res.redirect(301, 'https://numerai-insights.com/' + req.originalUrl);
+  }
+  return next();
+});
+
 
 //Query Constants
 const v2Leaderboard = () => `{v2Leaderboard{
