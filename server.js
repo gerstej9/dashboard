@@ -15,7 +15,7 @@ app.use(function forceLiveDomain(req, res, next) {
   // Don't allow user to hit Heroku now that we have a domain
   const host = req.get('Host');
   console.log(host);
-  if (host === 'numerai-dashboard.herokuapp.com/') {
+  if (host === 'numerai-dashboard.herokuapp.com') {
     res.redirect(301, 'https://numerai-insights.com/' + req.originalUrl);
   }
   next();
