@@ -476,6 +476,10 @@ section a{
   margin: 20px 50px;
 }
 
+#chat-link{
+  margin: 0px;
+}
+
 footer{
   margin-top: 60px;
 }
@@ -624,6 +628,15 @@ footer img {
 
   #top-footer{
     margin-bottom:0px
+  }
+
+  .about-us h4{
+    line-height: 0px;
+  }
+
+  #chat-link{
+    line-height: 25px;
+    margin: 0px;
   }
 
   footer img{
