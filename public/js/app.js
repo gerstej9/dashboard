@@ -237,7 +237,6 @@ async function addModel(){
     return;
   }
   const modelToRetrieve =  await retrieveObject(userProfile(modelToAdd));
-  console.log(modelToRetrieve);
   if(modelToRetrieve.v2UserProfile === null){
     $('#model-plus').show();
     $('.loader').hide();
@@ -413,7 +412,7 @@ async function getModelDetails(models){
   const userModelArr = await getMultipleModelDetails(models);
   const currentNmr = await retrieveObject(latestNmrPrice());
   const nmrPrice = Number(currentNmr.latestNmrPrice.priceUsd).toFixed(2);
-  const date = userModelArr[0].activeRounds[3].date.substring(0,10);
+  const date = currentNmr.latestNmrPrice.lastUpdated.substring(0,10);
   renderModelDetails(nmrPrice, userModelArr, date);
   $('.loader-detail').hide();
   $('#hide-on-load').show();
@@ -518,7 +517,10 @@ function renderModelDetails(nmrPrice, userData, date){
       let stake = Number(userData[i].activeRounds[j].selectedStakeValue);
       let payout = Number(userData[i].activeRounds[j].payoutPending);
       let activeRounds = userData[i].activeRounds[j];
-      // $('.modalDetailRow').after(modalDetailRow(activeRounds, stake, payout));
+      if(!stake){stake = 0;}
+      if(!payout){payout = 0;}
+      if(!activeRounds.correlation){activeRounds.correlation = 0;}
+      if(!activeRounds.mmc){activeRounds.mmc = 0;}
       $(`.${userData[i].modelName}`).find('.modalDetailRow').after(modalDetailRow(activeRounds, stake, payout));
     }
     activeTotalAllModels += Number(activeTotal);

@@ -36,10 +36,19 @@ h2, h3, h4, h5 {
   color: var(--header-text);
 }
 
+h5{
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
 nav {
   display: flex;
   font-weight: 400;
   font-size: 22px;
+}
+
+#use{
+  margin-right: 75px;
 }
 
 header h2{
@@ -538,6 +547,9 @@ footer img {
   }
   nav{
     font-size: 18px;
+  }
+  #use{
+    margin-right: 10px;
   }
   .collectionList{
     justify-content: flex-start;
