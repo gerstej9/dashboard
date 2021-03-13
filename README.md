@@ -3,7 +3,7 @@
 ## Authors:
 * James Gerstenberger
 
-**Version**: 1.0.14
+**Version**: 1.1.14
 
 ## Overview
 An application to allow Numerai users the ability to easily compare model performance. The application provides performance statistics for each model across live rounds, pending payouts, staked amounts, and mmc and correlation rankings for each model. In addition the application provides a total sum of all staked models, pending payouts across all models and total "live" staked amount which is the sum of all pending payouts with the sum of all staked amounts.

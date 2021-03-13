@@ -32,6 +32,7 @@ const v2Leaderboard = () => `{v2Leaderboard{
 // Route Paths
 app.get('/', getHomepage);
 app.get('/about_us', getAboutUs);
+app.get('/use',getUsePage);
 
 
 //Helper Functions
@@ -68,6 +69,10 @@ async function getHomepage(req, res){
 //About Us Route Function
 function getAboutUs(req, res){
   res.render('pages/about_us.ejs', {theme: getTheme(req)});
+}
+
+function getUsePage(req, res){
+  res.render('pages/use.ejs', {theme: getTheme(req)});
 }
 
 
