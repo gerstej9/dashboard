@@ -9,12 +9,6 @@ const latestNmrPrice = () => `query{latestNmrPrice {
 }}`;
 
 const userProfile = username => `query{v2UserProfile(username: "${username}") {
-  latestRanks {
-    mmcRank
-    prevMmcRank
-    prevRank
-    rank
-  }
   latestRoundPerformances {
     correlation
     correlationWithMetamodel
@@ -32,6 +26,16 @@ const userProfile = username => `query{v2UserProfile(username: "${username}") {
   }
   totalStake
   username
+}}`;
+
+const v3UserProfile = username => `query{v3UserProfile(modelName: "${username}") {
+  latestRanks{
+    corr
+    corr20d
+    mmc
+    mmc20d
+    fnc
+  }
 }}`;
 
 
@@ -58,7 +62,7 @@ const detailRow = (userData, activeTotal) => `
       <p class = "total-stake">${userData.totalStake}</p>
       <p class = "active-total">${activeTotal.toFixed(2)}</p>
       <p class = "daily-change">${userData.dailyChange}</p>
-      <p class = "prev-rank">${userData.corrPrev}</p>
+      <p class = "prev-rank">${userData.fnc}</p>
       <p class = "current-rank">${userData.corrCurrent}</p>
       <p class = "mmc-rank">${userData.mmcCurrent}</p>
     </div>
@@ -146,11 +150,10 @@ const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllMode
 `;
 
 //Object constructor function to hold model details for each model
-function ModelDetail(mmcCurrent, mmcPrevRank, corrCurrent, corrPrev, activeRounds, totalStake, modelName, dailyChange){
+function ModelDetail(mmcCurrent, corrCurrent, fnc, activeRounds, totalStake, modelName, dailyChange){
   this.mmcCurrent = mmcCurrent;
-  this.mmcPrevRank = mmcPrevRank;
   this.corrCurrent = corrCurrent;
-  this.corrPrev = corrPrev;
+  this.fnc = fnc;
   this.activeRounds = activeRounds;
   this.totalStake = totalStake;
   this.modelName = modelName;
@@ -424,21 +427,19 @@ async function getMultipleModelDetails(arr){
   let userModelArr = [];
   for(let i = 0; i < arr.length; i++){
     try{
-      // console.log(arr[i].toLowerCase());
       const user = await retrieveObject(userProfile(arr[i]));
-      // console.log(user);
-      const [userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange] =
+      const v3User = await retrieveObject(v3UserProfile(arr[i]));
+      const [userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange] =
       [
-        user.v2UserProfile.latestRanks.mmcRank,
-        user.v2UserProfile.latestRanks.prevMmcRank,
-        user.v2UserProfile.latestRanks.rank,
-        user.v2UserProfile.latestRanks.prevRank,
+        v3User.v3UserProfile.latestRanks.mmc,
+        v3User.v3UserProfile.latestRanks.corr,
+        v3User.v3UserProfile.latestRanks.fnc,
         user.v2UserProfile.latestRoundPerformances.slice(-4),
         Number(user.v2UserProfile.totalStake).toFixed(2),
         user.v2UserProfile.username,
         Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
       ];
-      userModelArr.push(new ModelDetail(userMmcRankCurrent, userMmcRankPrev, userCorrCurrent, userCorrPrev, activeRounds, totalStake, modelName, dailyChange));
+      userModelArr.push(new ModelDetail(userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange));
     }
     catch(error){
       console.log(error);
