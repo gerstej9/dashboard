@@ -29,6 +29,7 @@ const userProfile = username => `query{v2UserProfile(username: "${username}") {
 }}`;
 
 const v3UserProfile = username => `query{v3UserProfile(modelName: "${username}") {
+  username
   latestRanks{
     corr
     corr20d
@@ -36,6 +37,47 @@ const v3UserProfile = username => `query{v3UserProfile(modelName: "${username}")
     mmc20d
     fnc
   }
+    nmrStaked
+    stakeInfo {
+      corrMultiplier
+      mmcMultiplier
+      takeProfit
+    }
+    medals {
+      bronze
+      gold
+      silver
+    }
+    bio
+  latestReturns {
+    oneDay
+    oneYear
+    threeMonths
+  }
+    profileUrl
+    roundModelPerformances {
+      corr
+      corr20d
+      corr20dPercentile
+      corrMultiplier
+      corrPercentile
+      corrWMetamodel
+      fnc
+      fncPercentile
+      mmc
+      mmc20d
+      mmc20dPercentile
+      mmcMultiplier
+      mmcPercentile
+      payout
+      roundNumber
+      roundOpenTime
+      roundPayoutFactor
+      roundResolveTime
+      roundResolved
+      roundTarget
+      selectedStakeValue
+    }
 }}`;
 
 
@@ -51,7 +93,7 @@ const modelButton = (model) => `
 //Header for detail section of homepage
 const detailHeader = (date, userData, nmrPrice) => `
   <h3>Date: ${date}</h3>
-  <h3>Live Rounds: ${userData.activeRounds[0].roundNumber} to ${userData.activeRounds[3].roundNumber}</h3>
+  <h3>Live Rounds: ${userData.activeRounds[3].roundNumber} to ${userData.activeRounds[0].roundNumber}</h3>
   <h3>NMR Price: $${nmrPrice}</h3>`;
 
 //Row for each model details
@@ -96,7 +138,7 @@ const modalTitleRow= (userData, avgCorr, avgMmc) => `
 const modalDetailRow = (activeRounds, stake, payout) => `
 <div class = "modalTitleRow">
 <p>${activeRounds.roundNumber}</p>
-<p>${activeRounds.correlation.toFixed(3)}</p>
+<p>${activeRounds.corr.toFixed(3)}</p>
 <p>${activeRounds.mmc.toFixed(3)}</p>
 <p>${stake.toFixed(2)}</p>
 <p>${payout.toFixed(2)}</p>
@@ -131,16 +173,16 @@ const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllMode
     <p id = stat-round>Round</p>
     <p>Collection Avg Corr</p>
     <p>Collection Avg MMC</p>
-    <p id = "stat-round">${userData.activeRounds[0].roundNumber} </p>
+    <p id = "stat-round">${userData.activeRounds[3].roundNumber} </p>
     <p>${roundZeroAllModelAvgCorr}</p>
     <p>${roundZeroAllModelAvgMmc}</p>
-    <p id ="stat-round">${userData.activeRounds[1].roundNumber} </p>
+    <p id ="stat-round">${userData.activeRounds[2].roundNumber} </p>
     <p>${roundOneAllModelAvgCorr}</p>
     <p>${roundOneAllModelAvgMmc}</p>
-    <p id ="stat-round">${userData.activeRounds[2].roundNumber} </p>
+    <p id ="stat-round">${userData.activeRounds[1].roundNumber} </p>
     <p>${roundTwoAllModelAvgCorr}</p>
     <p>${roundTwoAllModelAvgMmc}</p>
-    <p id ="stat-round">${userData.activeRounds[3].roundNumber}</p>
+    <p id ="stat-round">${userData.activeRounds[0].roundNumber}</p>
     <p>${roundThreeAllModelAvgCorr}</p>
     <p>${roundThreeAllModelAvgMmc}</p>
     <p id ="stat-round">All Live</p>
@@ -255,10 +297,11 @@ async function addModel(){
     $('#model-to-add').val('');
     $('#model-plus').show();
     $('.loader').hide();
+    saveModelCollection();
   }
 }
 
-//Renders list of all existing model collections 
+//Renders list of all existing model collections
 function renderModelCollectionNames(selectedCollection){
   $('.existing-collections').html('');
 
@@ -434,9 +477,9 @@ async function getMultipleModelDetails(arr){
         v3User.v3UserProfile.latestRanks.mmc,
         v3User.v3UserProfile.latestRanks.corr,
         v3User.v3UserProfile.latestRanks.fnc,
-        user.v2UserProfile.latestRoundPerformances.slice(-4),
-        Number(user.v2UserProfile.totalStake).toFixed(2),
-        user.v2UserProfile.username,
+        v3User.v3UserProfile.roundModelPerformances.slice(0,4),
+        Number(v3User.v3UserProfile.roundModelPerformances[0].selectedStakeValue).toFixed(2),
+        v3User.v3UserProfile.username,
         Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
       ];
       userModelArr.push(new ModelDetail(userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange));
@@ -489,24 +532,24 @@ function renderModelDetails(nmrPrice, userData, date){
   let allLiveAllModelSumCorr = 0;
   let allLiveAllModelSumMmc = 0;
   for(let i = 0; i<userData.length; i++){
-    roundZeroAllModelSumCorr += userData[i].activeRounds[0].correlation;
-    roundZeroAllModelSumMmc += userData[i].activeRounds[0].mmc;
-    roundOneAllModelSumCorr+= userData[i].activeRounds[1].correlation;
-    roundOneAllModelSumMmc += userData[i].activeRounds[1].mmc;
-    roundTwoAllModelSumCorr+= userData[i].activeRounds[2].correlation;
-    roundTwoAllModelSumMmc += userData[i].activeRounds[2].mmc;
-    roundThreeAllModelSumCorr+= userData[i].activeRounds[3].correlation;
-    roundThreeAllModelSumMmc += userData[i].activeRounds[3].mmc;
+    roundZeroAllModelSumCorr += userData[i].activeRounds[3].corr;
+    roundZeroAllModelSumMmc += userData[i].activeRounds[3].mmc;
+    roundOneAllModelSumCorr+= userData[i].activeRounds[2].corr;
+    roundOneAllModelSumMmc += userData[i].activeRounds[2].mmc;
+    roundTwoAllModelSumCorr+= userData[i].activeRounds[1].corr;
+    roundTwoAllModelSumMmc += userData[i].activeRounds[1].mmc;
+    roundThreeAllModelSumCorr+= userData[i].activeRounds[0].corr;
+    roundThreeAllModelSumMmc += userData[i].activeRounds[0].mmc;
     userTotalStake += Number(userData[i].totalStake);
     let activeTotal = 0;
     for(let j =0; j< userData[i].activeRounds.length; j++){
-      activeTotal+= Number(userData[i].activeRounds[j].payoutPending);
+      activeTotal+= Number(userData[i].activeRounds[j].payout);
     }
     if(isNaN(activeTotal) === true){activeTotal = 0;}
     dailyChangedAllModels += Number(userData[i].dailyChange);
     $('.model-detail-row-section').append(detailRow(userData[i], activeTotal));
     let corrSum = 0;
-    for(let j = 0; j<4; j++){corrSum += userData[i].activeRounds[j].correlation;}
+    for(let j = 0; j<4; j++){corrSum += userData[i].activeRounds[j].corr;}
     let avgCorr = (corrSum/4);
     allLiveAllModelSumCorr += avgCorr;
     let mmcSum = 0;
@@ -516,11 +559,11 @@ function renderModelDetails(nmrPrice, userData, date){
     $(`#${userData[i].modelName}`).append(modalTitleRow(userData[i], avgCorr, avgMmc));
     for(let j =0; j<4; j++){
       let stake = Number(userData[i].activeRounds[j].selectedStakeValue);
-      let payout = Number(userData[i].activeRounds[j].payoutPending);
+      let payout = Number(userData[i].activeRounds[j].payout);
       let activeRounds = userData[i].activeRounds[j];
       if(!stake){stake = 0;}
       if(!payout){payout = 0;}
-      if(!activeRounds.correlation){activeRounds.correlation = 0;}
+      if(!activeRounds.corr){activeRounds.corr = 0;}
       if(!activeRounds.mmc){activeRounds.mmc = 0;}
       $(`.${userData[i].modelName}`).find('.modalDetailRow').after(modalDetailRow(activeRounds, stake, payout));
     }
