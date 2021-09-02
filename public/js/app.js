@@ -478,7 +478,7 @@ async function getMultipleModelDetails(arr){
         v3User.v3UserProfile.latestRanks.corr,
         v3User.v3UserProfile.latestRanks.fnc,
         v3User.v3UserProfile.roundModelPerformances.slice(0,4),
-        Number(v3User.v3UserProfile.roundModelPerformances[0].selectedStakeValue).toFixed(2),
+        Number(v3User.v3UserProfile.nmrStaked).toFixed(2),
         v3User.v3UserProfile.username,
         Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
       ];
