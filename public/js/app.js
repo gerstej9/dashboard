@@ -493,30 +493,17 @@ async function getMultipleModelDetails(arr){
         v3User.v3UserProfile.username,
       ];
       const dailyChangeArray = await
-      activeRounds.map(async (round) => {
+      Promise.all(activeRounds.map(async (round) => {
         let currentRound = round.roundNumber;
         const roundPerformance = await retrieveObject(roundSubmissionPerformance(arr[i], currentRound ));
         const dailyRoundPerformance = roundPerformance.roundSubmissionPerformance.roundDailyPerformances;
         const dailyRoundChange = dailyRoundPerformance.length > 1 ?
           Number(dailyRoundPerformance[dailyRoundPerformance.length-1].payoutPending) - Number(dailyRoundPerformance[dailyRoundPerformance.length -2].payoutPending) :
           Number(dailyRoundPerformance[0].payoutPending);
-        console.log(dailyRoundChange);
         return dailyRoundChange;
-      });
-      console.log(dailyChangeArray);
-      const dailyChange = dailyChangeArray.reduce((acc, cur) => {
-        return acc + new Promise((res, rej) => {
-          res(cur);
-        });
-      });
-      console.log(dailyChange);
-      // const dailyChange = await roundChangeArray.reduce((acc, cur) => acc + cur);
-      // //-2.179
-      // //-2.09
-      // //-0.74
-      // //-2.53
-      // //-7.53
-      userModelArr.push(new ModelDetail(userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName));
+      }));
+      const dailyChange = dailyChangeArray.reduce((acc, cur) => acc + cur, 0);
+      userModelArr.push(new ModelDetail(userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange.toFixed(2)));
     }
     catch(error){
       console.log(error);
