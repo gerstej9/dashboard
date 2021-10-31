@@ -8,6 +8,14 @@ const latestNmrPrice = () => `query{latestNmrPrice {
   priceUsd
 }}`;
 
+const roundSubmissionPerformance = (username, roundNumber)  => 
+  `query{roundSubmissionPerformance(username: "${username}" roundNumber:${roundNumber}){
+    roundDailyPerformances{
+      date
+      payoutPending
+    }
+  }}`;
+
 const userProfile = username => `query{v2UserProfile(username: "${username}") {
   latestRoundPerformances {
     correlation
@@ -30,6 +38,9 @@ const userProfile = username => `query{v2UserProfile(username: "${username}") {
 
 const v3UserProfile = username => `query{v3UserProfile(modelName: "${username}") {
   username
+  latestReturns{
+    oneDay
+  }
   latestRanks{
     corr
     corr20d
@@ -470,9 +481,9 @@ async function getMultipleModelDetails(arr){
   let userModelArr = [];
   for(let i = 0; i < arr.length; i++){
     try{
-      const user = await retrieveObject(userProfile(arr[i]));
+      // const user = await retrieveObject(userProfile(arr[i]));
       const v3User = await retrieveObject(v3UserProfile(arr[i]));
-      const [userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange] =
+      const [userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName] =
       [
         v3User.v3UserProfile.latestRanks.mmc,
         v3User.v3UserProfile.latestRanks.corr,
@@ -480,9 +491,19 @@ async function getMultipleModelDetails(arr){
         v3User.v3UserProfile.roundModelPerformances.slice(0,4),
         Number(v3User.v3UserProfile.nmrStaked).toFixed(2),
         v3User.v3UserProfile.username,
-        Number(user.v2UserProfile.dailyUserPerformances[0].payoutPending).toFixed(2)
       ];
-      userModelArr.push(new ModelDetail(userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange));
+      const dailyChangeArray = await
+      Promise.all(activeRounds.map(async (round) => {
+        let currentRound = round.roundNumber;
+        const roundPerformance = await retrieveObject(roundSubmissionPerformance(arr[i], currentRound ));
+        const dailyRoundPerformance = roundPerformance.roundSubmissionPerformance.roundDailyPerformances;
+        const dailyRoundChange = dailyRoundPerformance.length > 1 ?
+          Number(dailyRoundPerformance[dailyRoundPerformance.length-1].payoutPending) - Number(dailyRoundPerformance[dailyRoundPerformance.length -2].payoutPending) :
+          Number(dailyRoundPerformance[0].payoutPending);
+        return dailyRoundChange;
+      }));
+      const dailyChange = dailyChangeArray.reduce((acc, cur) => acc + cur, 0);
+      userModelArr.push(new ModelDetail(userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange.toFixed(2)));
     }
     catch(error){
       console.log(error);
