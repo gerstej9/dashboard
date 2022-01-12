@@ -497,9 +497,10 @@ async function getMultipleModelDetails(arr){
         let currentRound = round.roundNumber;
         const roundPerformance = await retrieveObject(roundSubmissionPerformance(arr[i], currentRound ));
         const dailyRoundPerformance = roundPerformance.roundSubmissionPerformance.roundDailyPerformances.sort(round => round.date);
-        const dailyRoundChange = dailyRoundPerformance.length > 1 ?
+        const dailyRoundChange = dailyRoundPerformance.length > 1 ? dailyRoundPerformance[0]?
           Number(dailyRoundPerformance[dailyRoundPerformance.length-1].payoutPending) - Number(dailyRoundPerformance[dailyRoundPerformance.length -2].payoutPending) :
-          Number(dailyRoundPerformance[0].payoutPending);
+          Number(dailyRoundPerformance[0].payoutPending):
+          0.00;
         return dailyRoundChange;
       }));
       const dailyChange = dailyChangeArray.reduce((acc, cur) => acc + cur, 0);
