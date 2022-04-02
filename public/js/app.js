@@ -47,6 +47,8 @@ const v3UserProfile = username => `query{v3UserProfile(modelName: "${username}")
     mmc
     mmc20d
     fnc
+    fncV3
+    tc
   }
     nmrStaked
     stakeInfo {
@@ -88,6 +90,7 @@ const v3UserProfile = username => `query{v3UserProfile(modelName: "${username}")
       roundResolved
       roundTarget
       selectedStakeValue
+      tc
     }
 }}`;
 
@@ -117,7 +120,7 @@ const detailRow = (userData, activeTotal) => `
       <p class = "daily-change">${userData.dailyChange}</p>
       <p class = "prev-rank">${userData.fnc}</p>
       <p class = "current-rank">${userData.corrCurrent}</p>
-      <p class = "mmc-rank">${userData.mmcCurrent}</p>
+      <p class = "tc-rank">${userData.TcCurrent}</p>
     </div>
   </div>
   `;
@@ -131,7 +134,7 @@ const modalTitleRow= (userData, avgCorr, avgMmc) => `
       <div class = "modalTitleRow">
         <p>Round</p>
         <p>Corr</p>
-        <p>MMC</p>
+        <p>TC</p>
         <p>NMR Stake</p>
         <p>NMR Payout</p>
       </div>
@@ -150,7 +153,7 @@ const modalDetailRow = (activeRounds, stake, payout) => `
 <div class = "modalTitleRow">
 <p>${activeRounds.roundNumber}</p>
 <p>${activeRounds.corr.toFixed(3)}</p>
-<p>${activeRounds.mmc.toFixed(3)}</p>
+<p>${activeRounds.tc.toFixed(3)}</p>
 <p>${stake.toFixed(2)}</p>
 <p>${payout.toFixed(2)}</p>
 </div>`;
@@ -178,33 +181,33 @@ const detailTotalRow = (dailyChangedAllModels, dailyChangeAllModelsUsd, activeTo
 </div>
 `;
 
-//Collection corr and mmc averages for live rounds
-const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllModelAvgMmc, roundOneAllModelAvgCorr, roundOneAllModelAvgMmc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgMmc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgMmc, allLiveAllModelAvgCorr, allLiveAllModelAvgMmc) => `
+//Collection corr and Tc averages for live rounds
+const detailTotalStatsRow = (userData, roundZeroAllModelAvgCorr,roundZeroAllModelAvgTc, roundOneAllModelAvgCorr, roundOneAllModelAvgTc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgTc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgTc, allLiveAllModelAvgCorr, allLiveAllModelAvgTc) => `
   <div class = "totalRowStats monkey">
     <p id = stat-round>Round</p>
     <p>Collection Avg Corr</p>
-    <p>Collection Avg MMC</p>
+    <p>Collection Avg TC</p>
     <p id = "stat-round">${userData.activeRounds[3].roundNumber} </p>
     <p>${roundZeroAllModelAvgCorr}</p>
-    <p>${roundZeroAllModelAvgMmc}</p>
+    <p>${roundZeroAllModelAvgTc}</p>
     <p id ="stat-round">${userData.activeRounds[2].roundNumber} </p>
     <p>${roundOneAllModelAvgCorr}</p>
-    <p>${roundOneAllModelAvgMmc}</p>
+    <p>${roundOneAllModelAvgTc}</p>
     <p id ="stat-round">${userData.activeRounds[1].roundNumber} </p>
     <p>${roundTwoAllModelAvgCorr}</p>
-    <p>${roundTwoAllModelAvgMmc}</p>
+    <p>${roundTwoAllModelAvgTc}</p>
     <p id ="stat-round">${userData.activeRounds[0].roundNumber}</p>
     <p>${roundThreeAllModelAvgCorr}</p>
-    <p>${roundThreeAllModelAvgMmc}</p>
+    <p>${roundThreeAllModelAvgTc}</p>
     <p id ="stat-round">All Live</p>
     <p>${allLiveAllModelAvgCorr}</p>
-    <p>${allLiveAllModelAvgMmc}</p>
+    <p>${allLiveAllModelAvgTc}</p>
   </div>
 `;
 
 //Object constructor function to hold model details for each model
-function ModelDetail(mmcCurrent, corrCurrent, fnc, activeRounds, totalStake, modelName, dailyChange){
-  this.mmcCurrent = mmcCurrent;
+function ModelDetail(TcCurrent, corrCurrent, fnc, activeRounds, totalStake, modelName, dailyChange){
+  this.TcCurrent = TcCurrent;
   this.corrCurrent = corrCurrent;
   this.fnc = fnc;
   this.activeRounds = activeRounds;
@@ -483,9 +486,9 @@ async function getMultipleModelDetails(arr){
     try{
       // const user = await retrieveObject(userProfile(arr[i]));
       const v3User = await retrieveObject(v3UserProfile(arr[i]));
-      const [userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName] =
+      const [userTcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName] =
       [
-        v3User.v3UserProfile.latestRanks.mmc,
+        v3User.v3UserProfile.latestRanks.tc,
         v3User.v3UserProfile.latestRanks.corr,
         v3User.v3UserProfile.latestRanks.fnc,
         v3User.v3UserProfile.roundModelPerformances.slice(0,4),
@@ -496,7 +499,9 @@ async function getMultipleModelDetails(arr){
       Promise.all(activeRounds.map(async (round) => {
         let currentRound = round.roundNumber;
         const roundPerformance = await retrieveObject(roundSubmissionPerformance(arr[i], currentRound ));
-        const dailyRoundPerformance = roundPerformance.roundSubmissionPerformance.roundDailyPerformances.sort(round => round.date);
+        const dailyRoundPerformance = roundPerformance.roundSubmissionPerformance? roundPerformance.roundSubmissionPerformance.roundDailyPerformances.sort(round => round.date) :
+          [null]
+        ;
         const dailyRoundChange = dailyRoundPerformance.length > 1 ? dailyRoundPerformance[0]?
           Number(dailyRoundPerformance[dailyRoundPerformance.length-1].payoutPending) - Number(dailyRoundPerformance[dailyRoundPerformance.length -2].payoutPending) :
           Number(dailyRoundPerformance[0].payoutPending):
@@ -504,7 +509,7 @@ async function getMultipleModelDetails(arr){
         return dailyRoundChange;
       }));
       const dailyChange = dailyChangeArray.reduce((acc, cur) => acc + cur, 0);
-      userModelArr.push(new ModelDetail(userMmcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange.toFixed(2)));
+      userModelArr.push(new ModelDetail(userTcRankCurrent, userCorrCurrent, userFNC, activeRounds, totalStake, modelName, dailyChange.toFixed(2)));
     }
     catch(error){
       console.log(error);
@@ -544,24 +549,24 @@ function renderModelDetails(nmrPrice, userData, date){
   let activeTotalAllModels = 0;
   let dailyChangedAllModels = 0;
   let roundZeroAllModelSumCorr= 0;
-  let roundZeroAllModelSumMmc = 0;
+  let roundZeroAllModelSumTc = 0;
   let roundOneAllModelSumCorr= 0;
-  let roundOneAllModelSumMmc = 0;
+  let roundOneAllModelSumTc = 0;
   let roundTwoAllModelSumCorr= 0;
-  let roundTwoAllModelSumMmc = 0;
+  let roundTwoAllModelSumTc = 0;
   let roundThreeAllModelSumCorr= 0;
-  let roundThreeAllModelSumMmc = 0;
+  let roundThreeAllModelSumTc = 0;
   let allLiveAllModelSumCorr = 0;
-  let allLiveAllModelSumMmc = 0;
+  let allLiveAllModelSumTc = 0;
   for(let i = 0; i<userData.length; i++){
     roundZeroAllModelSumCorr += userData[i].activeRounds[3].corr;
-    roundZeroAllModelSumMmc += userData[i].activeRounds[3].mmc;
+    roundZeroAllModelSumTc += userData[i].activeRounds[3].tc;
     roundOneAllModelSumCorr+= userData[i].activeRounds[2].corr;
-    roundOneAllModelSumMmc += userData[i].activeRounds[2].mmc;
+    roundOneAllModelSumTc += userData[i].activeRounds[2].tc;
     roundTwoAllModelSumCorr+= userData[i].activeRounds[1].corr;
-    roundTwoAllModelSumMmc += userData[i].activeRounds[1].mmc;
+    roundTwoAllModelSumTc += userData[i].activeRounds[1].tc;
     roundThreeAllModelSumCorr+= userData[i].activeRounds[0].corr;
-    roundThreeAllModelSumMmc += userData[i].activeRounds[0].mmc;
+    roundThreeAllModelSumTc += userData[i].activeRounds[0].tc;
     userTotalStake += Number(userData[i].totalStake);
     let activeTotal = 0;
     for(let j =0; j< userData[i].activeRounds.length; j++){
@@ -574,11 +579,11 @@ function renderModelDetails(nmrPrice, userData, date){
     for(let j = 0; j<4; j++){corrSum += userData[i].activeRounds[j].corr;}
     let avgCorr = (corrSum/4);
     allLiveAllModelSumCorr += avgCorr;
-    let mmcSum = 0;
-    for(let j =0; j< 4; j++){ mmcSum+= userData[i].activeRounds[j].mmc;}
-    let avgMmc = (mmcSum/4);
-    allLiveAllModelSumMmc += avgMmc;
-    $(`#${userData[i].modelName}`).append(modalTitleRow(userData[i], avgCorr, avgMmc));
+    let TcSum = 0;
+    for(let j =0; j< 4; j++){ TcSum+= userData[i].activeRounds[j].tc;}
+    let avgTc = (TcSum/4);
+    allLiveAllModelSumTc += avgTc;
+    $(`#${userData[i].modelName}`).append(modalTitleRow(userData[i], avgCorr, avgTc));
     for(let j =0; j<4; j++){
       let stake = Number(userData[i].activeRounds[j].selectedStakeValue);
       let payout = Number(userData[i].activeRounds[j].payout);
@@ -586,7 +591,7 @@ function renderModelDetails(nmrPrice, userData, date){
       if(!stake){stake = 0;}
       if(!payout){payout = 0;}
       if(!activeRounds.corr){activeRounds.corr = 0;}
-      if(!activeRounds.mmc){activeRounds.mmc = 0;}
+      if(!activeRounds.tc){activeRounds.tc = 0;}
       $(`.${userData[i].modelName}`).find('.modalDetailRow').after(modalDetailRow(activeRounds, stake, payout));
     }
     activeTotalAllModels += Number(activeTotal);
@@ -598,16 +603,16 @@ function renderModelDetails(nmrPrice, userData, date){
   let userLiveTotalUsd = (userLiveTotal * nmrPrice).toFixed(2);
   $('#user-detail').append(detailTotalRow(dailyChangedAllModels.toFixed(2), dailyChangeAllModelsUsd, activeTotalAllModels.toFixed(2), currPayoutUsd, userTotalStake.toFixed(2),stakedPayoutUsd, userLiveTotal, userLiveTotalUsd));
   let roundZeroAllModelAvgCorr= (roundZeroAllModelSumCorr/ userData.length).toFixed(3);
-  let roundZeroAllModelAvgMmc = (roundZeroAllModelSumMmc/ userData.length).toFixed(3);
+  let roundZeroAllModelAvgTc = (roundZeroAllModelSumTc/ userData.length).toFixed(3);
   let roundOneAllModelAvgCorr= (roundOneAllModelSumCorr/ userData.length).toFixed(3);
-  let roundOneAllModelAvgMmc = (roundOneAllModelSumMmc/ userData.length).toFixed(3);
+  let roundOneAllModelAvgTc = (roundOneAllModelSumTc/ userData.length).toFixed(3);
   let roundTwoAllModelAvgCorr= (roundTwoAllModelSumCorr/ userData.length).toFixed(3);
-  let roundTwoAllModelAvgMmc = (roundTwoAllModelSumMmc/ userData.length).toFixed(3);
+  let roundTwoAllModelAvgTc = (roundTwoAllModelSumTc/ userData.length).toFixed(3);
   let roundThreeAllModelAvgCorr= (roundThreeAllModelSumCorr/ userData.length).toFixed(3);
-  let roundThreeAllModelAvgMmc = (roundThreeAllModelSumMmc/ userData.length).toFixed(3);
+  let roundThreeAllModelAvgTc = (roundThreeAllModelSumTc/ userData.length).toFixed(3);
   let allLiveAllModelAvgCorr = (allLiveAllModelSumCorr/ userData.length).toFixed(3);
-  let allLiveAllModelAvgMmc = (allLiveAllModelSumMmc/ userData.length).toFixed(3);
-  $('#user-detail').append(detailTotalStatsRow(userData[0], roundZeroAllModelAvgCorr,roundZeroAllModelAvgMmc, roundOneAllModelAvgCorr, roundOneAllModelAvgMmc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgMmc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgMmc, allLiveAllModelAvgCorr, allLiveAllModelAvgMmc));
+  let allLiveAllModelAvgTc = (allLiveAllModelSumTc/ userData.length).toFixed(3);
+  $('#user-detail').append(detailTotalStatsRow(userData[0], roundZeroAllModelAvgCorr,roundZeroAllModelAvgTc, roundOneAllModelAvgCorr, roundOneAllModelAvgTc, roundTwoAllModelAvgCorr, roundTwoAllModelAvgTc, roundThreeAllModelAvgCorr, roundThreeAllModelAvgTc, allLiveAllModelAvgCorr, allLiveAllModelAvgTc));
   $('.myModal').on('click', closeModal);
   $('.modelRow').on('click', displayModal);
   sortDetailRows();
@@ -660,7 +665,7 @@ function sortDetailRows(){
     $('i').removeClass('fa-sort-up');
   }else if(sortingDirectionIndicator.includes('up')){
     $('i').removeClass('fa-sort-up');
-  };
+  }
   const detailRow = $('.model-detail-row-section');
   const detailRowList = detailRow.children('div');
   if(sortingProperty === 'model-name-title'){
@@ -687,9 +692,9 @@ function sortDetailRows(){
     $('#rank-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
     detailRowList.sort(columnSort('.current-rank', sortingDirection));
   }
-  if(sortingProperty === 'mmc-rank-title'){
-    $('#mmc-rank-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
-    detailRowList.sort(columnSort('.mmc-rank', sortingDirection));
+  if(sortingProperty === 'tc-rank-title'){
+    $('#tc-rank-title').find('i').addClass(`fa-sort-${sortingDirection[0]}`);
+    detailRowList.sort(columnSort('.tc-rank', sortingDirection));
   }
   detailRow.append(detailRowList);
 }
@@ -712,7 +717,7 @@ async function init(){
   $('#daily-change-title').on('click',sortDetailRows);
   $('#prev-rank-title').on('click',sortDetailRows);
   $('#rank-title').on('click',sortDetailRows);
-  $('#mmc-rank-title').on('click',sortDetailRows);
+  $('#tc-rank-title').on('click',sortDetailRows);
   $('#add-collection-button').on('click', newCollection);
   $('#collection-name').keypress(function (e) {
     if (e.which === 13) {
